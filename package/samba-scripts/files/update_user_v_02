@@ -22,7 +22,7 @@ echo "admin:x:1:"	>>$SMB_CONF_DIR/group
 echo "guest:x:65534:"	>>$SMB_CONF_DIR/group
 
 #/bin/adduser -G admin admin -D -H
-(sleep 1; echo "$($config get http_passwd)"; sleep 1; echo "$($config get http_passwd)") | /bin/adduser -G admin admin -H -h /tmp/ftpadmin -s /bin/ash
+(sleep 1; echo "$($config get http_passwd)"; sleep 1; echo "$($config get http_passwd)") | /bin/adduser -G admin admin -h /tmp/ftpadmin -s /bin/ash
 echo "guest::10957:0:99999:7:::"                        >> $SMB_CONF_DIR/shadow
 
 # clear smbpasswd file
