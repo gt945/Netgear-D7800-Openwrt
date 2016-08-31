@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+START=18
+
+. /lib/cfgmgr/dsl.sh
+
+boot()
+{
+	dsl_set_induced_configs
+	prepare_dsl_wan_conf
+	prepare_dsl_scr
+	/etc/init.d/lantiq_vrx320_init.sh boot
+	/etc/init.d/ltq_load_cpe_mei_drv.sh boot
+	/etc/init.d/ltq_load_dsl_cpe_api.sh boot
+	/etc/init.d/ltq_cpe_control_init.sh boot
+}

@@ -1,0 +1,25 @@
+
+
+config NET_VENDOR_LANTIQ
+        bool "Lantiq network devices"
+        default y
+        ---help---
+          If you have a network (Ethernet) card belonging to this class, say Y
+          and read the Ethernet-HOWTO, available from
+          <http://www.tldp.org/docs.html#howto>.
+
+if NET_VENDOR_LANTIQ
+
+config LANTIQ_VRX320
+	tristate "VRX320 SmartPHY PCIe EP driver"
+	default n
+	---help---
+	Supported VRX320 smartPHY PCIe EP
+
+config LANTIQ_VRX320_TEST
+	tristate "VRX320 SmartPHY PCIe EP driver test module"
+	default n
+	---help---
+	VRX320 smartPHY PCIe EP test module
+
+endif # NET_VENDOR_LANTIQ

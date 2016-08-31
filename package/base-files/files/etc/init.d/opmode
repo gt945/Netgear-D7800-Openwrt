@@ -1,0 +1,255 @@
+#!/bin/sh /etc/rc.common
+START=20
+. /lib/cfgmgr/cfgmgr.sh
+. /lib/cfgmgr/opmode.sh
+
+start0() # $1: boot/start
+{
+	op_set_induced_configs
+	op_create_brs_and_vifs
+
+	brctl addif br0 pas0
+	ifconfig pas0 up
+
+	[ "X$($CONFIG get modem_mode)" = "X1" ] && $CONFIG set device_mode="modem" || $CONFIG set device_mode="router"
+
+	case "$($CONFIG get i_opmode)" in
+	normal|iptv|vlan)
+		/etc/init.d/net-lan $1
+		/etc/init.d/net-wan $1
+		[ "$($CONFIG get device_mode)" = "modem" ] && return
+		/etc/init.d/init6 $1
+		;;
+	*)
+		/etc/init.d/net-br $1
+		;;
+	esac
+}
+
+stop0()
+{
+	case "$($CONFIG get i_opmode)" in
+	normal|iptv|vlan)
+		/etc/init.d/init6 stop
+		/etc/init.d/net-wan stop
+		/etc/init.d/net-lan stop
+		;;
+	*)
+		/etc/init.d/net-br stop
+		;;
+	esac
+	op_del_all_brs_vifs
+}
+
+start()
+{
+	start0 start
+
+	# WLAN WPS UPnP need br0's IP addr.
+	# Otherwise hostapd will exit with error
+	while [ "x`ifconfig br0 | grep "inet addr:"`" = "x" ];
+	do
+		sleep 1
+	done
+	/etc/init.d/wlan-common start
+}
+
+stop()
+{
+	/etc/init.d/wlan-common stop
+	stop0
+}
+
+restart()
+{
+	stop
+	start
+}
+
+boot()
+{
+	op_create_br0_brwan
+	start0 boot
+}
+
+EXTRA_COMMANDS="reset_wan_dsl_or_eth"
+EXTRA_HELP="	reset_wan_dsl_or_eth	switch wan cable type"
+
+reset_wan_dsl_or_eth()
+{
+	local nif vid pri opmode_tmp brx br_s
+	opmode_tmp=$($CONFIG get i_opmode)
+	echo "switch to `[ "x$WanIndepPhy" = "x1" ] && echo xdsl || echo ether` #################" > /dev/console
+
+	sleep 2 #give time to httpd return web page
+	ifconfig br0 down
+	for nif in $(br_allnifs br0); do
+		case "$nif" in
+			ethwan)
+				ifconfig $nif down
+				brctl delif br0 $nif
+				vconfig rem ethwan || ip link set dev ethwan name $RawEthWan
+				ifconfig $RawEthWan down
+				;;
+			ethlan)
+				ifconfig $nif down
+				brctl delif br0 $nif
+				vconfig rem ethlan || ip link set dev ethlan name $RawEthLan
+				ifconfig $RawEthLan down
+				;;
+		esac
+	done
+
+	br_s=`awk '/br[1-9w]|brwan2/ {print $1}' /proc/net/dev |sed 's/://g'` #brwan2 is for WAN2 IPTV that have no vid
+	for brx in $br_s; do
+		ifconfig $brx down
+		for nif in $(br_allnifs $brx); do
+			ifconfig $nif down
+			brctl delif $brx $nif
+			case "$nif" in
+				ethwan)
+					vconfig rem ethwan || ip link set dev ethwan name $RawEthWan
+					ifconfig $RawEthWan down
+					;;
+				eth*|ptm*|nas*)
+					vconfig rem $nif
+					;;
+			esac
+		done
+		[ "$brx" != "brwan" ] && brctl delbr $brx
+	done
+
+	/etc/init.d/ntpclient stop
+	case "$opmode_tmp" in
+		normal|factory)
+			[ "$opmode_tmp" = "factory" ] && /etc/init.d/net-br stop
+			ip link set dev $RawEthLan name ethlan
+			ip link set dev $RawEthWan name ethwan
+			if [ "$WanIndepPhy" = "1" ]; then
+				[ "$opmode_tmp" = "normal" -a "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				brctl addif brwan $RawDslWan
+				ifconfig $RawDslWan up
+			else
+				[ "$opmode_tmp" = "normal" ] && brctl addif brwan ethwan
+				$CONFIG set vlan_tag_1="1 Internet 10 0 0 0"
+			fi
+			brctl addif br0 ethlan
+			sw_configvlan "$opmode_tmp"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			[ "$opmode_tmp" = "factory" ] && /etc/init.d/net-br start
+			;;
+		iptv)
+			/etc/init.d/init6 stop
+			/etc/init.d/net-lan stop
+			if [ "$WanIndepPhy" = "0" ]; then
+				ip link set dev $RawEthLan name ethlan
+				ip link set dev $RawEthWan name ethwan
+				brctl addif brwan ethwan
+				$CONFIG set vlan_tag_1="1 Internet 10 0 0 0"
+			else
+				ifconfig $RawEthLan up
+				vconfig add $RawEthLan 1 && ifconfig $RawEthLan.1 down
+				vconfig add $RawEthLan 2 && ifconfig $RawEthLan.2 up
+				brctl addif brwan $RawEthLan.2
+				ip link set dev $RawEthLan.1 name ethlan
+				ip link set dev $RawEthWan name ethwan
+				[ "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				ifconfig $RawDslWan up
+				brctl addif brwan $RawDslWan
+			fi
+			brctl addif br0 ethlan
+			sw_configvlan "iptv" $($CONFIG get iptv_mask)
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			/etc/init.d/net-lan start
+			/etc/init.d/init6 start
+			;;
+		vlan)
+			/etc/init.d/init6 stop
+			/etc/init.d/net-lan stop
+			local lanvid=$(vlan_get_lanvid)
+			local used_wports=0
+			if [ "$WanIndepPhy" = "0" ]; then
+				ip link set dev $RawEthLan name ethlan
+				ifconfig $RawEthWan up
+			else
+				ifconfig $RawEthLan up
+				vconfig add $RawEthLan $lanvid && ifconfig $RawEthLan.$lanvid down
+				ip link set dev $RawEthLan.$lanvid name ethlan
+				ip link set dev $RawEthWan name ethwan
+				[ "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				ifconfig ethwan up
+			fi
+			brctl addif br0 ethlan
+
+			sw_configvlan "vlan" "start"
+			for i in 1 2 3 4 5 6 7 8 9 10; do
+				tv=$($CONFIG get vlan_tag_$i)
+				[ -n "$tv" ] || continue
+				set - $(echo $tv)
+				# $1: enable, $2: name, $3: vid, $4: pri, $5:wports, $6:wlports
+				[ "$1" = "1" ] || continue
+				if [ "$2" = "Internet" ]; then
+					vid=$3
+					pri=$4
+				else
+					used_wports=$(($used_wports | $5))
+					if [ "$WanIndepPhy" = "1" ] && [ "$dsl_video_vid" = "$3" ]; then
+						local iptv_flag=1
+					fi
+					vlan_create_br_and_vif $3 $4 $iptv_flag
+					sw_configvlan "vlan" "add" "br" $3 $5 $4
+				fi
+			done
+			if [ "$WanIndepPhy" = "0" ]; then
+				if [ "$vid" = "0" ]; then
+					vid=$(vlan_get_wanvid) && pri=0
+					vlan_create_internet_vif $vid $pri
+					sw_configvlan "vlan" "add" "wan" "$vid" "0" "$pri"
+				else
+					vlan_create_internet_vif $vid $pri
+					sw_configvlan "vlan" "add" "br" "$vid" "0" "$pri"
+				fi
+			else
+				eth_vid=$(vlan_get_wanvid) && eth_pri=0
+				[ "x$ethwan_as_lanport" = "x1" ] && sw_configvlan "vlan" "add" "dsl" "$eth_vid" "0" "$eth_pri"
+				ifconfig $RawDslWan up
+				if [ "x$vid" != "x" ]; then
+					vconfig add $RawDslWan $vid
+					ifconfig $RawDslWan.$vid up
+					vlan_set_vif_pri $RawDslWan.$vid $pri
+					brctl addif brwan $RawDslWan.$vid
+				else
+					brctl addif brwan $RawDslWan
+				fi
+			fi
+
+			sw_configvlan "vlan" "add" "lan" "$lanvid" $(($used_wports ^ 0xf)) "0"
+			sw_configvlan "vlan" "end"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			/etc/init.d/net-lan start
+			/etc/init.d/init6 start
+			;;
+		*)
+			/etc/init.d/net-br stop
+			ip link set dev $RawEthLan name ethlan
+			ip link set dev $RawEthWan name ethwan
+			brctl addif br0 ethlan
+			brctl addif br0 ethwan
+			sw_configvlan "$opmode_tmp"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig br0 up
+			/etc/init.d/net-br start
+			;;
+	esac
+	/etc/init.d/ntpclient start
+}

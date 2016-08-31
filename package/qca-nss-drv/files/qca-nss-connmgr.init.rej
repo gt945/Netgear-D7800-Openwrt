@@ -1,0 +1,27 @@
+diff a/package/qca-nss-drv/files/qca-nss-connmgr.init b/package/qca-nss-drv/files/qca-nss-connmgr.init	(rejected hunks)
+@@ -38,15 +38,9 @@ unload_nss_connmgr() {
+ }
+ 
+ start() {
+-	local proto=$($CONFIG get wan_proto)
+-
+-	[ "$proto" = "static" -o "$proto" = "dhcp" -o "$proto" = "pppoe" ] && \
+-	[ "x$($CONFIG get streamboost_enable)" = "x0" ] && \
+-	[ "x$($CONFIG get qos_endis_on)" = "x0" ] && {
+ 		load_nss_connmgr
+ 		echo "1" > /proc/sys/net/bridge/bridge-nf-call-iptables
+ 		echo "1" > /proc/sys/quantenna/nss/enable
+-	}
+ }
+ 
+ stop() {
+@@ -54,3 +48,9 @@ stop() {
+ 	echo "0" > /proc/sys/net/bridge/bridge-nf-call-iptables
+ 	echo "0" > /proc/sys/quantenna/nss/enable
+ }
++
++boot() {
++	echo "1" > /proc/sys/net/bridge/bridge-nf-call-ip6tables
++	echo "1" > /proc/sys/dev/nss/general/redirect
++	stop
++}

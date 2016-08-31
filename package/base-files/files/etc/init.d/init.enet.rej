@@ -1,0 +1,10 @@
+diff a/package/base-files/files/etc/init.d/init.enet b/package/base-files/files/etc/init.d/init.enet	(rejected hunks)
+@@ -11,8 +11,6 @@ start()
+ 	et_init
+ 	op_create_brs_and_vifs "$opmode"
+ 
+-        /bin/config set wan_factory_mac="$(et_wandefmac)"
+-
+ 	[ "x$($CONFIG get factory_mode)" = "x1" ] && swconfig dev switch0 load nowan
+ 
+ 	if [ "x$(detcable show | grep "WAN  : Plug off")" != "x" ]; then

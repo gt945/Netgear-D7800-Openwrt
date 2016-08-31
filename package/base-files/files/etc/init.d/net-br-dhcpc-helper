@@ -1,0 +1,93 @@
+#!/bin/sh
+# in brmode & extmode, this script is used to monitor wireless link
+
+. /lib/cfgmgr/cfgmgr.sh
+
+get_hostname()
+{
+	$(cat /proc/sys/kernel/hostname)
+}
+
+udhcpc_existed()
+{
+	[ "x$(pidof udhcpc)" != "x" ]
+}
+
+brmode_wlg_linked() { false; }
+brmode_wla_linked() { false; }
+brmode_wlg_fixup() { oc echo "unable to estabilish brmode 2.4G wireless link !"; }
+brmode_wla_fixup() { oc echo "unable to estabilish brmode 5G wireless link !"; }
+
+extmode_wlg_linked() { false; }
+extmode_wla_linked() { false; }
+extmode_wlg_fixup() { oc echo "unable to estabilish extmode 2.4G wireless link !"; }
+extmode_wla_fixup() { oc echo "unable to estabilish extmode 5G wireless link !"; }
+
+setup_global_variables_or_exit()
+# global variables : g_wl_linked, g_wl_fixup, g_udhcpc_h_arg, g_udhcpc_r_arg
+{
+	case "$($CONFIG get i_opmode)" in
+	brmode)
+		if [ "$($CONFIG get bridge_band_choose)" = "5g" ]; then
+			g_wl_linked=brmode_wla_linked
+			g_wl_fixup=brmode_wla_fixup
+		else
+			g_wl_linked=brmode_wlg_linked
+			g_wl_fixup=brmode_wlg_fixup
+		fi
+		;;
+	extmode)
+		if [ "$($CONFIG get extender_band_choose)" = "5g" ]; then
+			g_wl_linked=extmode_wla_linked
+			g_wl_fixup=extmode_wla_fixup
+		else
+			g_wl_linked=extmode_wlg_linked
+			g_wl_fixup=extmode_wlg_fixup
+		fi
+		;;
+	*)
+		echo "only for brmode or extmode !"
+		exit
+		;;
+	esac
+	g_udhcpc_h_arg="-h $(get_hostname)"
+	g_udhcpc_r_arg="-r $($CONFIG get ap_dhcp_ipaddr)"
+}
+
+# include the target dependent functions
+. /lib/cfgmgr/net-br-dhcpc-helper.sh
+
+setup_global_variables_or_exit
+oc echo "g_wl_linked=$g_wl_linked, g_wl_fixup=$g_wl_fixup"
+oc echo "g_udhcpc_h_arg=$g_udhcpc_h_arg, g_udhcpc_r_arg=$g_udhcpc_r_arg"
+
+tmp_on_time=0
+tmp_off_time=0
+newlinkstate=off
+unlink_time=0
+linkstate=off
+while true; do
+	if [ "x`ifconfig br0 | grep "inet addr:169.254"`" != "x" ] && [ "x`pidof udhcpc`" != "x" ]; then
+		killall -SIGUSR1 udhcpc
+		sleep 5
+	fi
+	#oc echo "xxxxxx on=$tmp_on_time, off=$tmp_off_time, s=$linkstate, ult=$unlink_time xxxxxx"
+	sleep 5
+	udhcpc_existed || udhcpc -a -b -i br0 "$g_udhcpc_h_arg" "$g_udhcpc_r_arg" &
+
+	if eval $g_wl_linked; then
+		tmp_off_time=0; tmp_on_time=$(($tmp_on_time + 5))
+		[ $tmp_on_time -ge 20 ] && tmp_on_time=0 && newlinkstate=on
+	else
+		tmp_on_time=0; tmp_off_time=$(($tmp_off_time + 5))
+		[ $tmp_off_time -ge 10 ] && tmp_off_time=0 && newlinkstate=off
+	fi
+
+	if [ "$newlinkstate" = "on" ]; then
+		[ "$linkstate" = "off" ] && linkstate=on && unlink_time=0 && killall -SIGUSR1 udhcpc
+	else
+		[ "$linkstate" = "on" ] && linkstate=off && killall -SIGUSR2 udhcpc
+		unlink_time=$(( $unlink_time + 5 ))
+		[ $unlink_time -ge 60 ] && unlink_time=0 && eval $g_wl_fixup
+	fi
+done

@@ -1,0 +1,43 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+START=50
+
+CRONTABS=/tmp/etc/crontabs
+CRON_SPOOL=/var/spool/cron
+
+prepare_crontab()
+{
+	case "$($CONFIG get i_opmode)" in
+	apmode)
+		/sbin/apsched ;;
+	brmode)
+		echo -n > $CRONTABS/root
+		echo -n "root" > $CRONTABS/cron.update
+		;;
+	*)
+		/sbin/cmdsched
+		;;
+	esac
+}
+
+start () {
+	prepare_crontab
+	crond -c $CRONTABS -T "$($CONFIG get time_zone)"
+}
+
+stop() {
+	killall -9 crond
+}
+
+restart() {
+	stop
+	start
+}
+
+boot () {
+	mkdir -p $CRONTABS
+	mkdir -p $CRON_SPOOL
+	ln -s $CRONTABS ${CRON_SPOOL}/crontabs
+	start
+}
+

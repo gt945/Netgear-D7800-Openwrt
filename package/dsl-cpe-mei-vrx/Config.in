@@ -1,0 +1,70 @@
+menu "Configuration"
+	depends on PACKAGE_dsl-cpe-mei-vrx
+
+	choice
+		prompt "Device selection"
+		default dsl-cpe-mei-vrx_DEVICE_VR9
+		help
+		  Selection of a device.
+
+	config dsl-cpe-mei-vrx_DEVICE_VR9
+		bool "VRX200"
+		help
+		  Actiavtes build for VRX200 Family.
+
+	config dsl-cpe-mei-vrx_DEVICE_VR10
+		bool "VRX300"
+		help
+		  Actiavtes build for VRX300 Family.
+
+	config dsl-cpe-mei-vrx_DEVICE_VR10_320
+		bool "VRX320"
+		help
+		  Actiavtes build for VRX300 Family, VRX320 Subfamily.
+
+	endchoice
+
+	config BUILD_SEPARATE_NONBONDED_BINS
+		bool "Build separate non-bonded binaries"
+		default n
+		help
+		  This option builds non-bonded binaries separately under rootfs apart from bonded binaries
+
+	config VRX_MAX_DEVICE
+		string
+		prompt "Max. number of devices"
+		default "1"
+		help
+		  Defines the max. number of VRX devices used.
+		  Set it to 2 for activating OFF-chip bonding.
+
+	config VRX_LINES_PER_DEVICE
+		string
+		prompt "Lines per device"
+		default "1"
+		help
+		  Defines the number of lines used per VRX devices.
+		  Set it to 2 for activating ON-chip bonding.
+
+	config dsl-cpe-mei-vrx_USE_KERNEL_BUILD_IN
+		bool "Use kernel build-in"
+		default n
+
+	config dsl-cpe-mei-vrx_USE_PCI_SLAVE_DOWNLOAD
+		bool "Use PCI Slave firmware download"
+		default n
+
+	config dsl-cpe-mei-vrx_MEI_PREDEF_DBG_BAR
+		bool "Enable BAR debug user functionality"
+		default y
+
+	choice
+		depends on dsl-cpe-mei-vrx_USE_PCI_SLAVE_DOWNLOAD
+		prompt "PCI Slave address range"
+		default dsl-cpe-mei-vrx_USE_PCI_SLAVE_ADDR_RANGE_ADTRAN
+	config dsl-cpe-mei-vrx_USE_PCI_SLAVE_ADDR_RANGE_ADTRAN
+		bool "ADTRAN"
+	config dsl-cpe-mei-vrx_USE_PCI_SLAVE_ADDR_RANGE_BONDING
+		bool "BONDING"
+    	endchoice
+endmenu

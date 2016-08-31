@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+START=19
+
+MODDIR=/lib/modules/3.4.103
+
+start()
+{
+	local mod_dni_enet=`lsmod | grep dni_enet`
+	if [ "x$mod_dni_enet" = "x" ]; then
+		insmod $MODDIR/dni_enet.ko
+	fi
+}

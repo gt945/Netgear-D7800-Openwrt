@@ -1,0 +1,8 @@
+#!/bin/sh
+
+route add default dev $1
+
+[ -f /etc/ppp/resolv.conf ] && {
+	cp -f /etc/ppp/resolv.conf /etc/
+}
+

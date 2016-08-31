@@ -1,0 +1,12 @@
+diff a/package/net-cgi/files/net-cgi.config b/package/net-cgi/files/net-cgi.config	(rejected hunks)
+@@ -8,8 +8,8 @@ EMPTY_FILE_CHECK=0
+ TOP_CENTRIA=0
+ 
+ #The router's wan side interface name.
+-NET_IFNAME=\"eth0\"
+-LAN_WIRED_IFNAME=\"eth1\"
++NET_IFNAME=\"brwan\"
++LAN_WIRED_IFNAME=\"ethlan\"
+ IPv6_LAN_IFNAME=\"br0\"
+ CTL_MOD=\"r7500\"
+ SMARTAGENT_VERSION=\"3.0\"

@@ -1,0 +1,10 @@
+diff a/package/qca-nss-drv/Makefile b/package/qca-nss-drv/Makefile	(rejected hunks)
+@@ -70,7 +70,7 @@ $(call KernelPackage/qca-nss-connmgr/Default/install, $(1))
+ 
+ 	# install service by default
+ 	$(INSTALL_DIR) $(1)/etc/rc.d
+-	$(LN) ../init.d/qca-nss-connmgr $(1)/etc/rc.d/S70qca-nss-connmgr
++#	$(LN) ../init.d/qca-nss-connmgr $(1)/etc/rc.d/S70qca-nss-connmgr
+ endef
+ 
+ define KernelPackage/qca-nss-connmgr-noload

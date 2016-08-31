@@ -1,0 +1,152 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+add_br_wan_vifs	lantiq_dsl_wan.sh	/^add_br_wan_vifs()$/;"	f
+boot	lantiq_dsl_wan_connect.sh	/^boot ()$/;"	f
+boot	lantiq_vrx320_init.sh	/^boot ()$/;"	f
+br_wannifs	lantiq_dsl_wan.sh	/^br_wannifs()$/;"	f
+bridge_lan_ports_for_iptv	lantiq_dsl_wan.sh	/^bridge_lan_ports_for_iptv() # $1 iface $2 datavid $3 videovid$/;"	f
+compare_cfg_inputs	lantiq_dsl_wan.sh	/^compare_cfg_inputs ()$/;"	f
+compare_cfg_inputs	lantiq_dsl_wan_uci.sh	/^compare_cfg_inputs ()$/;"	f
+conf_args_append	dni_dsl_net_wan.sh	/^conf_args_append()$/;"	f
+conf_export	lantiq_dsl_wan.sh	/^conf_export ()$/;"	f
+conf_export	lantiq_dsl_wan_uci.sh	/^conf_export ()$/;"	f
+conf_read	lantiq_dsl_wan.sh	/^conf_read ()$/;"	f
+conf_read	lantiq_dsl_wan_uci.sh	/^conf_read ()$/;"	f
+conf_write	lantiq_dsl_wan.sh	/^conf_write ()$/;"	f
+conf_write	lantiq_dsl_wan_uci.sh	/^conf_write ()$/;"	f
+configure_wan_mode	dni_dsl_net_wan.sh	/^configure_wan_mode() # $1: adsl\/vdsl$/;"	f
+connection_conf	dni_dsl_net_wan.sh	/^connection_conf()$/;"	f
+connection_wan2_conf	dni_dsl_net_wan.sh	/^connection_wan2_conf()$/;"	f
+create_connection_bridged	lantiq_dsl_wan.sh	/^create_connection_bridged ()$/;"	f
+create_connection_dhcp	lantiq_dsl_wan.sh	/^create_connection_dhcp ()$/;"	f
+create_connection_dhcp	lantiq_dsl_wan_uci.sh	/^create_connection_dhcp ()$/;"	f
+create_connection_pppoa	lantiq_dsl_wan.sh	/^create_connection_pppoa ()$/;"	f
+create_connection_pppoa	lantiq_dsl_wan_uci.sh	/^create_connection_pppoa ()$/;"	f
+create_connection_pppoe	lantiq_dsl_wan.sh	/^create_connection_pppoe ()$/;"	f
+create_connection_pppoe	lantiq_dsl_wan_uci.sh	/^create_connection_pppoe ()$/;"	f
+create_connection_static	lantiq_dsl_wan.sh	/^create_connection_static ()$/;"	f
+create_connection_static	lantiq_dsl_wan_uci.sh	/^create_connection_static ()$/;"	f
+create_nas	dni_adsl_scan.sh	/^create_nas()$/;"	f
+create_nas	dni_scan_isp_info.sh	/^create_nas()$/;"	f
+del_br_wan_vifs	lantiq_dsl_wan.sh	/^del_br_wan_vifs()$/;"	f
+del_brwan_wan_vifs	dni_adsl_scan.sh	/^del_brwan_wan_vifs()$/;"	f
+del_brwan_wan_vifs	dni_vdsl_eth_scan.sh	/^del_brwan_wan_vifs()$/;"	f
+del_nas	dni_adsl_scan.sh	/^del_nas()$/;"	f
+del_nas	dni_scan_isp_info.sh	/^del_nas()$/;"	f
+derive_dsl_iop_type	dsl.sh	/^derive_dsl_iop_type()$/;"	f
+dsl_set_induced_configs	dsl.sh	/^dsl_set_induced_configs()$/;"	f
+dsl_start	dni_dsl_net_wan.sh	/^dsl_start()$/;"	f
+dsl_stop	dni_dsl_net_wan.sh	/^dsl_stop()$/;"	f
+func_adsl_full_scan	dni_adsl_scan.sh	/^func_adsl_full_scan ()$/;"	f
+func_adsl_full_scan_isp_info	dni_scan_isp_info.sh	/^func_adsl_full_scan_isp_info ()$/;"	f
+func_adsl_quick_scan	dni_adsl_scan.sh	/^func_adsl_quick_scan ()$/;"	f
+func_check_in_vdsl_list	dni_vdsl_eth_scan.sh	/^func_check_in_vdsl_list () {$/;"	f
+func_configure_connection	lantiq_dsl_wan.sh	/^func_configure_connection ()$/;"	f
+func_configure_connection	lantiq_dsl_wan_uci.sh	/^func_configure_connection ()$/;"	f
+func_configure_wan	lantiq_dsl_wan.sh	/^func_configure_wan ()$/;"	f
+func_configure_wan	lantiq_dsl_wan_uci.sh	/^func_configure_wan ()$/;"	f
+func_delete_connection	lantiq_dsl_wan.sh	/^func_delete_connection ()$/;"	f
+func_delete_connection	lantiq_dsl_wan_uci.sh	/^func_delete_connection ()$/;"	f
+func_help	lantiq_dsl_wan.sh	/^func_help () {$/;"	f
+func_help	lantiq_dsl_wan_uci.sh	/^func_help () {$/;"	f
+func_load_driver_module	lantiq_dsl_wan.sh	/^func_load_driver_module ()$/;"	f
+func_load_driver_module	lantiq_dsl_wan_uci.sh	/^func_load_driver_module ()$/;"	f
+func_reload_dsl_modules	lantiq_dsl_wan.sh	/^func_reload_dsl_modules ()$/;"	f
+func_reload_dsl_modules	lantiq_dsl_wan_uci.sh	/^func_reload_dsl_modules ()$/;"	f
+func_show_connection	lantiq_dsl_wan.sh	/^func_show_connection ()$/;"	f
+func_show_connection	lantiq_dsl_wan_uci.sh	/^func_show_connection ()$/;"	f
+func_start_connection	lantiq_dsl_wan.sh	/^func_start_connection ()$/;"	f
+func_start_connection	lantiq_dsl_wan_uci.sh	/^func_start_connection ()$/;"	f
+func_start_wan_configure	lantiq_dsl_wan.sh	/^func_start_wan_configure ()$/;"	f
+func_start_wan_configure	lantiq_dsl_wan_uci.sh	/^func_start_wan_configure ()$/;"	f
+func_stop_connection	lantiq_dsl_wan.sh	/^func_stop_connection ()$/;"	f
+func_stop_connection	lantiq_dsl_wan_uci.sh	/^func_stop_connection ()$/;"	f
+func_vdsl_country_isp_identify	dni_vdsl_eth_scan.sh	/^func_vdsl_country_isp_identify () {$/;"	f
+func_vdsl_full_scan	dni_vdsl_eth_scan.sh	/^func_vdsl_full_scan () {$/;"	f
+func_vdsl_full_scan_isp_info	dni_scan_isp_info.sh	/^func_vdsl_full_scan_isp_info ()$/;"	f
+func_vdsl_quick_scan	dni_vdsl_eth_scan.sh	/^func_vdsl_quick_scan () {$/;"	f
+get_adsl_vid	dni_adsl_scan.sh	/^get_adsl_vid()$/;"	f
+get_next_mac	lantiq_dsl_wan.sh	/^get_next_mac ()$/;"	f
+get_next_mac	lantiq_dsl_wan_uci.sh	/^get_next_mac ()$/;"	f
+get_xDSL_AnnexMode	lantiq_dsl_wan.sh	/^get_xDSL_AnnexMode()$/;"	f
+get_xTSE	lantiq_dsl_wan.sh	/^get_xTSE()$/;"	f
+help	dni_dsl_net_wan.sh	/^help()$/;"	f
+help	lantiq_dsl_wan.sh	/^help () { __hlp=1; }$/;"	f
+help	lantiq_dsl_wan_uci.sh	/^help () { __hlp=1; }$/;"	f
+iface_bridged	dni_dsl_net_wan.sh	/^iface_bridged ()$/;"	f
+iface_bridged	dni_scan_isp_info.sh	/^iface_bridged ()$/;"	f
+iface_existed	dni_scan_isp_info.sh	/^iface_existed ()$/;"	f
+l_insmod	lantiq_dsl_wan.sh	/^l_insmod ()$/;"	f
+l_insmod	lantiq_dsl_wan_uci.sh	/^l_insmod ()$/;"	f
+l_rmmod	lantiq_dsl_wan.sh	/^l_rmmod ()$/;"	f
+l_rmmod	lantiq_dsl_wan_uci.sh	/^l_rmmod ()$/;"	f
+link_restart	lantiq_dsl_wan.sh	/^link_restart ()$/;"	f
+link_restart	lantiq_dsl_wan_uci.sh	/^link_restart ()$/;"	f
+lock	dni_dsl_net_wan.sh	/^lock(){$/;"	f
+nif_existed	lantiq_dsl_wan.sh	/^nif_existed()$/;"	f
+outp	xdslrc.sh	/^outp ()$/;"	f
+pppoa_detect	dni_adsl_scan.sh	/^pppoa_detect()$/;"	f
+pppoa_detect	dni_scan_isp_info.sh	/^pppoa_detect()$/;"	f
+prepare_dsl_scr	dsl.sh	/^prepare_dsl_scr()$/;"	f
+prepare_dsl_scr_and_restart_dsl_link	dsl.sh	/^prepare_dsl_scr_and_restart_dsl_link()$/;"	f
+prepare_dsl_scr_and_restart_dsl_link_if_needed	dsl.sh	/^prepare_dsl_scr_and_restart_dsl_link_if_needed()$/;"	f
+prepare_dsl_wan_conf	dsl.sh	/^prepare_dsl_wan_conf()$/;"	f
+print_details	xdslrc.sh	/^print_details ()$/;"	f
+print_dsl_scr	dsl.sh	/^print_dsl_scr() # $1: country, $2: isp, $3: vdsl\/adsl$/;"	f
+print_dsmcs_adjustment	dsl.sh	/^print_dsmcs_adjustment() # $1: vdsl\/adsl$/;"	f
+print_interop_bits_adjustment	dsl.sh	/^print_interop_bits_adjustment() # $1: country, $2: isp, $3: vdsl\/adsl$/;"	f
+print_scr_Common	dsl.sh	/^print_scr_Common()$/;"	f
+print_scr_WaitForConfiguration	dsl.sh	/^print_scr_WaitForConfiguration()$/;"	f
+print_scr_WaitForLinkActivate	dsl.sh	/^print_scr_WaitForLinkActivate() # $1: country, $2: isp, $3: vdsl\/adsl$/;"	f
+print_scr_WaitForRestart	dsl.sh	/^print_scr_WaitForRestart()$/;"	f
+pvc_detect	dni_adsl_scan.sh	/^pvc_detect()$/;"	f
+pvc_detect	dni_scan_isp_info.sh	/^pvc_detect()$/;"	f
+pvc_set	dni_adsl_scan.sh	/^pvc_set()$/;"	f
+real_wan2_ifname_setting	dni_dsl_net_wan.sh	/^real_wan2_ifname_setting() #this function is for saving wan2 iface for other progress use$/;"	f
+save_conf	dni_adsl_scan.sh	/^save_conf()$/;"	f
+save_wan2_conf	dni_adsl_scan.sh	/^save_wan2_conf() #this function is for double vpi\/vci setting$/;"	f
+set_dsl_iop_type	dsl.sh	/^set_dsl_iop_type()$/;"	f
+show_hlp_options	lantiq_dsl_wan.sh	/^show_hlp_options ()$/;"	f
+show_hlp_options	lantiq_dsl_wan_uci.sh	/^show_hlp_options ()$/;"	f
+start	lantiq_dsl_wan_connect.sh	/^start ()$/;"	f
+start	lantiq_vrx320_init.sh	/^start ()$/;"	f
+stop_connection_bridged	lantiq_dsl_wan.sh	/^stop_connection_bridged ()$/;"	f
+stop_connection_dhcp	lantiq_dsl_wan.sh	/^stop_connection_dhcp ()$/;"	f
+stop_connection_dhcp	lantiq_dsl_wan_uci.sh	/^stop_connection_dhcp ()$/;"	f
+stop_connection_pppoa	lantiq_dsl_wan.sh	/^stop_connection_pppoa ()$/;"	f
+stop_connection_pppoa	lantiq_dsl_wan_uci.sh	/^stop_connection_pppoa ()$/;"	f
+stop_connection_pppoe	lantiq_dsl_wan.sh	/^stop_connection_pppoe ()$/;"	f
+stop_connection_pppoe	lantiq_dsl_wan_uci.sh	/^stop_connection_pppoe ()$/;"	f
+stop_connection_static	lantiq_dsl_wan.sh	/^stop_connection_static ()$/;"	f
+stop_connection_static	lantiq_dsl_wan_uci.sh	/^stop_connection_static ()$/;"	f
+switch_wan_mode_to_ADSL_ATM	lantiq_dsl_wan.sh	/^switch_wan_mode_to_ADSL_ATM ()$/;"	f
+switch_wan_mode_to_ADSL_ATM	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_ADSL_ATM ()$/;"	f
+switch_wan_mode_to_ADSL_AUTO	lantiq_dsl_wan.sh	/^switch_wan_mode_to_ADSL_AUTO ()$/;"	f
+switch_wan_mode_to_ADSL_AUTO	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_ADSL_AUTO ()$/;"	f
+switch_wan_mode_to_ADSL_PTM	lantiq_dsl_wan.sh	/^switch_wan_mode_to_ADSL_PTM ()$/;"	f
+switch_wan_mode_to_ADSL_PTM	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_ADSL_PTM ()$/;"	f
+switch_wan_mode_to_FULL_AUTO	lantiq_dsl_wan.sh	/^switch_wan_mode_to_FULL_AUTO ()$/;"	f
+switch_wan_mode_to_FULL_AUTO	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_FULL_AUTO ()$/;"	f
+switch_wan_mode_to_VDSL_ATM	lantiq_dsl_wan.sh	/^switch_wan_mode_to_VDSL_ATM ()$/;"	f
+switch_wan_mode_to_VDSL_ATM	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_VDSL_ATM ()$/;"	f
+switch_wan_mode_to_VDSL_AUTO	lantiq_dsl_wan.sh	/^switch_wan_mode_to_VDSL_AUTO ()$/;"	f
+switch_wan_mode_to_VDSL_AUTO	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_VDSL_AUTO ()$/;"	f
+switch_wan_mode_to_VDSL_PTM	lantiq_dsl_wan.sh	/^switch_wan_mode_to_VDSL_PTM ()$/;"	f
+switch_wan_mode_to_VDSL_PTM	lantiq_dsl_wan_uci.sh	/^switch_wan_mode_to_VDSL_PTM ()$/;"	f
+tcpdump_if_needed	lantiq_dsl_wan.sh	/^tcpdump_if_needed() # $1: iface$/;"	f
+unlock	dni_dsl_net_wan.sh	/^unlock()$/;"	f
+verify_and_write_inputs	lantiq_dsl_wan.sh	/^verify_and_write_inputs ()$/;"	f
+verify_and_write_inputs	lantiq_dsl_wan_uci.sh	/^verify_and_write_inputs ()$/;"	f
+verify_input	lantiq_dsl_wan.sh	/^verify_input ()$/;"	f
+verify_input	lantiq_dsl_wan_uci.sh	/^verify_input ()$/;"	f
+vlan_set_vif_pri	lantiq_dsl_wan.sh	/^vlan_set_vif_pri() # $1: vif, $2: pri$/;"	f
+wan_detect_full_scan	dni_adsl_scan.sh	/^wan_detect_full_scan()$/;"	f
+wan_detect_full_scan	dni_scan_isp_info.sh	/^wan_detect_full_scan() #$1 vdsl\/adsl ifname$/;"	f
+wan_detect_quick_scan	dni_adsl_scan.sh	/^wan_detect_quick_scan()$/;"	f
+wanmac	dni_adsl_scan.sh	/^wanmac()$/;"	f
+wanmac	dni_scan_isp_info.sh	/^wanmac()$/;"	f
+wanmac	dni_vdsl_eth_scan.sh	/^wanmac()$/;"	f

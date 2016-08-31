@@ -1,0 +1,189 @@
+#!/bin/sh
+#. /lib/cfgmgr/cfgmgr.sh
+#the following line combines the last line to prevent this file from being sourced twice
+if [ "x$cfgmgr_sh" = "x" ]; then cfgmgr_sh="sourced"
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+cfg_libdir=/lib/cfgmgr
+cfg_cmddir=/sbin/cfgmgr
+CONFIG=/bin/config
+FIREWALL=/www/cgi-bin/firewall.sh
+
+oc () { "$@" >> /dev/console 2>&1 ; } # stdout & stderr to /dev/console
+qt () { "$@" >> /dev/null 2>&1 ; } # stdout & stderr to /dev/null
+
+fi #-------------------- this must be the last line -----------------------------
+
+# kwilt version format :
+#    <app name>-<app version>-<model name>-<firmware version>-<dash version>.<ext file name>
+#    eg: kwilt-v<kwilt version>-r7500v2-v<r7500v2 version>-<dash version>.<ext file name>
+#    eg: kwilt-v1.2-r7500v2-v1.0.4.60-002.tar.gz
+#
+
+kwilt_updated_file="/tmp/.kwilt_updated"
+
+kwilt_has_updated()
+{
+	[ -f $kwilt_updated_file ]
+}
+
+touch_kwilt_has_updated()
+{
+	touch $kwilt_updated_file
+}
+
+dlna_has_run()
+{
+	[ -n "$(pidof minidlna)" ]
+}
+
+start()
+{	exit
+	kwilt_has_updated || { oc echo "[kwilt] no run, has not been updated !"; return; }
+	dlna_has_run || { oc echo "[kwilt] no run, dlna has not been run !"; return; }
+	[ -d /hipplay ] && /hipplay/bin/busybox sh /hipplay/daemon start &
+}
+
+stop()
+{	exit
+	[ -d /hipplay ] && /hipplay/bin/busybox sh /hipplay/daemon stop
+}
+
+PID_file=/var/run/kwilt.pid
+kwilt_info_file=/tmp/kwilt_info
+kwilt_tgz_file=/tmp/kwilt.tar.gz
+kwilt_local_version_file=/hipplay/version
+update_url="ftp://updates1.netgear.com/sw-apps/kwilt/r7500v2/"
+#update_url="-u user:passwd ftp://172.16.83.218/tmp/r7500v2/"
+
+get_firmware_version()
+{
+	sed -n 's/^V\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\.[[0-9]]*\).*$/\1/p' /firmware_version
+}
+
+newer_version() # $1: x.x.x.x, $2: x.x.x.x
+{
+	local v1 v2 n=1
+
+	while [ 1 ]; do
+		v1=$(echo $1 |awk -F. '{print $'$n'}')
+		v2=$(echo $2 |awk -F. '{print $'$n'}')
+		[ "$v1" -gt "$v2" ] && return 0
+		[ "$v1" -lt "$v2" ] && return 1
+		[ -z "$v1" -a -z "$v2" ] && return 0
+		n=$(($n + 1))
+	done
+}
+
+kwilt_version_allowed() # $1: fullversion
+{
+	local v1=$(get_firmware_version)
+	local v2=$(echo $1 | sed -n 's/^kwilt-v.*-r7500v2-v\(.*\)-.*\..*$/\1/p')
+	newer_version $v1 $v2 && return 0 || return 1
+}
+
+local_version_integrity_passed()
+{
+	[ -d /hipplay/ ] || return 1
+	kwilt_version_allowed "$(cat $kwilt_local_version_file)" && return 0
+	return 1
+}
+
+run_local_version_and_exit() # $1: message
+{
+	oc echo "[kwilt] run local version, $1"
+	touch_kwilt_has_updated
+	rm -f $kwilt_info_file
+	rm -f $kwilt_tgz_file
+	rm -f $PID_file
+	start
+	exit 1
+}
+
+newer_kwilt() # $1: fullversion, $2: fullversion
+{
+	local v1=$(echo $1 | sed -n 's/^kwilt-v\(.*\)-r7500v2-v.*-.*\..*$/\1/p')
+	local v2=$(echo $2 | sed -n 's/^kwilt-v\(.*\)-r7500v2-v.*-.*\..*$/\1/p')
+	newer_version $v1 $v2 && return 0 || return 1
+}
+
+get_fullversion() # $1: kwilt_info_file
+{
+	local app apps="$(awk '{print $1}' $1)"
+	local app_final=""
+
+	for app in $apps; do
+		kwilt_version_allowed "$app" && newer_kwilt "$app" "$app_final" && app_final="$app"
+	done
+	echo "$app_final"
+}
+
+get_dynamic_sleep_time() # $1: retry
+{
+	case "$1" in
+		1) echo 30 ;;
+		2) echo 60 ;;
+		3) echo 360 ;;
+		4) echo 900 ;;
+		*) echo 3600 ;;
+	esac
+}
+
+update()
+{	exit
+	local retry fullversion
+
+	kwilt_has_updated && { oc echo "[kwilt] no update, has ever been updated !"; return 1; }
+	[ -f $PID_file ] && { oc echo "[kwilt] no update, others running now !"; return 1; }
+	echo "$$" > $PID_file
+
+	oc echo "[kwilt] start to get info from $update_url"
+	retry=0
+	while [ 1 ]; do
+		curl -l $update_url 2>/dev/null | \
+			awk '/^kwilt-v.*-r7500v2-v.*-.*\..*$/' | sort > $kwilt_info_file
+		[ -s $kwilt_info_file ] && break
+
+		oc echo "[kwilt] retry=$retry, fail to get $update_url info."
+		[ "$retry" = "2" ] && local_version_integrity_passed \
+			&& run_local_version_and_exit "update is given up !"
+
+		retry=$(($retry + 1)) && sleep $(get_dynamic_sleep_time $retry)
+	done
+
+	fullversion="$(get_fullversion $kwilt_info_file)"
+	[ -z "$fullversion" ] && oc echo "[kwilt] bug in update_url server ! exit !" && exit 2
+
+	if [ -f $kwilt_local_version_file -a "$(cat $kwilt_local_version_file)" = "$fullversion" ]; then
+		run_local_version_and_exit "no new version !"
+	fi
+
+	oc echo "[kwilt] start to download $update_url$fullversion"
+	retry=0
+	while [ 1 ]; do
+		curl $update_url$fullversion -o $kwilt_tgz_file 2>/dev/null && break
+
+		oc echo "[kwilt] retry=$retry, fail to download $update_url$fullversion"
+		[ "$retry" = "2" ] && local_version_integrity_passed \
+			&& run_local_version_and_exit "download is given up !"
+
+		retry=$(($retry + 1)) && sleep $(get_dynamic_sleep_time $retry)
+	done
+
+	rm -rf /hipplay
+	mkdir /hipplay
+	tar xfz $kwilt_tgz_file -C /hipplay
+	echo $fullversion > $kwilt_local_version_file
+	rm -f $kwilt_info_file
+	rm -f $kwilt_tgz_file
+	oc echo "[kwilt] install $update_url$fullversion to R/W filesystem successfully."
+
+	touch_kwilt_has_updated && start
+	rm -f $PID_file
+}
+
+case "$1" in
+	start) start ;;
+	stop) stop ;;
+	update) update ;;
+esac
+

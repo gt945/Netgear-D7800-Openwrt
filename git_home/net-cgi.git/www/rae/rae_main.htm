@@ -1,0 +1,85 @@
+<% http_header("style/form2.css", "/funcs.js", "/jquery-1.7.2.min.js") %>
+<% body_header("_edit_device", "QOS_device.htm", "edit_device") %>
+<style type="text/css">
+.boxline{width: 470px; height: 230px; margin:0 auto; position: relative;}
+.box {width: 200px; height: 200px; float: left; position: relative; margin-left: 20px; margin-top: 20px; border-width: 1px; border-style:solid; border-color:#a8a8aa;}
+.radio_box{width: 90%; height: 30px; border-bottom-width: 1px; border-bottom-style:solid; border-bottom-color:#a8a8aa;  font-size: 13px; font-weight: bold; color: black; position: relative; top: 10px; padding-left: 10%;}
+.icon, .icon_select{width:120px; height: 120px; position: absolute; bottom: 20px; left: 40px; cursor: pointer;}
+.icon img, .icon_select img{width:120px; height:120px}
+.icon { background-color: #5db5e5;}
+.icon_select { background-color: #6abd49;}
+</style>
+<div class="page_title">
+<script>
+		if(parent.rae_flag == "3")
+                        document.write('$rae_header');
+                else if(parent.rae_flag == "2")
+                        document.write('$qos_device10 / AP $wlan_mark_mode');
+                else if(parent.rae_flag == "1")
+                        document.write('$qos_device10 / $rae_em');
+</script>
+</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+	<TD nowrap align=center>
+	<script>
+		var master="<% cfg_get("http_loginname") %>";
+		if( master=="admin" )
+			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'rae_main.htm\';"><input class="new_apply_bt ui-corner-all" type="button" name="Apply" value="$apply_mark" onClick="return select_type();">');
+		else
+			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_apply_bt ui-corner-all" type="submiti" name="Apply" value="$apply_mark" disabled>');
+	</script>
+	</TD>
+</TR>
+</TABLE>
+</div>
+<script language="javascript" type="text/javascript">
+var cur_mode="<% cfg_get("rae_cur_mode") %>";
+var ap_mode="<% cfg_get("ap_mode") %>";
+var extender_mode="<% cfg_get("extender_mode") %>";
+function loadvalue()
+{
+	var cf = document.forms[0];
+	if( ap_mode == "1" )
+	{
+		cf.operation_type[1].checked = true;
+		$$("#ap").removeClass("icon").addClass("icon_select");
+	}
+	else if(extender_mode == "1")
+	{
+		cf.operation_type[2].checked = true;
+		$$("#extender").removeClass("icon").addClass("icon_select");
+	}
+	else
+	{
+		cf.operation_type[0].checked = true;
+		$$("#router").removeClass("icon").addClass("icon_select");
+	}
+		
+
+}
+
+
+</script>
+<div id="main" class="main_top_button">
+
+<div class="boxline">
+<div class="box ui-corner-all router">
+<div class="radio_box"><input type="radio" name="operation_type" onclick="select_type(0)" value=0> $rae_rm</div>
+<div id="router" class="icon" onclick="select_type(0)"><img src="/image/router.gif"></div>
+</div>
+<div class="box ui-corner-all ap">
+<div class="radio_box"><input type="radio" name="operation_type" onclick="select_type(1)" value=1> $ap_mode</div>
+<div id="ap" class="icon" onclick="select_type(1)"><img src="/image/ap.gif"></div>
+</div>
+<div class="box ui-corner-all extender" style="display:none;">
+<div class="radio_box"><input type="radio" name="operation_type" onclick="select_type(2)" value=2> $rae_em</div>
+<div id="extender" class="icon" onclick="select_type(2)"><img src="/image/extender.gif"></div>
+</div>
+</div>
+
+</div>
+</form>
+</body>
+</html>

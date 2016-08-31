@@ -1,0 +1,95 @@
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.3	|	 2010-09-16
+
+--------------------------------------------------------------------------------------------------
+  "ifx_utilities changes to support NAND flash, xdsl page changes in ifx_httpd"
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.3	|	 2010-09-01
+
+--------------------------------------------------------------------------------------------------
+  "UGW-4.3_PRE2_1.81"
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.3	|	 2010-08-28
+
+--------------------------------------------------------------------------------------------------
+  "UGW-4.3_PRE2_1.79"
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.2	|	 2010-07-09
+
+--------------------------------------------------------------------------------------------------
+  "GCC-4.3.3 fixes"
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.2	|	 2010-07-08
+
+--------------------------------------------------------------------------------------------------
+  "1. GCC-4.3.3 fixes 
+
+   2. WLAN fix in Web page : If a VAP shall be added when already the maximum number of supported VAPs are active, then a warning is given"
+
+	3. Changes to,
+API:
+- new function(s) added
+  + ifx_oam_f4_ping
+  + ifx_oam_cell_counters_get
+  + ifx_oam_cell_counters_reset
+  + ifx_oam_fsm_timer_config_set
+common:
+- new configuration option(s) added:
+  + INCLUDE_IFX_OAM_F5_LOOPBACK
+  + INCLUDE_IFX_OAM_F4_LOOPBACK
+  + INCLUDE_IFX_OAM_F5_LOOPBACK_PING
+  + INCLUDE_IFX_OAM_F4_LOOPBACK_PING
+  + INCLUDE_IFX_OAM_AIS
+  + INCLUDE_IFX_OAM_RDI
+  + INCLUDE_IFX_OAM_CC
+  + INCLUDE_IFX_OAM_EVENT_SCRIPT
+  + INCLUDE_IFX_OAM_SIMULATOR
+- minor source code cleanup
+- C++ style comments removed
+- F4 loopback ping support added
+- Event script handling:
+  + common implementation added
+  + OAM_F5_LB_FAIL event added
+  + OAM_F4_LB_FAIL event added
+  + OAM_CC_EVENT event added
+  + OAM_AIS_EVENT event added
+  + OAM_RDI_EVENT event added
+- OAM daemon startup options added
+- new file(s) added:
+  + ChangeLog
+  + oamsim.c
+- Cell counters handling added
+- oamctl
+  + "--num-of-pings" handling added
+  + "--cell-cnt" handling added
+  + "--timer-set" handling added
+  + "--ais-not-rx" handling added
+  + "--ais-persist" handling added
+  + "--rdi-not-rx" handling added
+  + "--rdi-persist" handling added
+  + "--cc-sink-down" handling added
+- simple OAM cell simulator suport added
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.1	|	 2010-06-14
+
+--------------------------------------------------------------------------------------------------
+  "adapt model.conf and AutoGenConf Makefile for all the newly created models"
+
+
+-------------------------------------------------------------------------------------------------
+version 1.1.0.1	|	 2010-05-19
+
+--------------------------------------------------------------------------------------------------
+  "Merged updates from UGW-4.2.1 patch"
+

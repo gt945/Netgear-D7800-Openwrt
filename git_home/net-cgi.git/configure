@@ -1,0 +1,72 @@
+#! /bin/bash
+
+print_usage()
+{
+	echo -e "Usage:	configurate [option]\n"
+	echo -e "[option] could be:"
+	echo -e "  -h|--help	print this messages"
+	echo -e "  -N|--use_new_source"
+	echo -e "		compile source code in src.new"
+	echo -e "  -P|--install_prefix <path>"
+	echo -e "		specify prefix path where \"net-cgi\" module will be installed"
+}
+
+args=$(getopt -o hNP: \
+       	-l help,use_new_source,install_prefix: \
+	-n "net-cgi:configurate" -- "$@")
+[ $? -ne 0 ] && { echo "getopt error!" >&2; exit 1; } || eval set -- "${args}"
+
+while true
+do
+	case "$1" in
+		-h|--help)
+			print_usage; exit 1;;
+		-N|--use_new_source)
+			SOURCE_DIR=src.new; shift;;
+		-P|--install_prefix)
+			INS_DIR_PRE="$2"; shift 2;;
+		--)
+			shift; break;;
+		*)
+			echo 'wrong option, refer to `configurate --help`'; exit 1;;
+	esac
+done
+
+SOURCE_DIR=${SOURCE_DIR:-src}
+FILES_DIR=files
+SCRIPT_DIR=sh
+WWW_DIR=www
+
+WWW_OUT_DIR=$(pwd)/www.out
+
+INS_DIR_PRE=${INS_DIR_PRE}
+INS_BIN_DIR='$(INS_DIR_PRE)/usr/sbin'
+INS_WWW_DIR='$(INS_DIR_PRE)/www'
+
+NETCGI_CONF=$(pwd)/files/net-cgi.config
+
+cat >toprule.mk <<-EOF
+	# GENERATED AUTOMATICALLY BY configure, DON'T EDIT THIS FILE MANUALLY.
+
+	INSTALL_BIN:=install -m0755
+	INSTALL_DIR:=install -d -m0755
+	INSTALL_DATA:=install -m0644
+	INSTALL_CONF:=install -m0600
+	LN:=ln -sf
+	CP:=cp -fpR
+	TOUCH:=touch
+
+	SOURCE_DIR:=$SOURCE_DIR
+	FILES_DIR:=$FILES_DIR
+	SCRIPT_DIR:=$SCRIPT_DIR
+	WWW_DIR:=$WWW_DIR
+
+	WWW_OUT_DIR:=$WWW_OUT_DIR
+
+	INS_DIR_PRE:=$INS_DIR_PRE
+	INS_BIN_DIR:=$INS_BIN_DIR
+	INS_WWW_DIR:=$INS_WWW_DIR
+
+	NETCGI_CONF:=$NETCGI_CONF
+EOF
+

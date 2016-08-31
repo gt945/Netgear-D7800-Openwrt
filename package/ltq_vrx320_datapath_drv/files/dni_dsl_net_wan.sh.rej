@@ -1,0 +1,10 @@
+diff a/package/ltq_vrx320_datapath_drv/files/dni_dsl_net_wan.sh b/package/ltq_vrx320_datapath_drv/files/dni_dsl_net_wan.sh	(rejected hunks)
+@@ -186,7 +200,7 @@ connection_wan2_conf()
+ 
+ check_qca_nss() {
+ 	proto=$1
+-	if [ "$proto" = "pptp" ] || [ "$proto" = "l2tp" ] || [ "$($CONFIG get qos_endis_on)" = "1" ] ; then
++	if [ "$proto" = "pptp" ] || [ "$proto" = "l2tp" ] || [ "$proto" = "ipoa" ] || [ "$($CONFIG get qos_endis_on)" = "1" ] ; then
+ 		/etc/init.d/qca-nss-ecm stop &
+ 	else
+ 		pppmod=`lsmod |grep pppoe`

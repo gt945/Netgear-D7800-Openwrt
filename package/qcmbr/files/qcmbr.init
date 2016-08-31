@@ -1,0 +1,84 @@
+#!/bin/sh /etc/rc.common
+#
+# Copyright (c) 2013 Qualcomm Atheros, Inc..
+#
+# All Rights Reserved.
+# Qualcomm Atheros Confidential and Proprietary.
+#
+
+# We don't want to start ART2 automatically at boot time as we want the
+# default to be a working user configuration.
+# At the end of the boot process, the user can start art using:
+# /etc/init.d/art start
+START=
+SERVICE_DAEMONIZE=1
+SERVICE_WRITE_PID=1
+wifi_dir=/sys/class/net/wifi
+arm_platform=`uname -m | grep arm`
+
+MTD_ART_PART_NAME="art"
+
+unload_modules() {
+	for mod in $(cat /lib/wifi/33-qca-wifi* | sed '1!G;h;$!d'); do
+		[ -d /sys/module/${mod} ] && rmmod ${mod}
+	done
+}
+
+load_modules() {
+	for mod in $(cat /lib/wifi/33-qca-wifi*) ; do
+		case ${mod} in
+			umac) insmod ${mod} testmode=1 ahbskip=1;;
+			*) insmod ${mod};;
+		esac
+		[ -d /sys/module/${mod} ] || insmod ${mod}
+	done
+}
+
+start_qcmbr() {
+	local wifi_index=$1
+
+	SERVICE_PID_FILE=/var/run/qcmbr${wifi_index}.pid
+	service_start /usr/sbin/Qcmbr -instance ${wifi_index} -pcie ${wifi_index} -console
+}
+
+stop_qcmbr() {
+	local wifi_index=$1
+
+	SERVICE_PID_FILE=/var/run/Qcmbr${wifi_index}.pid
+	service_stop /usr/sbin/Qcmbr -instance ${wifi_index} -pcie ${wifi_index} -console
+}
+
+start() {
+	local nor_flash=""
+
+	mtd_name=$(grep -i ${MTD_ART_PART_NAME} /proc/mtd |grep -v ART.bak | cut -f1 -d:)
+	nor_flash=`find /sys/devices/platform/spi* -name ${mtd_name}`
+
+	if [ -n "$nor_flash" -a -n "$arm_platform" ]; then
+		[ -L /dev/caldata ] || \
+			ln -s /dev/${mtd_name} /dev/caldata
+	else
+		[ -L /dev/caldata ] || \
+			ln -s /dev/`echo ${mtd_name} | sed -e 's/mtd/mtdblock/g'` /dev/caldata
+	fi
+
+	load_modules
+
+# Start the daemon
+	for dir in /sys/class/net/wifi*; do
+		[ -d "$dir" ] || continue
+		start_qcmbr "${dir#"$wifi_dir"}"
+	done
+}
+
+stop() {
+	# Stop the daemon
+	for dir in /sys/class/net/wifi*; do
+		[ -d "$dir" ] || continue
+		stop_qcmbr "${dir#"$wifi_dir"}"
+	done
+
+	unload_modules
+
+	[ -L /dev/caldata ] && rm /dev/caldata
+}

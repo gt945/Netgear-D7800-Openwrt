@@ -1,0 +1,13 @@
+#
+[WaitForConfiguration]={
+}
+
+[WaitForLinkActivate]={
+	dsmcs 2
+}
+
+[WaitForRestart]={
+}
+
+[Common]={
+}

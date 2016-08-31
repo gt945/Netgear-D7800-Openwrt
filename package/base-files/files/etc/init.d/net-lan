@@ -1,0 +1,164 @@
+#!/bin/sh /etc/rc.common
+#START=20
+
+setup_hostname()
+{
+	local hostname="$($CONFIG get netbiosname)"
+	[ -z "$hostname" ] && hostname="$($CONFIG get Device_name)"
+	echo "$hostname" > /proc/sys/kernel/hostname
+}
+
+print_dhcpd_conf()
+{
+	local leases_file=/tmp/udhcpd.leases
+	local n=1
+	local static_lease
+
+	[ ! -f $leases_file ] && touch $leases_file
+
+	cat <<EOF
+pidfile /var/run/udhcpd.pid
+start $($CONFIG get dhcp_start)
+end $($CONFIG get dhcp_end)
+interface br0
+remaining yes
+auto_time 5
+lease_file $leases_file
+option subnet $($CONFIG get lan_netmask)
+option router $($CONFIG get lan_ipaddr)
+option dns $($CONFIG get lan_ipaddr)
+option lease $($CONFIG get lan_lease)
+EOF
+
+	while : ; do
+		static_lease="$($CONFIG get reservation$n)"
+		[ "x$static_lease" = "x" ] && break || echo "static_lease $static_lease"
+		n=$(( $n + 1))
+	done
+}
+ 
+start_dhcpd_if_needed()
+{
+	[ "$($CONFIG get lan_dhcp)" = "0" ] && return
+	[ "$($CONFIG get device_mode)" = "modem" ] && return #in modem mode, no need dhcpd
+	print_dhcpd_conf > /tmp/udhcpd.conf
+	udhcpd /tmp/udhcpd.conf
+}
+
+for_ipv6logo_test()
+{
+	[ "$($CONFIG get device_mode)" = "modem" ] && return
+
+	local wan6_type=`$CONFIG get ipv6_type`
+	local logo_test=`$CONFIG get endis_ipv6_logo_test`
+
+	ifconfig br0 down
+	# Enable DAD, and randomly generate anoter link-local address if
+	# MAC-based duplicate link-local address has been found.
+	if [ "x$logo_test" = "x1" -a "x$wan6_type" = "xfixed" ]; then
+		echo 2 > /proc/sys/net/ipv6/conf/default/accept_dad
+		echo 2 > /proc/sys/net/ipv6/conf/br0/accept_dad
+		echo "1" > /proc/sys/net/ipv6/neigh/br0/not_send_neighbor_solicitation
+		echo "1" > /proc/sys/net/ipv6/neigh/ethlan/not_send_neighbor_solicitation
+	else
+		echo 3 > /proc/sys/net/ipv6/conf/default/accept_dad
+		echo 3 > /proc/sys/net/ipv6/conf/br0/accept_dad
+	fi
+
+	sleep 2
+	ifconfig br0 up
+
+	if [ "x$logo_test" = "x1" -a "x$wan6_type" = "xfixed" ]; then
+		echo "1" > /proc/sys/net/ipv6/neigh/ethlan/not_send_neighbor_solicitation
+		echo "1" > /proc/sys/net/ipv6/neigh/br0/not_send_neighbor_solicitation
+	fi
+}
+
+start0() # $1: boot/start
+{
+	local lan_ip=$($CONFIG get lan_ipaddr)
+	local lan_mask=$($CONFIG get lan_netmask)
+
+	# Update the hostname
+	setup_hostname
+
+	ifconfig ethlan up
+	ifconfig br0 ${lan_ip:-192.168.1.1} netmask ${lan_mask:-255.255.255.0}
+	for_ipv6logo_test
+
+	# Start dlna
+	/sbin/cmddlna ip_restart &
+
+	/sbin/cmdroute start        # Apply static route
+
+	start_dhcpd_if_needed       # dhcpd daemon
+
+	# Set Hairpin mode on br0:ethlan
+	brctl hairpin br0 ethlan on
+
+	# PHY link will be pulled low some seconds to force transition to reboot state 
+	# and generating DHCP request and Discovery protocol and address refresh in the 
+	# devices connected to the NETGEAR Local Area Network ports.
+	#
+	# After echo 9 into /proc/switch_phy, LAN physical signal will bring down 9 seconds,
+	# should wait for LAN physical signal bring up, and then execute subsequence actions
+	# as below.
+	echo -n 9 > /proc/switch_phy && sleep 10
+	
+	[ "$($CONFIG get device_mode)" = "modem" ] && /sbin/cmd_ebtables start #modem mode just like ap mode
+	/etc/init.d/net-scan $1        # daemon for getting attached devices
+	/etc/init.d/lltd $1          # Link Layer Topology Discovery Daemon
+	/etc/init.d/telnet $1        # telnet daemon for Router Debugging Mode ...
+	/etc/init.d/samba $1         # samba daemon
+
+	    # when the user changes "Device Name" in LAN Setup page, make sure the new name shows up on ReadyCLOUD.
+    if [ "$($CONFIG get readycloud_enable)" = "1" ]; then
+        local name=$($CONFIG get netbiosname)
+        if [ "x$name" != "x" ]; then
+            /opt/rcagent/script/alish.sh $name
+        else
+            name=$($CONFIG get Device_name)
+            /opt/rcagent/script/alish.sh $name
+        fi
+    fi
+}
+
+start()
+{
+	start0 start
+	/sbin/cmdupnp start          # in booting, upnpd is started by net-wan
+}
+
+stop()
+{
+	# Stop UPnP
+	# Fix Bug 35743 - [Netgear-44][PnP-X]When change the DUT IP from 
+	# the GUI. The device icon change to be gray and IP address of 
+	# the device don't change .
+	# Reason:stop miniupnpd when br0 would stop.Thus,it will send bye-bye
+	# packets to 239.255.255.0 to inform client it would be down.
+	/sbin/cmdupnp stop
+
+	/etc/init.d/samba stop
+	/etc/init.d/telnet stop
+	/etc/init.d/lltd stop
+	/etc/init.d/net-scan stop
+	[ "$($CONFIG get device_mode)" = "modem" ] && /sbin/cmd_ebtables stop
+
+	killall udhcpd
+
+	/sbin/cmdroute stop
+	ifconfig br0 down
+	ifconfig ethlan down
+}
+
+restart()
+{
+	stop
+	start
+}
+
+boot()
+{
+	start0 boot
+}

@@ -1,0 +1,21 @@
+diff a/package/qca-ssdk/src/include/init/ssdk_plat.h b/package/qca-ssdk/src/include/init/ssdk_plat.h	(rejected hunks)
+@@ -123,8 +123,8 @@ enum {
+ 	QCA_VER_AR8337 = 0x13
+ };
+ 
+-/*poll mib per 2secs*/
+-#define QCA_PHY_MIB_WORK_DELAY	20000
++/*poll mib per 120secs*/
++#define QCA_PHY_MIB_WORK_DELAY	120000
+ #define QCA_MIB_ITEM_NUMBER	41
+ 
+ struct qca_phy_priv {
+@@ -153,7 +153,7 @@ struct qca_phy_priv {
+     bool       vlan;  /* True: 1q vlan mode, False: port vlan mode */
+     a_uint16_t vlan_id[AR8327_MAX_VLANS];
+     a_uint8_t  vlan_table[AR8327_MAX_VLANS];
+-    a_uint8_t  vlan_tagged;
++    a_uint8_t  vlan_tagged[AR8327_MAX_VLANS];
+     a_uint16_t pvid[AR8327_NUM_PORTS];
+ 
+ };

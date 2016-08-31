@@ -1,0 +1,125 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ARRAY_SIZE	uci.c	37;"	d	file:
+CFLAGS	Makefile	/^CFLAGS = -O2 -g -I ..\/src$/;"	m
+CMD_GET	cli.c	/^	CMD_GET,$/;"	e	enum:__anon1	file:
+CMD_HELP	cli.c	/^	CMD_HELP,$/;"	e	enum:__anon1	file:
+CMD_LOAD	cli.c	/^	CMD_LOAD,$/;"	e	enum:__anon1	file:
+CMD_NONE	cli.c	/^	CMD_NONE,$/;"	e	enum:__anon1	file:
+CMD_SET	cli.c	/^	CMD_SET,$/;"	e	enum:__anon1	file:
+CMD_SHOW	cli.c	/^	CMD_SHOW,$/;"	e	enum:__anon1	file:
+DPRINTF	swlib.c	33;"	d	file:
+DPRINTF	swlib.c	35;"	d	file:
+LIBS	Makefile	/^LIBS=-lnl -lnl-genl$/;"	m
+SWLIB_ATTR_GROUP_GLOBAL	swlib.h	/^	SWLIB_ATTR_GROUP_GLOBAL,$/;"	e	enum:swlib_attr_group
+SWLIB_ATTR_GROUP_PORT	swlib.h	/^	SWLIB_ATTR_GROUP_PORT,$/;"	e	enum:swlib_attr_group
+SWLIB_ATTR_GROUP_VLAN	swlib.h	/^	SWLIB_ATTR_GROUP_VLAN,$/;"	e	enum:swlib_attr_group
+SWLIB_PORT_FLAG_TAGGED	swlib.h	/^	SWLIB_PORT_FLAG_TAGGED = (1 << 0),$/;"	e	enum:swlib_port_flags
+__SWLIB_H	swlib.h	96;"	d
+add_attr	swlib.c	/^add_attr(struct nl_msg *msg, void *ptr)$/;"	f	file:
+add_id	swlib.c	/^add_id(struct nl_msg *msg, void *arg)$/;"	f	file:
+add_switch	swlib.c	/^add_switch(struct nl_msg *msg, void *arg)$/;"	f	file:
+alias	swlib.h	/^	const char *alias;$/;"	m	struct:switch_dev
+attr	swlib.h	/^	struct switch_attr *attr;$/;"	m	struct:switch_val	typeref:struct:switch_val::switch_attr
+attr	uci.c	/^	struct switch_attr *attr;$/;"	m	struct:swlib_setting	typeref:struct:swlib_setting::switch_attr	file:
+attrlist_arg	swlib.c	/^struct attrlist_arg {$/;"	s	file:
+atype	swlib.c	/^	int atype;$/;"	m	struct:attrlist_arg	file:
+atype	swlib.h	/^	int atype;$/;"	m	struct:switch_attr
+cache	swlib.c	/^static struct nl_cache *cache;$/;"	v	typeref:struct:nl_cache	file:
+cpu_port	swlib.h	/^	int cpu_port;$/;"	m	struct:switch_dev
+description	swlib.h	/^	const char *description;$/;"	m	struct:switch_attr
+dev	swlib.c	/^	struct switch_dev *dev;$/;"	m	struct:attrlist_arg	typeref:struct:attrlist_arg::switch_dev	file:
+dev	swlib.h	/^	struct switch_dev *dev;$/;"	m	struct:switch_attr	typeref:struct:switch_attr::switch_dev
+dev_name	swlib.h	/^	char dev_name[IFNAMSIZ];$/;"	m	struct:switch_dev
+early_settings	uci.c	/^struct swlib_setting early_settings[] = {$/;"	v	typeref:struct:swlib_setting
+err	swlib.h	/^	int err;$/;"	m	struct:switch_val
+ext_val	swlib.h	/^		struct switch_ext *ext_val;$/;"	m	union:switch_val::__anon2	typeref:struct:switch_val::__anon2::switch_ext
+ext_val	uci.c	/^	struct switch_ext *ext_val;$/;"	m	struct:swlib_setting	typeref:struct:swlib_setting::switch_ext	file:
+family	swlib.c	/^static struct genl_family *family;$/;"	v	typeref:struct:genl_family	file:
+flags	swlib.h	/^	unsigned int flags;$/;"	m	struct:switch_port
+handle	swlib.c	/^static struct nl_sock *handle;$/;"	v	typeref:struct:nl_sock	file:
+head	swlib.c	/^	struct switch_attr **head;$/;"	m	struct:attrlist_arg	typeref:struct:attrlist_arg::switch_attr	file:
+head	swlib.c	/^	struct switch_dev *head;$/;"	m	struct:swlib_scan_arg	typeref:struct:swlib_scan_arg::switch_dev	file:
+head	uci.c	/^static struct swlib_setting **head;$/;"	v	typeref:struct:swlib_setting	file:
+i	swlib.h	/^		unsigned int i;$/;"	m	union:switch_val::__anon2
+id	swlib.c	/^	int id;$/;"	m	struct:attrlist_arg	file:
+id	swlib.h	/^	int id;$/;"	m	struct:switch_attr
+id	swlib.h	/^	int id;$/;"	m	struct:switch_dev
+id	swlib.h	/^	unsigned int id;$/;"	m	struct:switch_port
+len	swlib.h	/^	int len;$/;"	m	struct:switch_val
+list_attributes	cli.c	/^list_attributes(struct switch_dev *dev)$/;"	f	file:
+main	cli.c	/^int main(int argc, char **argv)$/;"	f
+name	swlib.c	/^	const char *name;$/;"	m	struct:swlib_scan_arg	file:
+name	swlib.h	/^	const char *name;$/;"	m	struct:switch_attr
+name	swlib.h	/^	const char *name;$/;"	m	struct:switch_dev
+name	uci.c	/^	const char *name;$/;"	m	struct:swlib_setting	file:
+next	swlib.h	/^	struct switch_attr *next;$/;"	m	struct:switch_attr	typeref:struct:switch_attr::switch_attr
+next	swlib.h	/^	struct switch_dev *next;$/;"	m	struct:switch_dev	typeref:struct:switch_dev::switch_dev
+next	swlib.h	/^	struct switch_ext *next;$/;"	m	struct:switch_ext	typeref:struct:switch_ext::switch_ext
+next	uci.c	/^	struct swlib_setting *next;$/;"	m	struct:swlib_setting	typeref:struct:swlib_setting::swlib_setting	file:
+ops	swlib.h	/^	struct switch_attr *ops;$/;"	m	struct:switch_dev	typeref:struct:switch_dev::switch_attr
+option_name	swlib.h	/^	const char *option_name;$/;"	m	struct:switch_ext
+option_value	swlib.h	/^	const char *option_value;$/;"	m	struct:switch_ext
+port_ops	swlib.h	/^	struct switch_attr *port_ops;$/;"	m	struct:switch_dev	typeref:struct:switch_dev::switch_attr
+port_policy	swlib.c	/^static struct nla_policy port_policy[] = {$/;"	v	typeref:struct:nla_policy	file:
+port_vlan	swlib.h	/^	int port_vlan;$/;"	m	struct:switch_val
+port_vlan	uci.c	/^	int port_vlan;$/;"	m	struct:swlib_setting	file:
+ports	swlib.h	/^		struct switch_port *ports;$/;"	m	union:switch_val::__anon2	typeref:struct:switch_val::__anon2::switch_port
+ports	swlib.h	/^	int ports;$/;"	m	struct:switch_dev
+prev	swlib.c	/^	struct switch_attr *prev;$/;"	m	struct:attrlist_arg	typeref:struct:attrlist_arg::switch_attr	file:
+print_attr_val	cli.c	/^print_attr_val(const struct switch_attr *attr, const struct switch_val *val)$/;"	f	file:
+print_attrs	cli.c	/^print_attrs(const struct switch_attr *attr)$/;"	f	file:
+print_usage	cli.c	/^print_usage(void)$/;"	f	file:
+priv	swlib.h	/^	void *priv;$/;"	m	struct:switch_dev
+ptr	swlib.c	/^	struct switch_dev *ptr;$/;"	m	struct:swlib_scan_arg	typeref:struct:swlib_scan_arg::switch_dev	file:
+refcount	swlib.c	/^static int refcount = 0;$/;"	v	file:
+s	swlib.h	/^		const char *s;$/;"	m	union:switch_val::__anon2
+send_attr	swlib.c	/^send_attr(struct nl_msg *msg, void *arg)$/;"	f	file:
+send_attr_ext	swlib.c	/^send_attr_ext(struct nl_msg *msg, struct switch_val *val)$/;"	f	file:
+send_attr_ports	swlib.c	/^send_attr_ports(struct nl_msg *msg, struct switch_val *val)$/;"	f	file:
+send_attr_val	swlib.c	/^send_attr_val(struct nl_msg *msg, void *arg)$/;"	f	file:
+settings	uci.c	/^static struct swlib_setting *settings;$/;"	v	typeref:struct:swlib_setting	file:
+show_attrs	cli.c	/^show_attrs(struct switch_dev *dev, struct switch_attr *attr, struct switch_val *val)$/;"	f	file:
+show_global	cli.c	/^show_global(struct switch_dev *dev)$/;"	f	file:
+show_port	cli.c	/^show_port(struct switch_dev *dev, int port)$/;"	f	file:
+show_vlan	cli.c	/^show_vlan(struct switch_dev *dev, int vlan, bool all)$/;"	f	file:
+store_port_val	swlib.c	/^store_port_val(struct nl_msg *msg, struct nlattr *nla, struct switch_val *val)$/;"	f	file:
+store_val	swlib.c	/^store_val(struct nl_msg *msg, void *arg)$/;"	f	file:
+swconfig_load_uci	cli.c	/^swconfig_load_uci(struct switch_dev *dev, const char *name)$/;"	f	file:
+switch_attr	swlib.h	/^struct switch_attr {$/;"	s
+switch_dev	swlib.h	/^struct switch_dev {$/;"	s
+switch_ext	swlib.h	/^struct switch_ext {$/;"	s
+switch_port	swlib.h	/^struct switch_port {$/;"	s
+switch_val	swlib.h	/^struct switch_val {$/;"	s
+swlib_alloc	swlib.c	/^swlib_alloc(size_t size)$/;"	f	file:
+swlib_apply_from_uci	uci.c	/^int swlib_apply_from_uci(struct switch_dev *dev, struct uci_package *p)$/;"	f
+swlib_attr_group	swlib.h	/^enum swlib_attr_group {$/;"	g
+swlib_call	swlib.c	/^swlib_call(int cmd, int (*call)(struct nl_msg *, void *),$/;"	f	file:
+swlib_connect	swlib.c	/^swlib_connect(const char *name)$/;"	f
+swlib_free	swlib.c	/^swlib_free(struct switch_dev *dev)$/;"	f
+swlib_free_all	swlib.c	/^swlib_free_all(struct switch_dev *dev)$/;"	f
+swlib_free_attributes	swlib.c	/^swlib_free_attributes(struct switch_attr **head)$/;"	f	file:
+swlib_get_attr	swlib.c	/^swlib_get_attr(struct switch_dev *dev, struct switch_attr *attr, struct switch_val *val)$/;"	f
+swlib_lookup_attr	swlib.c	/^struct switch_attr *swlib_lookup_attr(struct switch_dev *dev,$/;"	f
+swlib_map_ext_attr_settings	uci.c	/^swlib_map_ext_attr_settings(struct switch_dev *dev, int type, int port_vlan, struct uci_section *s)$/;"	f	file:
+swlib_map_settings	uci.c	/^swlib_map_settings(struct switch_dev *dev, int type, int port_vlan, struct uci_section *s)$/;"	f	file:
+swlib_match_name	uci.c	/^static bool swlib_match_name(struct switch_dev *dev, const char *name)$/;"	f	file:
+swlib_port_flags	swlib.h	/^enum swlib_port_flags {$/;"	g
+swlib_priv_free	swlib.c	/^swlib_priv_free(void)$/;"	f	file:
+swlib_priv_init	swlib.c	/^swlib_priv_init(void)$/;"	f	file:
+swlib_scan	swlib.c	/^swlib_scan(struct switch_dev *dev)$/;"	f
+swlib_scan_arg	swlib.c	/^struct swlib_scan_arg {$/;"	s	file:
+swlib_set_attr	swlib.c	/^swlib_set_attr(struct switch_dev *dev, struct switch_attr *attr, struct switch_val *val)$/;"	f
+swlib_set_attr_string	swlib.c	/^int swlib_set_attr_string(struct switch_dev *dev, struct switch_attr *a, int port_vlan, const char *str)$/;"	f
+swlib_setting	uci.c	/^struct swlib_setting {$/;"	s	file:
+tb	swlib.c	/^static struct nlattr *tb[SWITCH_ATTR_MAX + 1];$/;"	v	typeref:struct:nlattr	file:
+type	swlib.h	/^	int type;$/;"	m	struct:switch_attr
+val	uci.c	/^	const char *val;$/;"	m	struct:swlib_setting	file:
+value	swlib.h	/^	} value;$/;"	m	struct:switch_val	typeref:union:switch_val::__anon2
+vlan_ops	swlib.h	/^	struct switch_attr *vlan_ops;$/;"	m	struct:switch_dev	typeref:struct:switch_dev::switch_attr
+vlans	swlib.h	/^	int vlans;$/;"	m	struct:switch_dev
+wait_handler	swlib.c	/^wait_handler(struct nl_msg *msg, void *arg)$/;"	f	file:

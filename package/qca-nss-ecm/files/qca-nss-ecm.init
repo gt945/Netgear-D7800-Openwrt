@@ -1,0 +1,79 @@
+#!/bin/sh  /etc/rc.common
+#
+# Copyright (c) 2014 The Linux Foundation. All rights reserved.
+#
+# The shebang above has an extra space intentially to avoid having
+# openwrt build scripts automatically enable this package starting
+# at boot.
+
+START=70
+
+LAN_BR=br0
+WAN_BR=brwan
+
+load_ecm() {
+	[ -d /sys/module/ecm ] || {
+		if [ "x`/bin/config get dsl_wan_preference`" = "x1" ]; then
+			insmod ecm dsl_mode=1
+		else
+			insmod ecm
+		fi
+	}
+
+	#only call iptables for br0 and brwan to make IPTV works on vlan groups
+	echo 1 > /sys/devices/virtual/net/$LAN_BR/bridge/nf_call_iptables
+	echo 1 > /sys/devices/virtual/net/$WAN_BR/bridge/nf_call_iptables
+	
+	sysctl -w net.bridge.bridge-nf-call-ip6tables=0
+	sysctl -w net.bridge.bridge-nf-call-iptables=0
+	sysctl -w dev.nss.n2hcfg.n2h_empty_pool_buf_core0=2048
+	sysctl -w dev.nss.n2hcfg.n2h_empty_pool_buf_core1=2048
+
+	# Expect nf_conntrack_tcp_no_window_check=1
+	# For fix FTP like script throughput issue, details ref bug#54619
+	[ -f /tmp/.dni_ecm_store ] || sysctl net.netfilter.nf_conntrack_tcp_no_window_check > /tmp/.dni_ecm_store
+	sysctl -w net.netfilter.nf_conntrack_tcp_no_window_check=1
+}
+
+unload_ecm() {
+	[ -d /sys/module/ecm ] && rmmod ecm
+
+	echo 0 > /sys/devices/virtual/net/$LAN_BR/bridge/nf_call_iptables
+	echo 0 > /sys/devices/virtual/net/$WAN_BR/bridge/nf_call_iptables
+#	sysctl -w net.bridge.bridge-nf-call-ip6tables=0
+#	sysctl -w net.bridge.bridge-nf-call-iptables=0
+
+	if [ -f /tmp/.dni_ecm_store ]; then
+		sysctl -w `cat /tmp/.dni_ecm_store | sed 's/ //g'`
+	fi
+}
+
+start() {
+	[ "$($CONFIG get i_opmode)" = "apmode" ] && return
+	proto=`/bin/config get wan_proto`
+	if [ "$proto" = "pptp" ] || [ "$proto" = "l2tp" ] || [ "$proto" = "ipoa" ]; then
+		echo "pptp,l2tp,ipoa does not start NSS." > /dev/console
+		return
+	fi
+	load_ecm
+
+#	if [ "X$($CONFIG get dsl_wan_preference)" = "X1" ] && [ "X$($CONFIG get dsl_wan2_bridge_mode)" = "X1" ]; then
+#		sed '/net.bridge.bridge-nf-call-ip6tables=1/d' -i /etc/sysctl.d/qca-nss-ecm.conf
+#		sed '/net.bridge.bridge-nf-call-iptables=1/d' -i /etc/sysctl.d/qca-nss-ecm.conf
+#	else
+#		grep -q 'net\.bridge\.bridge-nf-call-ip6tables=1' /etc/sysctl.d/qca-nss-ecm.conf || {
+#			echo 'net.bridge.bridge-nf-call-ip6tables=1' >> /etc/sysctl.d/qca-nss-ecm.conf
+#		}
+#		grep -q 'net\.bridge\.bridge-nf-call-iptables=1' /etc/sysctl.d/qca-nss-ecm.conf || {
+#			echo 'net.bridge.bridge-nf-call-iptables=1' >> /etc/sysctl.d/qca-nss-ecm.conf
+#		}
+#	fi
+
+}
+
+stop() {
+	unload_ecm
+
+#	sed '/net.bridge.bridge-nf-call-ip6tables=1/d' -i /etc/sysctl.d/qca-nss-ecm.conf
+#	sed '/net.bridge.bridge-nf-call-iptables=1/d' -i /etc/sysctl.d/qca-nss-ecm.conf
+}

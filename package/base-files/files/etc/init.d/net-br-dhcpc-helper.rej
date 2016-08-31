@@ -1,0 +1,32 @@
+diff a/package/base-files/files/etc/init.d/net-br-dhcpc-helper b/package/base-files/files/etc/init.d/net-br-dhcpc-helper	(rejected hunks)
+@@ -30,11 +35,6 @@ setup_global_variables_or_exit()
+ 			g_wl_linked=brmode_wlg_linked
+ 			g_wl_fixup=brmode_wlg_fixup
+ 		fi
+-		if [ "x$($CONFIG get bridge_netbiosname)" != "x" ]; then
+-			g_udhcpc_h_arg="-h $($CONFIG get bridge_netbiosname)"
+-		else
+-			g_udhcpc_h_arg="-h $($CONFIG get Device_name)"
+-		fi
+ 		;;
+ 	extmode)
+ 		if [ "$($CONFIG get extender_band_choose)" = "5g" ]; then
+@@ -44,17 +44,13 @@ setup_global_variables_or_exit()
+ 			g_wl_linked=extmode_wlg_linked
+ 			g_wl_fixup=extmode_wlg_fixup
+ 		fi
+-		if [ "x$($CONFIG get netbiosname)" != "x" ]; then
+-			g_udhcpc_h_arg="-h $($CONFIG get netbiosname)"
+-		else
+-			g_udhcpc_h_arg="-h $($CONFIG get Device_name)"
+-		fi
+ 		;;
+ 	*)
+ 		echo "only for brmode or extmode !"
+ 		exit
+ 		;;
+ 	esac
++	g_udhcpc_h_arg="-h $(get_hostname)"
+ 	g_udhcpc_r_arg="-r $($CONFIG get ap_dhcp_ipaddr)"
+ }
+ 

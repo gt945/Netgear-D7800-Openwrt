@@ -1,0 +1,26 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+br_allbrs	opmode.sh	/^br_allbrs()$/;"	f
+br_allnifs	opmode.sh	/^br_allnifs() # $1: brx$/;"	f
+br_create	opmode.sh	/^br_create() # $1: brname$/;"	f
+create_brs_and_vifs	opmode.sh	/^create_brs_and_vifs() # $1: noraml \/ apmode \/ factory$/;"	f
+iptv_create_brs_and_vifs	opmode.sh	/^iptv_create_brs_and_vifs()$/;"	f
+nif_existed	opmode.sh	/^nif_existed() # $1: nif$/;"	f
+oc	cfgmgr.sh	/^oc () { "$@" >> \/dev\/console 2>&1 ; } # stdout & stderr to \/dev\/console$/;"	f
+op_create_br0_brwan	opmode.sh	/^op_create_br0_brwan()$/;"	f
+op_create_brs_and_vifs	opmode.sh	/^op_create_brs_and_vifs()$/;"	f
+op_del_all_brs_vifs	opmode.sh	/^op_del_all_brs_vifs()$/;"	f
+op_opmode	opmode.sh	/^op_opmode() # ret: factory \/ brmode \/ apmode \/ extmode \/ normal \/ vlan \/ iptv$/;"	f
+op_set_induced_configs	opmode.sh	/^op_set_induced_configs()$/;"	f
+qt	cfgmgr.sh	/^qt () { "$@" >> \/dev\/null 2>&1 ; } # stdout & stderr to \/dev\/null$/;"	f
+vlan_create_br_and_vif	opmode.sh	/^vlan_create_br_and_vif() # $1: vid, $2: pri$/;"	f
+vlan_create_brs_and_vifs	opmode.sh	/^vlan_create_brs_and_vifs()$/;"	f
+vlan_create_internet_vif	opmode.sh	/^vlan_create_internet_vif() # $1: vid, $2: pri$/;"	f
+vlan_get_freevid	opmode.sh	/^vlan_get_freevid() # $1: up \/ down$/;"	f
+vlan_get_lanvid	opmode.sh	/^vlan_get_lanvid()$/;"	f
+vlan_get_wanvid	opmode.sh	/^vlan_get_wanvid()$/;"	f
+vlan_set_vif_pri	opmode.sh	/^vlan_set_vif_pri() # $1: vif, $2: pri$/;"	f
