@@ -1,0 +1,20 @@
+--- a/sbin/update-wifi	2014-12-16 00:47:50.000000000 -0500
++++ b/sbin/update-wifi.new	2015-02-11 14:09:49.724917108 -0500
+@@ -577,7 +577,7 @@
+     uci set wireless.${g_device}.type=qcawifi
+     uci set wireless.${g_device}.country=${country_code}
+     uci set wireless.${g_device}.ODM=dni
+-    uci set wireless.${g_device}.sys_bridge=${lan_ifname}
++    uci set wireless.${g_device}.sys_bridge=${wlg_bridge}
+     generate_wifi_hw_button_state "$g_device"
+     generate_mac "wlg"
+     generate_channel "wlg"
+@@ -591,7 +591,7 @@
+     uci set wireless.${a_device}.type=qcawifi
+     uci set wireless.${a_device}.country=${country_code}
+     uci set wireless.${a_device}.ODM=dni
+-    uci set wireless.${a_device}.sys_bridge=${lan_ifname}
++    uci set wireless.${a_device}.sys_bridge=${wla_bridge}
+     generate_wifi_hw_button_state "$a_device"
+     generate_mac "wla"
+     generate_channel "wla"

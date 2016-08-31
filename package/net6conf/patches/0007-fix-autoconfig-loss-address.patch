@@ -1,0 +1,24 @@
+diff -ruN net6conf/6autoconf net6conf.org/6autoconf
+--- net6conf/6autoconf	2016-06-03 16:33:35.000000000 +0800
++++ net6conf.org/6autoconf	2016-06-03 16:40:04.000000000 +0800
+@@ -44,7 +44,7 @@
+ 
+ autoconf_wan() {
+ 	# Change the WAN(eth0) interface to send the IPv6 Router Solicitation
+-	echo 0 > /proc/sys/net/ipv6/conf/${WAN}/forwarding
++	echo 1 > /proc/sys/net/ipv6/conf/${WAN}/autoconf
+ 	echo 1 > /proc/sys/net/ipv6/icmp/ra_sel_flag
+ 	rs_send -i $WAN -c 3 -t 4 &
+ #	ifconfig $WAN down && ifconfig $WAN up
+diff -ruN net6conf/6proc net6conf.org/6proc
+--- net6conf/6proc	2016-06-03 16:33:35.000000000 +0800
++++ net6conf.org/6proc	2016-06-03 16:38:18.000000000 +0800
+@@ -6,7 +6,8 @@
+ {
+ 	local logo_test=`$CONFIG get endis_ipv6_logo_test`
+ 
+	echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
++	echo 0 > /proc/sys/net/ipv6/conf/${WAN}/autoconf
+ 	echo 1 > /proc/sys/dni_netfilter/ipv6_ip6frag_not_check_icmp
+ 
+ 	if [ "x$logo_test" = "x1" -a "x$wan6_type" = "xfixed" ]; then

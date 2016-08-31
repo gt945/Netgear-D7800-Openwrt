@@ -16,7 +16,7 @@ atm_mode=1
 ptm_mode=2
 auto_mode=4
 
-. /lib/cfgmgr/dsl.sh
+. /lib/cfgmgr/dsl_prepare.sh
 [ "$(basename $0)" = "lantiq_dsl_wan.sh" ] && DSL_WAN=wan1 || DSL_WAN=wan2
 CONFIG=/bin/config
 FIREWALL="/www/cgi-bin/firewall.sh"
@@ -1002,9 +1002,9 @@ create_connection_ipoa ()
 	/sbin/cmdroute stop
 	/usr/bin/killall -SIGINT ripd
 	/sbin/cmdroute start
-	/usr/sbin/ripd
-	/sbin/cmdigmp stop
-	/sbin/cmdigmp start &
+	/usr/etc/functions/ripd_functions start
+	cmd_igmp stop
+	cmd_igmp start &
 
 	/sbin/ledcontrol -n wan -c green -s on
 	mkdir -p /tmp/traffic_meter
@@ -1195,9 +1195,9 @@ create_connection_static ()
 		/sbin/cmdroute stop
 		/usr/bin/killall -SIGINT ripd
 		/sbin/cmdroute start
-		/usr/sbin/ripd
-		/sbin/cmdigmp stop
-		/sbin/cmdigmp start &
+		/usr/etc/functions/ripd_functions start
+		cmd_igmp stop
+		cmd_igmp start &
 
 		/sbin/ledcontrol -n wan -c green -s on
 		mkdir -p /tmp/traffic_meter

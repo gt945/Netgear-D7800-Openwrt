@@ -9,6 +9,7 @@ override TARGET_BUILD=
 include $(INCLUDE_DIR)/prereq.mk
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/host.mk
+include $(INCLUDE_DIR)/dni_gconf.mk
 
 .NOTPARALLEL:
 override MAKEFLAGS=
@@ -177,6 +178,7 @@ define BuildImage
   ifeq ($(IB),)
     install: compile install-targets FORCE
 		$(call Image/Prepare)
+		$(call DGC/GenDGCFile)
 		$(call Image/mkfs/prepare)
 		$(call Image/BuildKernel)
 		$(call Image/mkfs/cpiogz)

@@ -320,6 +320,19 @@ function check_pppoe(form,check)
                         return false;
                 }
         }
+	if(parent.enable_vlan_pppoe_support == 0 && vlan_iptv_enable == "1"){
+		if(confirm("$vlan_pppoe_support_query") == false)
+			return false;
+	}
+	if( form.pppoe_dod.value == "1" || form.pppoe_dod.value == "2" )
+	{
+		if( readycloud_enable == "1" || vpn_enable == "1" || upnp_enableMedia == "1" || parent.geniecloud_flag == 1)
+		{
+			if(confirm("$ppp_dial_on_demand_query") == false)
+				return false;
+		}
+	}
+	form.submit();
 	return true;
 }
 

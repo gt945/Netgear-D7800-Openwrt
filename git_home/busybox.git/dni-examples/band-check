@@ -155,9 +155,6 @@ case "$proto" in
         pppoe)
                 local mtu=$($CONFIG get wan_pppoe_mtu)
                 ;;
-		pppoa)
-				local mtu=$($CONFIG get wan_pppoa_mtu)
-				;;
         pptp)
                 local mtu=$($CONFIG get wan_pptp_mtu)
                 ;;

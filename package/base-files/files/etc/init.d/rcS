@@ -1,10 +1,12 @@
 #!/bin/sh
 # Copyright (C) 2006 OpenWrt.org
 
+[ -z "$(echo $PATH|grep -o dnicmd)" ] && export PATH=$PATH:/lib/dnicmd
+
 run_scripts() {
 	for i in /etc/rc.d/$1*; do
 		[ -x $i ] && $i $2 2>&1
-	done | $LOGGER
+	done | $LOGGER &
 }
 
 system_config() {

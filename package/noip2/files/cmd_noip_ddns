@@ -1,0 +1,49 @@
+#!/bin/sh
+
+CONFIG=$(which config)
+bin=noip2
+
+DDNS_STATUS="/tmp/ez-ipupd.status"
+
+start()
+{
+	local wan_ifname=""
+	case "$($CONFIG get wan_proto)" in
+		"3g"|"pppoe"|"l2tp"|"pptp"|"pppoa"|"ipoa")
+			wan_ifname="ppp0" ;;
+		"xwimax")
+			wan_ifname="$($CONFIG get wan_ifname_wimax)" ;;
+		*)
+			wan_ifname="$($CONFIG get wan_ifname)" ;;
+	esac
+
+	usr_name=`$CONFIG get sysDNSUser`
+	usr_password=`$CONFIG get sysDNSPassword`
+	host_name=`$CONFIG get sysDNSHost`
+
+	sleep 3	# XXX why ???
+
+	local no_ip_conf="/tmp/noip2.conf"
+	[ ! -f $no_ip_conf ] && touch $no_ip_conf # XXX why ???
+
+	$bin -I $wan_ifname -o $host_name -u $usr_name -p $usr_password -U 10 -C -c $no_ip_conf
+}
+
+stop()
+{
+	killall -9 $bin
+	printf "0" > $DDNS_STATUS
+
+}
+
+case "$1" in
+	start)
+		start ;;
+	stop)
+		stop ;;
+	restart)
+		stop; start ;;
+	*)
+		echo "Uage:$0 {start|stop|restart}"
+		exit 1
+esac

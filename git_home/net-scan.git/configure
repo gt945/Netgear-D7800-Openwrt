@@ -1,0 +1,33 @@
+#! /bin/sh
+bin=${0##*/}
+
+gen_makefile()
+{
+	cat <<EOF
+export SUPPORT_STREAMBOOST:= ${SUPPORT_STREAMBOOST:-0}
+
+all %:
+	\$(MAKE) -C src \$@
+EOF
+}
+
+usage()
+{
+	printf "%s\n" \
+		"Usage:	${bin} <option>" \
+		"	--support_streamboost	(optional) Enable it when your project support streamboost." \
+		"	--help		display this message."
+}
+
+while true
+do
+	[ "x$1" = "x" ] && break
+	case $1 in
+		"--support_streamboost")
+			SUPPORT_STREAMBOOST=1; shift ;;
+		*) usage; exit 1 ;;
+	esac
+done
+
+# top level Makefile
+gen_makefile >Makefile

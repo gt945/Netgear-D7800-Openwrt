@@ -20,7 +20,7 @@ include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/kcode
   SUBMENU:=Other modules
-  DEPENDS:=@TARGET_d7800
+  DEPENDS:=@TARGET_ipq806x
   TITLE:=KCode USB Printer
   VERSION:=$(LINUX_VERSION)+$(PKG_VERSION)-$(BOARD)-$(PKG_RELEASE)
   FILES:= \

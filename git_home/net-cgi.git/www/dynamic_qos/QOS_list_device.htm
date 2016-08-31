@@ -37,9 +37,13 @@ function show_wlan_ssid(name)
 		wlan_ssid=" $wlan_guest_ssid: "+wl_ssid;
 	else if(name=="guest")
 		wlan_ssid=" $wlan_guest_ssid: "+wlg1_ssid;
+	else if(name=="gre")
+		wlan_ssid=" $wlan_guest_ssid: "+wlg1_ssid;
 	else if(name=="primary_an")
 		wlan_ssid=" $wlan_guest_ssid: "+wla_ssid;
 	else if(name=="guest_an")
+		wlan_ssid=" $wlan_guest_ssid: "+wla1_ssid;
+	else if(name=="gre_an")
 		wlan_ssid=" $wlan_guest_ssid: "+wla1_ssid;
 	else
 		wlan_ssid="";
@@ -170,9 +174,9 @@ function loadvalue()
 <div class="access">$access_control_url1
 <script>
 	if(enable_bridge_flag == "1")
-		document.write('<a href=# class="ui-corner-all"><font color=grey>&nbsp; $access_control_url2 &nbsp;</font></a>&nbsp;');
+		document.write("<a href=# class=\"ui-corner-all\"><font color=grey>&nbsp; $access_control_url2 &nbsp;</font></a>&nbsp;");
 	else
-		document.write('<a href=# onclick="goto_url(); return false;" class="ui-corner-all">&nbsp; $access_control_url2 &nbsp;</a>&nbsp;');
+		document.write("<a href=# onclick=\"goto_url(); return false;\" class=\"ui-corner-all\">&nbsp; $access_control_url2 &nbsp;</a>&nbsp;");
 
 	document.write('$access_control_url3<br/>');
 

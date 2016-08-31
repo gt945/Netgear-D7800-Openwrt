@@ -45,52 +45,6 @@ static inline int ipv6_is_transient_multicast(const struct in6_addr *addr)
 }
 #endif
 
-#ifdef CONFIG_DNI_MCAST_TO_UNICAST
-static inline void
-add_mac_cache(struct sk_buff *skb)
-{
-      unsigned char i, num = 0xff;
-      unsigned char *src, check = 1;
-      struct iphdr *iph;
-      struct ethhdr *ethernet=(struct ethhdr *)skb->mac_header;
-
-      iph = (struct iphdr *)skb->network_header;
-      src = ethernet->h_source;
-
-      for (i = 0; i < MCAST_ENTRY_SIZE; i++)
-      {
-              if (mac_cache[i].valid)
-                      if ((++mac_cache[i].count) == MAX_CLEAN_COUNT)
-                              mac_cache[i].valid = 0;
-      }
-
-      for (i = 0; i < MCAST_ENTRY_SIZE; i++)
-      {
-              if (mac_cache[i].valid)
-              {
-                      if (mac_cache[i].sip==iph->saddr)
-                      {
-                              num = i;
-                              break;
-                      }
-              }
-              else if (check)
-              {
-                      num=i;
-                      check = 0;
-              }
-      }
-
-      if (num < MCAST_ENTRY_SIZE)
-      {
-              mac_cache[num].valid = mac_cache[num].count = 1;
-              memcpy(mac_cache[num].mac, src, 6);
-              mac_cache[num].sip = iph->saddr;
-              mac_cache[num].dev = skb->dev;
-      }
-}
-#endif
-
 static inline int br_ip_equal(const struct br_ip *a, const struct br_ip *b)
 {
 	if (a->proto != b->proto)
@@ -1567,13 +1521,6 @@ int br_multicast_rcv(struct net_bridge *br, struct net_bridge_port *port,
 	BR_INPUT_SKB_CB(skb)->igmp = 0;
 	BR_INPUT_SKB_CB(skb)->mrouters_only = 0;
 
-#ifdef CONFIG_DNI_MCAST_TO_UNICAST
-	if (igmp_snoop_enable && skb->dev->name[0] == 'a' && ip_hdr(skb)->protocol == IPPROTO_IGMP)
-	{
-		add_mac_cache(skb);
-		iptv_port_update_mgroup(skb);
-	}
-#endif
 	if (br->multicast_disabled)
 		return 0;
 

@@ -7,9 +7,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if(master=="admin")
-	document.write('<TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Refresh" value="$ipv6_refresh" onClick="location.href=\'IPv6_index.htm\';">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'IPv6_auto.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_ipv6_auto(document.forms[0])";></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Status Refresh" id="refresh" value="$ipv6_refresh" onClick="location.href=\'IPv6_index.htm\';">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'IPv6_auto.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" id="apply" value="$apply_mark" onClick="return check_ipv6_auto(document.forms[0])";></TD>');
 else
-	document.write(' <TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Refresh" value="$ipv6_refresh" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></TD>');
+	document.write(' <TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Status Refresh" id="refresh" value="$ipv6_refresh" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
 </script>
 </TR>
 </TABLE>
@@ -54,9 +54,18 @@ if(connection_type == "Pass Through")
 else
  	ipv6_lan_ip = "<% ipv6_lan_ip() %>";
 
-if(connection_type == "Detecting...")
+if(connection_type == "Detecting..."){
+	top.refresh_another_time = 3;
 	setTimeout("location.href='IPv6_auto.htm';", 3000);
-
+}else{
+	if(top.refresh_another_time > 0 && ipv6_lan_ip == ""){
+		top.refresh_another_time--;
+		connection_type = "Detecting...";
+		setTimeout("location.href='IPv6_auto.htm';", 3000);
+	}
+	else
+		top.refresh_another_time = 0;
+}
 /* to fix bug 27954 */
 var ipv6_type = "<% cfg_get("ipv6_type") %>";
 if( ipv6_type != "autoDetect" )
@@ -91,6 +100,8 @@ function loadvalue()
 			load_ipv6_dns(cf);
 		}
 	}
+	login_type_show(cf);
+	cf.login_type.value = "autoDetect";
 }
 
 function check_ipv6_auto(cf)
@@ -113,10 +124,11 @@ function check_ipv6_auto(cf)
 </script>
 
 <input type="hidden" name="ipv6_hidden_enable_interface" value="">
-<input type="hidden" name="ipv6_hidden_interface_id" value="">
+<input type="hidden" name="ipv6_hidden_interface_id" value="<% cfg_get("ipv6_dhcps_interface_id") %>">
 <input type="hidden" name="ipv6_hidden_filtering" value="">
 <input type="hidden" name="ipv6_hidden_primary_dns" value="<% cfg_get("ipv6_auto_dns1") %>" />
 <input type="hidden" name="ipv6_hidden_second_dns" value="<% cfg_get("ipv6_auto_dns2") %>" />
+<input type="hidden" name="ipv6_hidden_ip_assign" value="">
 
 <TABLE cellspacing=5 cellPadding=0 width=100% border=0>
 <TR>
@@ -124,26 +136,14 @@ function check_ipv6_auto(cf)
         <A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','internet')"><B>$ipv6_internet_con_type</B></A>
         </TD>
         <TD nowrap align=right>
-        <select name="con_type" onChange="change_ipv6(document.forms[0].con_type.value)">
-		<option value="disabled">$pppoe2_disable</option>
-                <option value="autoDetect" selected>$ipv6_auto_detect</option>
-		<option value="autoConfig">$ipv6_auto_config</option>
-		<option value="6to4">$ipv6_6to4_tunnel</option>
-		<script>
-                if(top.ipv6_6rd_flag ==1)
-                        document.write('<option value="6rd">6rd</option>');
-                </script>
-                <option value="bridge">$ipv6_pass_through</option>
-                <option value="fixed">$ipv6_fixed</option>
-                <option value="dhcp">$router_status_dhcp</option>
-                <option value="pppoe">$basic_intserv_pppoe</option>
+        <select name="login_type" id="login_type" onChange="change_ipv6(document.forms[0].login_type.value)">
         </select>
         </TD>
 </TR>
 $bluebar
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','wan_type')"><B>$trigger_contype</B></A></TD>
-	<TD nowrap align=right>
+	<TD nowrap align=right id="connection_type">
 	<script>
 	if(top.dsl_enable_flag == 0)
 	{	
@@ -190,7 +190,7 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','wan_ipaddr')"><B>$ipv6_wan_address</B></A></TD>
-	<TD nowrap align=right>
+	<TD nowrap align=right id="wan_ip">
 	<script>
 	if(connection_type == "6to4 Tunnel" && wan_port_status != "Link down")
 		document.write("<TR><TD nowrap>$spacebar"+"N/A</TD></TR>");
@@ -214,30 +214,30 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','lan_ipaddr')"><B>$ipv6_lan_address</B></A></TD>
-	<TD nowrap align=right><script>ipv6_write_ip(ipv6_lan_ip);</script></TD>
+	<TD nowrap align=right id="lan_ip"><script>ipv6_write_ip(ipv6_lan_ip);</script></TD>
 </TR>
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','lan_ip_assign')">$ipv6_ip_assign</A></TD>
 </TR>
 <TR>
-	<TD nowrap colspan=2><input type="radio" name="ipv6_lan_ip_assign" value="1">$ipv6_dhcp_server</TD>
+	<TD nowrap colspan=2><input type="radio" name="IpAssign" id="ipassign_dhcp" value="dhcp">$ipv6_dhcp_server</TD>
 </TR>
 <TR>
-	<TD nowrap colspan=2><input type="radio" name="ipv6_lan_ip_assign" value="0">$ipv6_auto_config</TD>
+	<TD nowrap colspan=2><input type="radio" name="IpAssign" id="ipassign_auto" value="auto">$ipv6_auto_config</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
 	<BR>
-	<input type="checkbox" name="enable_interface" value="" onClick="set_interface();">
+	<input type="checkbox" name="useInterfaceId" id="useInterfaceId" value="" onClick="set_interface();">
 	<A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','interface_id')">$ipv6_interface</A>
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2><img src=/spacer.gif width=20 height=12 border=0>
-	<input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-	<input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-	<input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-	<input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">
+	<input type="text" name="IPv6_interface_id1" id="ipv6_interface_id1" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id2" id="ipv6_interface_id2" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id3" id="ipv6_interface_id3" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id4" id="ipv6_interface_id4" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">
 	</TD>
 </TR> 
 $bluebar

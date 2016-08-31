@@ -5,7 +5,7 @@
 
 get_hostname()
 {
-	$(cat /proc/sys/kernel/hostname)
+	cat /proc/sys/kernel/hostname
 }
 
 udhcpc_existed()
@@ -37,7 +37,7 @@ setup_global_variables_or_exit()
 		fi
 		;;
 	extmode)
-		if [ "$($CONFIG get extender_band_choose)" = "5g" ]; then
+		if [ "x$($CONFIG get wla_ext_enabled)" = "x1" ]; then
 			g_wl_linked=extmode_wla_linked
 			g_wl_fixup=extmode_wla_fixup
 		else

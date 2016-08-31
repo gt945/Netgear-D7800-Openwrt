@@ -10,10 +10,12 @@
 <script language="javascript" type="text/javascript" src="script/brs_genie_03A_B_pppoe_reenter.js"></script>
 <script language="javascript" type="text/javascript" src="script/funcs.js"></script>
 <% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 <% cfg_set("form_set2","") %>
 <script>
 var hijack_process="<% cfg_get("hijack_process") %>";
+var master="<% cfg_get("http_loginname") %>";
 </script>
 </head>
 
@@ -39,7 +41,7 @@ var hijack_process="<% cfg_get("hijack_process") %>";
 				</div>
 				<div class="wanInput_Img_div">
 					<img src="image/ca_text_pic.gif" />
-					<input type="text" id="inputName" maxlength="64" align="right" name="pppoe_name" autocomplete="off" />
+					<input type="text" id="pppoe_name" maxlength="64" align="right" name="pppoe_name" autocomplete="off" />
 				</div>
 				
 				<div id="passwd" class="wanInput_left_div" align="right">
@@ -49,9 +51,9 @@ var hijack_process="<% cfg_get("hijack_process") %>";
 					<img src="image/ca_text_pic.gif" />
 					<script>
 					if(top.dsl_enable_flag == 1)
-						document.write('<input type="password" id="inputPasswd" maxlength="16" align="right" name="pppoe_passwd" autocomplete="off" />');
+						document.write('<input type="password" id="pppoe_password" maxlength="16" align="right" name="pppoe_passwd" autocomplete="off" />');
 					else	
-						document.write('<input type="text" id="inputPasswd" maxlength="16" align="right" name="pppoe_passwd" autocomplete="off" />');
+						document.write('<input type="text" id="pppoe_password" maxlength="16" align="right" name="pppoe_passwd" autocomplete="off" />');
 						
 					</script>
 				</div>
@@ -64,26 +66,10 @@ var hijack_process="<% cfg_get("hijack_process") %>";
 	<div id="allBtns_div" class="wizard_buttons_div" align="right">
 
 		<div id="btnsContainer_div1" class="buttons_img_div" align="center">
-			<script>
-			var master="<% cfg_get("http_loginname") %>";
-			if( master == "admin" )
-				document.write('<img src="image/ca_purple_long_button.gif" />');
-			else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-			</script>
-			
-			<div class="buttons_words_div"><!--manual_config_connection--></div>
+			<input type="button" name="I want to configure the Internet connection myself" id="self_config" class="purple_long_btn"><!--manual_config_connection-->
 		</div>
-
 		<div id="btnsContainer_div2" class="buttons_img_div" align="center">
-		<script>
-		if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-		else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-			
-		</script>
-			<div class="buttons_words_div"><!--try_again--></div>
+			<input type="button" name="Try again" id="again" class="purple_common_btn"><!--try_again-->
 		</div>
 
 	</div>

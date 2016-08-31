@@ -12,7 +12,6 @@ PKG_NAME:=kmod-trigger
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-trigger-dni7
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -23,11 +22,14 @@ define KernelPackage/trigger
   FILES:= \
 	$(PKG_BUILD_DIR)/ipt_TRIGGER.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,ipt_TRIGGER)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-trigger.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   URL:=http://www.qca.qualcomm.com
   MAINTAINER:=Qualcomm Atheros
   TITLE:=QCA Wifi Positioning
-  DEPENDS:=kmod-qca-wifi-10.4 +libpthread
+  DEPENDS:=kmod-qca-wifi +libpthread
 endef
 
 define KernelPackage/$(PKG_NAME)/config

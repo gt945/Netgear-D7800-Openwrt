@@ -35,6 +35,11 @@ function loadvalue()
 	else
 		document.forms[6].mirrortolan.checked = false;
 
+	if("<% cat_file("/tmp/allow_ipv6_ping") %>" == "1")
+		document.forms[7].allow_ipv6_ping.checked = true;
+	else
+		document.forms[7].allow_ipv6_ping.checked = false;
+
 	refresh_start();
 }
 
@@ -97,6 +102,16 @@ function click_mirror()
 		cf.hid_mirrortolan.value = "1";
 	else
 		cf.hid_mirrortolan.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_ipv6()
+{
+	var cf = document.forms[7];
+	if(cf.allow_ipv6_ping.checked == true)
+		cf.hid_ipv6.value = "1";
+	else
+		cf.hid_ipv6.value = "0";
 	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
 	cf.submit();
 }
@@ -196,7 +211,13 @@ function refresh_start()
 <form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
 <input type="hidden" name="submit_flag" value="debug_info" />
 <input type="hidden" name="hid_mirrortolan" />
-<input type="checkbox" name="mirrortolan" onclick="click_mirror();"><b>WAN Port minrror to LAN port1</b>
+<input type="checkbox" name="mirrortolan" onclick="click_mirror();"><b>WAN Port mirror to LAN port1</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_ipv6" />
+<input type="checkbox" name="allow_ipv6_ping" onclick="click_ipv6();"><b>Allow external IPv6 hosts ping internal IPv6 hosts</b>
 </form>
 
 </div>

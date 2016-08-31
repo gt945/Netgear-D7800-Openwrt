@@ -243,26 +243,27 @@ static unsigned long uptime(void)
  * It is set by `usr/bin/detcable`.
  */
 #define CABLE_FILE	"/tmp/port_status"
-#define DSL_CABLE_FILE	"/tmp/dsl_port_status"
+#define DSL_CABLE_FILE  "/tmp/dsl_port_status"
 
 static inline int eth_up(void)
 {
 	char value;
+	int fd, link_up, wan_choose = 2;
 	FILE *fp;
-	int fd, link_up, wan_choose;
 
 	system("echo `config get dsl_wan_preference` > /tmp/dsl_wan_preference");
 	fp = fopen("/tmp/dsl_wan_preference", "r");
-	fscanf(fp, "%d\n", &wan_choose);
-	fclose(fp);
-	if (wan_choose == 1)
-	{
+	if (fp > 0) {
+		fscanf(fp, "%d\n", &wan_choose);
+		fclose(fp);
+	}
+
+	if (wan_choose == 1) {
 		fd = open(DSL_CABLE_FILE, O_RDONLY, 0666);
 		if (fd < 0)
 			return 0;
 	}
-	else if (wan_choose == 2)
-	{
+	else if (wan_choose == 2) {
 		fd = open(CABLE_FILE, O_RDONLY, 0666);
 		if (fd < 0)
 			return 0;
@@ -500,7 +501,7 @@ int main(int argc, char *argv[])
 			if (listen_mode == LISTEN_KERNEL)
 				fd = listen_socket(INADDR_ANY, CLIENT_PORT, client_config.interface);
 			else
-				fd = raw_socket(client_config.ifindex);
+				fd = raw_socket(client_config.ifindex, CLIENT_PORT);
 			if (fd < 0) {
 				LOG(LOG_ERR, "FATAL: couldn't listen on socket, %s", strerror(errno));
 				exit_client(0);
@@ -542,6 +543,11 @@ int main(int argc, char *argv[])
 						xid = random_xid();
 
 					/* send discover packet */
+				
+					/* Bug-61771: Should not sleep */
+					//	if ( client_config.apmode != 1 )
+					//		sleep(5);
+
 					send_discover(xid, requested_ip); /* broadcast */
 					
 					timeout = uptime() + (client_config.apmode ? 5 : ((packet_num == 2) ? 4 : 2));
@@ -569,6 +575,8 @@ int main(int argc, char *argv[])
 					 * Periodic checking for dynamic address availability
 					 * A device that has auto-configured an IP address MUST periodically check 
 					 * every 4 minutes for the existence of a DHCP server.
+					 * [new Router Spec Rev.11 2012.12.03 DHCP (DHCP client)]: if the whole DHCP
+					 * request procedure is failed, router should restart the procedure every 10 seconds.
 					 */
 					timeout = now + (client_config.apmode ? (!br_mode_enable() ? 240 : 120) : 10);
 				}
@@ -581,7 +589,12 @@ int main(int argc, char *argv[])
 						send_renew(xid, server_addr, requested_ip); /* unicast */
 					else send_selecting(xid, server_addr, requested_ip); /* broadcast */
 					
-					timeout = now + ((packet_num == 2) ? 10 : 1);
+					/*
+					 * [new Router Spec Rev.11 2012.12.03 DHCP (DHCP client)]: for the cases of Ethernet cable plug-off and plug-in,
+					 * client should send 3 consecutive DHCP_REQUEST with 1 second interval and include current IP address as preferred
+					 * client IP address.
+					 */
+					timeout = now + 1;
 					packet_num++;
 				} else {
 					/* timed out, go back to init state */
@@ -689,7 +702,7 @@ int main(int argc, char *argv[])
 								if (listen_mode == LISTEN_KERNEL)
 									fd = listen_socket(INADDR_ANY, CLIENT_PORT, client_config.interface);
 								else
-									fd = raw_socket(client_config.ifindex);
+									fd = raw_socket(client_config.ifindex, CLIENT_PORT);
 								if (fd < 0) {
 									LOG(LOG_ERR, "FATAL: couldn't listen on socket, %s", strerror(errno));
 									exit_client(0);

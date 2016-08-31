@@ -1,0 +1,175 @@
+From e8833f6a09eb8be6ae2f77bfb5a890d3e90f5d3f Mon Sep 17 00:00:00 2001
+From: figo.yan <figo.yan@dniserver.dnish.net>
+Date: Tue, 5 Apr 2016 11:39:27 -0400
+Subject: [PATCH] wrap them up
+
+Signed-off-by: figo.yan <figo.yan@dniserver.dnish.net>
+---
+ src/Makefile |   24 +++++++++++++++---------
+ src/excmd.c  |    3 ++-
+ src/ntpst    |   11 +++++++++++
+ src/pot.c    |    2 +-
+ src/potd     |   11 +++++++++++
+ src/potval   |   11 +++++++++++
+ src/stamac   |   11 +++++++++++
+ 7 files changed, 62 insertions(+), 11 deletions(-)
+ create mode 100644 src/ntpst
+ create mode 100644 src/potd
+ create mode 100644 src/potval
+ create mode 100644 src/stamac
+
+diff --git a/src/Makefile b/src/Makefile
+index fcaf164..3451c87 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -6,26 +6,27 @@ include $(POT_CONF)
+ CC = gcc
+ 
+ FILES = pot.c excmd.c common.h config.h
+-TARGET = potd potval ntpst stamac
++TARGET = i_potd i_potval i_ntpst i_stamac
++OUT_TARGETS = potd potval ntpst stamac
+ 
+ CFLAGS += -Wall -Wunused -g
+ CFLAGS += -DPOT_MTD=$(POT_MTD)
+ 
+ all : $(TARGET)
+ 
+-potd : $(FILES)
++i_potd : $(FILES)
+ 	$(CC) $(CFLAGS) $(FILES) -o $@ $(EXTRA_LDFLAGS) $(LDFLAGS)
+ 	@echo "make $@ finished on `date`"
+ 
+-potval: $(FILES)
++i_potval: $(FILES)
+ 	$(CC) $(CFLAGS) $(FILES) -o $@ $(EXTRA_LDFLAGS) $(LDFLAGS)
+ 	@echo "make $@ finished on `date`"
+ 
+-ntpst: $(FILES)
++i_ntpst: $(FILES)
+ 	$(CC) $(CFLAGS) $(FILES) -o $@ $(EXTRA_LDFLAGS) $(LDFLAGS)
+ 	@echo "make $@ finished on `date`"
+ 
+-stamac: $(FILES)
++i_stamac: $(FILES)
+ 	$(CC) $(CFLAGS) $(FILES) -o $@ $(EXTRA_LDFLAGS) $(LDFLAGS)
+ 	@echo "make $@ finished on `date`"
+ 
+@@ -35,10 +36,15 @@ stamac: $(FILES)
+ install:
+ 	$(INSTALL_DIR) $(INS_BIN_DIR) 
+ 
+-	$(INSTALL_BIN) potd $(INS_BIN_DIR)
+-	$(INSTALL_BIN) potval $(INS_BIN_DIR)
+-	$(INSTALL_BIN) ntpst $(INS_BIN_DIR)
+-	$(INSTALL_BIN) stamac $(INS_BIN_DIR)
++	( \
++		for target in $(TARGET); do \
++		$(INSTALL_BIN) $$target $(INS_BIN_DIR); \
++	done; );
++
++	( \
++		for target in $(OUT_TARGETS); do \
++		$(INSTALL_BIN) $$target $(INS_BIN_DIR); \
++	done; );
+ 
+ clean:
+ 	rm -f *.o
+diff --git a/src/excmd.c b/src/excmd.c
+index 3bc10f2..9e488d2 100644
+--- a/src/excmd.c
++++ b/src/excmd.c
+@@ -129,7 +129,8 @@ void stamac_usage(char *name)
+ 
+ int stamac_func(int argc, char *argv[])
+ {
+-	char ch;
++	/* getopt returns (int) */
++	int ch;
+ 	int devfd, count, sign = 0;	/* sign: 0 - get, 1 - set */
+ 	unsigned char buf[NAND_FLASH_PAGESIZE];
+ 	struct mac_t {
+diff --git a/src/ntpst b/src/ntpst
+new file mode 100644
+index 0000000..a90e1b5
+--- /dev/null
++++ b/src/ntpst
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++[ -f /dni-gconfig ] && . /dni-gconfig
++
++if [ "x$DGC_MTD_POT" = "x" ]; then
++	echo "!!!! POT MTD defined MISS!!!!"
++	exit 1
++fi
++
++i_ntpst $* -d $DGC_MTD_POT
++
+diff --git a/src/pot.c b/src/pot.c
+index 5b2d2fb..925012b 100644
+--- a/src/pot.c
++++ b/src/pot.c
+@@ -71,7 +71,7 @@ void pot_usage(char *name)
+ 
+ int pot_func(int argc, char **argv)
+ {
+-	char ch;
++	int ch;
+ 	int devfd;
+ 	int pot_value;
+ 	struct timeval timo;
+diff --git a/src/potd b/src/potd
+new file mode 100644
+index 0000000..a18adb0
+--- /dev/null
++++ b/src/potd
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++[ -f /dni-gconfig ] && . /dni-gconfig
++
++if [ "x$DGC_MTD_POT" = "x" ]; then
++	echo "!!!! POT MTD defined MISS!!!!"
++	exit 1
++fi
++
++i_potd $* -d $DGC_MTD_POT
++
+diff --git a/src/potval b/src/potval
+new file mode 100644
+index 0000000..fd2e6a6
+--- /dev/null
++++ b/src/potval
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++[ -f /dni-gconfig ] && . /dni-gconfig
++
++if [ "x$DGC_MTD_POT" = "x" ]; then
++	echo "!!!! POT MTD defined MISS!!!!"
++	exit 1
++fi
++
++i_potval $* -d $DGC_MTD_POT
++
+diff --git a/src/stamac b/src/stamac
+new file mode 100644
+index 0000000..b5031c1
+--- /dev/null
++++ b/src/stamac
+@@ -0,0 +1,11 @@
++#!/bin/sh
++
++[ -f /dni-gconfig ] && . /dni-gconfig
++
++if [ "x$DGC_MTD_POT" = "x" ]; then
++	echo "!!!! POT MTD defined MISS!!!!"
++	exit 1
++fi
++
++i_stamac $* -d $DGC_MTD_POT
++
+-- 
+1.7.4.1
+

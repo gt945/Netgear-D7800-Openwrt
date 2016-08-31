@@ -4,7 +4,6 @@ include $(INCLUDE_DIR)/kernel.mk
 PKG_NAME:=kmod-dnirtsp
 PKG_VERSION:=
 PKG_RELEASE:=1
-PKG_GIT_TREEISH=alg-rtsp-v3.4-dni1
 NF=nf
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 
@@ -18,11 +17,14 @@ define KernelPackage/dnirtsp
 	$(PKG_BUILD_DIR)/$(NF)_conntrack_dnirtsp.$(LINUX_KMOD_SUFFIX) \
 	$(PKG_BUILD_DIR)/$(NF)_nat_dnirtsp.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,$(NF)_conntrack_dnirtsp $(NF)_nat_dnirtsp)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-dnirtsp.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

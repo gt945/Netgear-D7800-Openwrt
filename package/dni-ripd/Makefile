@@ -10,28 +10,31 @@ PKG_RELEASE:=1
 PKG_BUILD_DEPENDS:=datalib
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
-PKG_GIT_TREEISH:=dni-rip-v1.0-dni25
-
 include $(INCLUDE_DIR)/package.mk
 
-define Package/dni-ripd
+define Package/$(PKG_NAME)
   SECTION:=dni
   CATEGORY:=DNI-Package
-  DEPENDS:=@TARGET_ipq806x
   TITLE:=ripd
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/dni-ripd.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
 endef
 
-define Package/dni-ripd/install
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/usr
 	install -d -m0755 $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/ripd $(1)/usr/sbin/
+	install -d -m0755 $(1)/usr/etc
+	install -d -m0755 $(1)/usr/etc/functions
+	$(INSTALL_BIN) ./files/ripd_functions $(1)/usr/etc/functions/
 endef
 
-$(eval $(call BuildPackage,dni-ripd))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -1,0 +1,13 @@
+diff --git a/etc/dni-wifi-config b/etc/dni-wifi-config
+index e276be4..18a797c 100644
+--- a/etc/dni-wifi-config
++++ b/etc/dni-wifi-config
+@@ -137,7 +137,7 @@ if [ -n "$DNI_CONFIG" ]; then
+         wlg_chmode=`dniconfig get wl_simple_mode`
+         case "${wlg_chmode}" in
+             1)
+-                wlg_hwmode=11g;
++                wlg_hwmode=11bg;
+                 ;;
+             2)
+                 wlg_hwmode=11ng;

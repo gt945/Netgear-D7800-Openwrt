@@ -56,6 +56,7 @@ function check_forwarding_edit(cf)
 		cf.select_edit_num.value=parseInt(item_count[select_num]);
 		cf.submit_flag.value="forwarding_editnum_range";
 		cf.action="/apply.cgi?/forwarding_edit_wait.htm timestamp="+ts;
+		cf.submit();
 		return true;
 	}
 }
@@ -94,6 +95,7 @@ function check_forwarding_del(cf)
 		cf.select_del.value=parseInt(forward_table[select_num]);
 		cf.select_del_num.value=parseInt(item_count[select_num]);
 		cf.submit_flag.value="forwarding_del_range";
+		cf.submit();
 		return true;
 	}
 	
@@ -171,11 +173,16 @@ function Check_add(cf)
 				var int_bigger_port = parseInt(int_endport)>parseInt(int_startport)?parseInt(int_endport):parseInt(int_startport);
 				var int_smaller_port = parseInt(int_endport)>parseInt(int_startport)?parseInt(int_startport):parseInt(int_endport);
 				
-			if( forwardingip == input_ip && !(ext_bigger_port<parseInt(input_external_start_port)||parseInt(input_external_end_port)<ext_smaller_port))
- 			{
+			if(!(ext_bigger_port<parseInt(input_external_start_port)||parseInt(input_external_end_port)<ext_smaller_port))
+ 			{//ext ports range must have no intersection, no matter the ip
 				alert("$ports_error_conflict");
 				return false;
-			}		
+			}
+			if(forwardingip == input_ip && !(int_bigger_port < parseInt(input_internal_start_port) || parseInt(input_internal_end_port) < int_smaller_port))
+			{//the same ip, int ports range must have no intersection.
+				alert("$ports_error_conflict");
+				return false;
+			}
 		}
 	}	
 	//port_triggering	
@@ -221,13 +228,30 @@ function Check_add(cf)
 	{
 		alert(invalid_port_used);
 		return false;
-	}		
+	}
+
+	//check VPN port
+	if (vpn_enable=="1")
+	{
+		if(((input_sertype.toLowerCase()==vpn_tun_type || input_sertype=="TCP/UDP") && vpn_tun_port!="" &&
+		(!(parseInt(vpn_tun_port)<parseInt(input_external_start_port)||parseInt(input_external_end_port)<parseInt(vpn_tun_port))
+		|| !(parseInt(vpn_tun_port)<parseInt(input_internal_start_port)||parseInt(input_internal_end_port)<parseInt(vpn_tun_port))))
+		|| (input_sertype.toLowerCase()==vpn_type || input_sertype=="TCP/UDP") && vpn_port!="" &&
+		(!(parseInt(vpn_port)<parseInt(input_external_start_port)||parseInt(input_external_end_port)<parseInt(vpn_port))
+		|| !(parseInt(vpn_port)<parseInt(input_internal_start_port)||parseInt(input_internal_end_port)<parseInt(vpn_port))))
+		{
+			alert(invalid_port_used);
+			return false;
+		}
+	}
+
 	if(cf.hidden_service_name.value=="NetMeeting")
 		cf.serflag.value=1;
 	else
 		cf.serflag.value=0;
 
 	cf.submit_flag.value="forwarding_hidden_add";
+	cf.submit();
 	return true;
 }
 
@@ -629,16 +653,30 @@ function check_forwarding_add_range(cf,flag)
 
 				if(flag == 'edit')
 				{//bug 41501, in edit case, the ports should compare with itself. so jump the case:!(select_editnum<=i && i<parseInt(select_editnum)+parseInt(edit_num))
-					if(!(select_editnum<=i && i<parseInt(select_editnum)+parseInt(edit_num)) && (forwardingip == input_ip && !(ext_bigger_port<input_ext_smaller_port||input_ext_bigger_port<ext_smaller_port)))
-					{
+					if(!(select_editnum<=i && i<parseInt(select_editnum)+parseInt(edit_num)) && (!(ext_bigger_port<input_ext_smaller_port||input_ext_bigger_port<ext_smaller_port)))
+					{//ext ports range must have no intersection, no matter the ip
+						alert("$ports_error_conflict");
+						return false;		
+					}
+					if(!(select_editnum<=i && i<parseInt(select_editnum)+parseInt(edit_num)) && forwardingip == input_ip &&
+					!(int_bigger_port < input_int_smaller_port || int_smaller_port > input_int_bigger_port))
+					{//the same ip, int ports range must have no intersection.
+						alert("$ports_error_conflict");
+						return  false;
+					}
+				}
+				else if(flag == 'add') // for add 
+				{
+					if(!(ext_bigger_port<input_ext_smaller_port||input_ext_bigger_port<ext_smaller_port))
+					{//ext ports range must have no intersection, no matter the ip
 						alert("$ports_error_conflict");
 						return false;
 					}
-				}
-				else if(forwardingip == input_ip && !(ext_bigger_port<input_ext_smaller_port||input_ext_bigger_port<ext_smaller_port)) // for add 
-				{
-					alert("$ports_error_conflict");
-					return false;
+					if(forwardingip == input_ip && !(int_bigger_port < input_int_smaller_port || int_smaller_port > input_int_bigger_port))
+					{//the same ip, int ports range must have no intersection.
+						alert("$ports_error_conflict");
+						return false;
+					}
 				}
 			}
 		}
@@ -724,6 +762,19 @@ function check_forwarding_add_range(cf,flag)
 			alert(invalid_port_used);
 			return false;
 		}
+		//check VPN port
+		if (vpn_enable=="1")
+		{
+			if(((cf.srvtype.value.toLowerCase()==vpn_tun_type || cf.srvtype.value=="TCP/UDP") && vpn_tun_port!="" &&
+				(!(parseInt(vpn_tun_port)<parseInt(input_ext_start_port[k])||parseInt(input_ext_end_port[k])<parseInt(vpn_tun_port)) || !(parseInt(vpn_tun_port)<parseInt(input_int_start_port[k])||parseInt(input_int_end_port[k])<parseInt(vpn_tun_port))))
+			||((cf.srvtype.value.toLowerCase()==vpn_type || cf.srvtype.value=="TCP/UDP") && vpn_port!="" &&
+				(!(parseInt(vpn_port)<parseInt(input_ext_start_port[k])||parseInt(input_ext_end_port[k])<parseInt(vpn_port)) || !(parseInt(vpn_port)<parseInt(input_int_start_port[k])||parseInt(input_int_end_port[k])<parseInt(vpn_port)))))
+			{
+				alert(invalid_port_used);
+				return false;
+			}
+		}	
+
 		if (cf.srvtype.value=="TCP"||cf.srvtype.value=="TCP/UDP")
 		{
 			if (parseInt(input_ext_end_port[k])>="1720"&&parseInt(input_ext_start_port[k])<="1720")
@@ -734,7 +785,7 @@ function check_forwarding_add_range(cf,flag)
 	cf.port_end.value=ext_end_port;
 	cf.hidden_port_int_start.value=int_start_port;
 	cf.hidden_port_int_end.value=int_end_port;
-	
+	cf.submit();
 	return true;
 }
 
@@ -747,7 +798,7 @@ function int_port_value()
 
 function click_arrange_by_ip()
 {
-        var table = document.getElementById("port_forwarding");
+        var table = document.getElementById("pf_record");
         var tbody = table.tBodies[0];
         var tr = tbody.rows;
         var trValue = new Array();

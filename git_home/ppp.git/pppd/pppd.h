@@ -57,9 +57,6 @@
 #include <net/ppp_defs.h>
 #include "patchlevel.h"
 
-// DNI feature define
-#include "config.h"
-
 #if defined(__STDC__)
 #include <stdarg.h>
 #define __V(x)	x
@@ -276,9 +273,6 @@ extern struct notifier *fork_notifier;	/* we are a new child process */
  * Variables set by command-line options.
  */
 
-#ifdef DNI_DETECT_PPP
-extern bool do_detect;
-#endif
 extern int	debug;		/* Debug flag */
 extern int	kdebugflag;	/* Tell kernel to print debug messages */
 extern int	default_device;	/* Using /dev/tty or equivalent */
@@ -335,6 +329,13 @@ extern char	*bundle_name;	/* bundle name for multilink */
 extern bool	dump_options;	/* print out option values */
 extern bool	dryrun;		/* check everything, print options, exit */
 extern int	child_wait;	/* # seconds to wait for children at end */
+
+extern char	*ip_cflt_cmd;
+extern char	*firewall_cmd;
+extern char	*dns_setup_cmd;
+extern bool	do_detect;
+
+extern char *wan_eth_if;
 
 #ifdef MAXOCTETS
 extern unsigned int maxoctets;	     /* Maximum octetes per session (in bytes) */

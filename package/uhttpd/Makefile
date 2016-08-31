@@ -10,6 +10,11 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=uhttpd
 PKG_RELEASE:=31
 
+config-$(CONFIG_PACKAGE_uhttpd-mod-tls)		+= --tls_support
+config-$(CONFIG_PACKAGE_uhttpd-mod-tls_cyassl)	+= --tls_source cyassl
+config-$(CONFIG_PACKAGE_uhttpd-mod-tls_openssl)	+= --tls_source openssl
+config-$(CONFIG_PACKAGE_uhttpd-mod-lua)		+= --lua_support
+
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 PKG_CONFIG_DEPENDS := \
 	CONFIG_PACKAGE_uhttpd-mod-tls \
@@ -19,20 +24,20 @@ PKG_CONFIG_DEPENDS := \
 include $(INCLUDE_DIR)/package.mk
 
 WEB_PATH:=www
-PKG_GIT_TREEISH:=a74a56001e35ca6cc3a4531f8ceebdf697c71fc7
-define Package/uhttpd/default
+
+define Package/$(PKG_NAME)/default
   SECTION:=net
   CATEGORY:=Network
   TITLE:=uHTTPd - tiny, single threaded HTTP server
   MAINTAINER:=Jo-Philipp Wich <xm@subsignal.org>
 endef
 
-define Package/uhttpd
-  $(Package/uhttpd/default)
+define Package/$(PKG_NAME)
+  $(Package/$(PKG_NAME)/default)
   MENU:=1
 endef
 
-define Package/uhttpd/description
+define Package/$(PKG_NAME)/description
  uHTTPd is a tiny single threaded HTTP server with TLS, CGI and Lua
  support. It is intended as a drop-in replacement for the Busybox
  HTTP daemon.
@@ -40,9 +45,9 @@ endef
 
 
 define Package/uhttpd-mod-tls
-  $(Package/uhttpd/default)
+  $(Package/$(PKG_NAME)/default)
   TITLE+= (TLS plugin)
-  DEPENDS:=uhttpd +PACKAGE_uhttpd-mod-tls_cyassl:libcyassl +PACKAGE_uhttpd-mod-tls_openssl:libopenssl
+  DEPENDS:=$(PKG_NAME) +PACKAGE_uhttpd-mod-tls_cyassl:libcyassl +PACKAGE_uhttpd-mod-tls_openssl:libopenssl
 endef
 
 define Package/uhttpd-mod-tls/description
@@ -63,90 +68,36 @@ define Package/uhttpd-mod-tls/config
         endchoice
 endef
 
-CGI_SUPPORT:= 1
-LUA_SUPPORT:= 0
-TLS_SUPPORT:= 1
-
-UHTTPD_TLS:=
-TLS_CFLAGS:=
-TLS_LDFLAGS:=
-
-ifneq ($(CONFIG_PACKAGE_uhttpd-mod-tls_cyassl),)
-  UHTTPD_TLS:=cyassl
-  TLS_CFLAGS:=-I$(STAGING_DIR)/usr/include/cyassl -DTLS_IS_CYASSL
-  TLS_LDFLAGS:=-lcyassl -lm
-endif
-
-ifneq ($(CONFIG_PACKAGE_uhttpd-mod-tls_openssl),)
-  UHTTPD_TLS:=openssl
-  TLS_CFLAGS:=-DTLS_IS_OPENSSL
-  TLS_LDFLAGS:=-lssl
-endif
-
-
 define Package/uhttpd-mod-lua
-  $(Package/uhttpd/default)
+  $(Package/$(PKG_NAME)/default)
   TITLE+= (Lua plugin)
-  DEPENDS:=uhttpd +liblua
+  DEPENDS:=$(PKG_NAME) +liblua
 endef
 
 define Package/uhttpd-mod-lua/description
  The Lua plugin adds a CGI-like Lua runtime interface to uHTTPd.
 endef
 
-
-TARGET_CFLAGS += $(TLS_CFLAGS)
-TARGET_LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib
-MAKE_VARS += \
-	FPIC="$(FPIC)" \
-	LUA_SUPPORT="$(if $(CONFIG_PACKAGE_uhttpd-mod-lua),1)" \
-	TLS_SUPPORT="$(if $(CONFIG_PACKAGE_uhttpd-mod-tls),1)" \
-	UHTTPD_TLS="$(UHTTPD_TLS)" \
-	TLS_CFLAGS="$(TLS_CFLAGS)" \
-	TLS_LDFLAGS="$(TLS_LDFLAGS)" \
-	CGI_SUPPORT="$(CGI_SUPPORT)" \
-	LUA_SUPPORT="$(LUA_SUPPORT)" \
-	TLS_SUPPORT="$(TLS_SUPPORT)"
-
 define Build/Prepare
 	$(CP) $(GIT_HOME)/uhttpd.git/* $(PKG_BUILD_DIR)/
 endef
 
-define Package/uhttpd/conffiles
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/conffiles
 /etc/config/uhttpd
 endef
 
 define Build/Configure
-	(cd $(PKG_BUILD_DIR)/files && \
-	./generate_crt.sh \
+	(cd $(PKG_BUILD_DIR); \
+		./configure $(config-y) \
 	)
 endef
 
-define Package/uhttpd/install
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/uhttpd.init $(1)/etc/init.d/uhttpd
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/uhttpd.config $(1)/etc/config/uhttpd
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/uhttpd.key $(1)/etc/uhttpd.key
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/uhttpd.crt $(1)/etc/uhttpd.crt
-	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/uhttpd $(1)/usr/sbin/uhttpd
-	$(INSTALL_DIR) $(1)/$(WEB_PATH)/cgi-bin
-	$(INSTALL_CONF) $(PKG_BUILD_DIR)/files/uhttpd.sh $(1)/$(WEB_PATH)/cgi-bin
-	chmod a+x $(1)/$(WEB_PATH)/cgi-bin/uhttpd.sh
+define Package/$(PKG_NAME)/install
+	$(MAKE) -C $(PKG_BUILD_DIR) install INS_DIR_PRE=$(1)
 endef
 
-define Package/uhttpd-mod-tls/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/uhttpd_tls.so $(1)/usr/lib/
-endef
-
-define Package/uhttpd-mod-lua/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/uhttpd_lua.so $(1)/usr/lib/
-endef
-
-
-$(eval $(call BuildPackage,uhttpd))
+$(eval $(call BuildPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,uhttpd-mod-tls))
 $(eval $(call BuildPackage,uhttpd-mod-lua))

@@ -662,7 +662,6 @@ retry:
 	if (x < 0 && req_unit >= 0 && errno == EEXIST) {
 		warn("Couldn't allocate PPP unit %d as it is already in use", req_unit);
 		ifunit = -1;
-		
 		/* When we are in Multi-PPPoE, we ONLY allow the request unit. */
 		if (no_replace_dns == 1)
 			exit(0);
@@ -2938,7 +2937,11 @@ ether_to_eui64(eui64_t *p_eui64)
         return 0;
     }
 
-    strcpy(ifr.ifr_name, WAN_ETH_NAME);
+	if( wan_eth_if)
+		strcpy(ifr.ifr_name, wan_eth_if);
+	else
+		strcpy(ifr.ifr_name, WAN_ETH_NAME);
+
     if(ioctl(skfd, SIOCGIFHWADDR, &ifr) < 0)
     {
         close(skfd);

@@ -1,0 +1,52 @@
+#! /bin/sh /etc/rc.common
+
+CONF_FILE="${CFGDIR}/datalib.conf"
+
+start()
+{
+	local partition magic
+
+	# please add magic number for different project in here.
+	case ${DGC_PRODUCT_NAME} in
+		R7500v2|D7800)
+			magic="0x20131224" ;;
+		*)
+			magic="0x20150910" ;;
+	esac
+
+	partition="$(part_path config)"
+
+	/bin/datalib -f $CONF_FILE -p "${partition}" -m $((${magic}))
+}
+
+stop()
+{
+	kill -9 $(pidof datalib)
+}
+
+config()
+{
+	[ ! -d ${CFGDIR} ] && mkdir -p ${CFGDIR}
+
+	cat > $CONF_FILE <<-EOF
+		netbiosname	"${DGC_PRODUCT_NAME}"
+		Device_name	"${DGC_PRODUCT_NAME}"
+		raw_iface	"${DGC_LAN_ETH_IF}"
+		true_lanif	"${DGC_LAN_ETH_IF}"
+		lan_ifname	"${DGC_LAN_BR_IF}"
+		lan_ifnames	"${DGC_LAN_ETH_IF} ${DGC_WLAN_IF:-ath0}"
+		wl_ifname	"${DGC_WLAN_IF:-ath0}"
+		wan_ifname	"${DGC_WAN_BR_IF}"
+		wan_ifnames	"${DGC_WAN_BR_IF}"
+		wan_hostname	"${DGC_PRODUCT_NAME}"
+		upnp_serverName "${DGC_PRODUCT_NAME}"
+		bridge_netbiosname	"${DGC_PRODUCT_NAME}"
+		ap_netbiosname	"${DGC_PRODUCT_NAME}"
+	EOF
+}
+
+boot()
+{
+	config
+	start
+}

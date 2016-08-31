@@ -1,15 +1,16 @@
 <% http_header("style/advanced.css", "funcs.js", "advanced.js", "top.js") %>
-<body onload="loadvalue();" onResize="change_size();">
+<body onload="loadvalue();" onResize="change_size(); setHeight_for_IE6();">
 <!--[if IE 6]>
 <script type="text/javascript">
 document.execCommand("BackgroundImageCache", false, true);
 </script>
 <![endif]-->
 <script>
+var refresh_another_time=0;
 var timeoutfunc;
 var enable_action=1;
-var enabled_wds=<% wds_enable() %>;
-var enabled_wps=<% wps_menu() %>;
+var enabled_wds="<% wds_enable() %>";
+var enabled_wps="<% wps_menu() %>";
 var type="advanced";
 var charcount=0;
 var file_version=0;
@@ -158,14 +159,17 @@ function loadvalue()
 	}
 
 	if( from_nowan == "1" && have_lte_flag != 1 )
-		menu_color_change('setup_wizard');
+		menu_color_change('adv_setup_wizard');
 	else if(show_rae_page == "1")
 		menu_color_change('rae');
 	else if(to_multipppoe == 0)
-		menu_color_change('home');
+		menu_color_change('adv_home');
+	else if( master == "guest" )
+		click_adv_action("adv_home");
 
 	if(set_vlan_tag=="1")
 		click_adv_action("vlan");
+	setHeight_for_IE6();
 
 }
 
@@ -177,89 +181,67 @@ function loadvalue()
 <div id="container" class="container_center">
 <div id="middle">
 <div id="menu" class="menu_common_words">
-	<div id="home" class="advanced_purple_button" onclick="click_adv_action('home');"><b><span>$adv_home</span></b></div>
+	<div id="adv_home" class="advanced_purple_button" onclick="click_adv_action('adv_home');"><b><span id="home">$adv_home</span></b></div>
 	<% advanced_menu_setup_wizard() %>
-	<div id="wps" class="advanced_black_button" onclick="click_adv_action('wps');"><b><span>$wps_wzd_head</span></b></div>
 
-	<div id="setup_bt" class="advanced_white_close_button" onclick="open_or_close_sub('setup');"><b><span>$setup_head</span></b></div>
+	<div id="setup_bt" class="advanced_white_close_button" onclick="open_or_close_sub('setup');"><b><span id="setup">$setup_head</span></b></div>
 	<div id="setup_sub" class="sub_men"  style="display: none">
 	<dl>
-		<% advanced_sub_menu("lte_broadband", "sub_back", "lte_broadband_title") %>
-		<% advanced_sub_menu("mobile_internet", "sub_back", "mobile_setup") %>
-		<dt id="internet" class="sub_back"><a onclick="click_adv_action('internet');"><b><span>$int_setup</span></b></a></dt><!--href="javascript:void(0)"-->
-		<dt id="wireless" class="sub_back"><a  target="formframe" onclick="click_adv_action('wireless');"><b><span>$wls_setup</span></b></a></dt> <!--href="javascript:void(1)"-->
-		<% advanced_sub_menu("guest", "sub_back", "wlan_mark_guest") %>
-		<dt id="wan" class="sub_back"><a  target="formframe" onclick="click_adv_action('wan');"><b><span>$wan_setup_head</span></b></a></dt>
-	       	<dt id="lan" class="sub_back"><a target="formframe" onclick="click_adv_action('lan');"><b><span>$lan_mark_head</span></b></a></dt>
-		<% advanced_sub_menu("qos", "sub_back", "qos_head") %>
+		<% advanced_sub_menu("lte_broadband", "sub_back", "lte_broadband_title", "broadband_set", "broadband_set") %>
+		<% advanced_sub_menu("mobile_internet", "sub_back", "mobile_setup", "mobile_set", "mobile_set") %>
+		<% advanced_sub_menu("internet", "sub_back", "int_setup", "internet_setup", "int_set") %>
+		<% advanced_sub_menu("wireless", "sub_back", "wls_setup", "wireless_setup", "wireless") %>
+		<% advanced_sub_menu("guest", "sub_back", "wlan_mark_guest", "guest_network_setup", "guest") %>
+		<% advanced_sub_menu("wan", "sub_back", "wan_setup_head", "wan_setup", "wan") %>
+	       	<dt id="lan" class="sub_back"><a target="formframe" onclick="click_adv_action('lan');"><b><span name="lan" id="lan_setup">$lan_mark_head</span></b></a></dt>
+		<% advanced_sub_menu("qos", "sub_back", "qos_head", "qos_setup", "qos") %>
+		<% advanced_sub_menu("devname", "sub_back", "edit_devname", "advanced_devname")%>
 	</dl>
 	</div>
 
 	<% advanced_menu_usb() %>
 
-	<div id="security_bt" class="advanced_white_close_button" onclick="open_or_close_sub('security');"><b><span>$wlan_guest_security</span></b></div>
-	<div id="security_sub" class="sub_men"  style="display: none">
-	<dl>
-		<% advanced_sub_menu("parental", "sub_back", "parental_control") %>
-		<% advanced_sub_menu("access_control", "sub_back", "acc_control") %>
-		<% advanced_sub_menu("block_site", "sub_back", "block_sites_head") %>
-		<dt id="block_services" class="sub_back"><a  target="formframe" onclick="click_adv_action('block_services');"><b><span>$block_serv_head</span></b></a></dt>
-		<dt id="schedule" class="sub_back"><a  target="formframe" onclick="click_adv_action('schedule');"><b><span>$block_schedule_head</span></b></a></dt>
-		<dt id="email" class="sub_back"><a  target="formframe" onclick="click_adv_action('email');"><b><span>$email_head</span></b></a></dt>
-		<% advanced_menu_ipmac() %>
-	</dl>	
-	</div>
+	<% advanced_menu_security() %>
 
 	<% advanced_menu_green_download() %>
-	<div id="admin_bt" class="advanced_white_close_button" onclick="open_or_close_sub('admin');"><b><span>$admin</span></b></div>
+	<div id="admin_bt" class="advanced_white_close_button" onclick="open_or_close_sub('admin');"><b><span id="admin">$admin</span></b></div>
 	<div id="admin_sub" class="sub_men"  style="display: none">
 	<dl>
-	       	<dt id="status" class="sub_back"><a  target="formframe" onclick="click_adv_action('status');"><b><span>$info_mark_head</span></b></a></dt>
-		<dt id="log" class="sub_back"><a  target="formframe" onclick="click_adv_action('log');"><b><span>$logs_head</span></b></a></dt>
-		<dt id="attached" class="sub_back"><a  target="formframe" onclick="click_adv_action('attached');"><b><span>$attach_device</span></b></a></dt>
-		<dt id="bak_set" class="sub_back"><a  target="formframe" onclick="click_adv_action('bak_set');"><b><span>$backup_head</span></b></a></dt>
-		<dt id="passwd" class="sub_back"><a  target="formframe" onclick="click_adv_action('passwd');"><b><span>$passwd_head</span></b></a></dt>
-		<dt id="upgrade" class="sub_back"><a  target="formframe" onclick="click_adv_action('upgrade');"><b><span>$firm_upgrade</span></b></a></dt>
-		<% advanced_sub_menu("mobile_upg", "sub_back", "mobile_upgrade") %>
+	       	<dt id="status" class="sub_back"><a  target="formframe" onclick="click_adv_action('status');"><b><span name="status" id="admin_status">$info_mark_head</span></b></a></dt>
+		<dt id="log" class="sub_back"><a  target="formframe" onclick="click_adv_action('log');"><b><span name="log" id="admin_logs">$logs_head</span></b></a></dt>
+		<dt id="attached" class="sub_back"><a  target="formframe" onclick="click_adv_action('attached');"><b><span name="attached" id="admin_attached">$attach_device</span></b></a></dt>
+		<dt id="bak_set" class="sub_back"><a  target="formframe" onclick="click_adv_action('bak_set');"><b><span name="bak_set" id="admin_bakup">$backup_head</span></b></a></dt>
+		<dt id="passwd" class="sub_back"><a  target="formframe" onclick="click_adv_action('passwd');"><b><span name="passwd" id="admin_setpassword">$passwd_head</span></b></a></dt>
+		<dt id="upgrade" class="sub_back"><a  target="formframe" onclick="click_adv_action('upgrade');"><b><span name="upgrade" id="admin_upgrade">$firm_upgrade</span></b></a></dt>
+		<% advanced_sub_menu("mobile_upg", "sub_back", "mobile_upgrade", "admin_mobileupg") %>
 	</dl>	
 	</div>	
 
-	<div id="advanced_bt" class="advanced_white_close_button" onclick="open_or_close_sub('advanced');"><b><span>$adv_setup</span></b></div>
+	<div id="advanced_bt" class="advanced_white_close_button" onclick="open_or_close_sub('advanced');"><b><span id="advanced">$adv_setup</span></b></div>
 	<div id="advanced_sub" class="sub_men"  style="display: none">
 	<dl>
-		<% advanced_sub_menu("plc", "sub_back", "plc_head") %>
-		<dt id="wladv" class="sub_back"><a  target="formframe" onclick="click_adv_action('wladv');"><b><span>$wlan_mark</span></b></a></dt>
-		<% advanced_sub_menu("wlap", "sub_back", "wlan_ap") %>
-		<script>
-		if(rae_flag == "3")
-		 	document.write('<dt id="rae" class="sub_back"><a  target="formframe" onclick="click_adv_action(\'rae\');"><b><span>$rae_header</span></b></a></dt>');
-		else if(rae_flag == "2")
-			document.write('<dt id="rae" class="sub_back"><a  target="formframe" onclick="click_adv_action(\'rae\');"><b><span>$qos_device10 / AP $wlan_mark_mode</span></b></a></dt>');
-		else if(rae_flag == "1")
-			document.write('<dt id="rae" class="sub_back"><a  target="formframe" onclick="click_adv_action(\'rae\');"><b><span>$qos_device10 / $rae_em</span></b></a></dt>');
-		</script>
-	<script>
-	if( bridge_flag == 1)
-		document.write('<dt id=\"wl_bridge\" class=\"sub_back\"><a  target=\"formframe\" onclick=\"click_adv_action(\'wl_bridge\');\"><b><span>$bridge_head</span></b></a></dt>');
-	</script>
-		<% advanced_sub_menu("wds", "long_name", "wds_head") %>
-		<dt id="forwarding_triggering" class="long_name"><a  target="formframe" onclick="click_adv_action('forwarding_triggering');"><b><span>$logs_port_forward_trigger</span></b></a></dt>
-		<dt id="dns" class="sub_back"><a  target="formframe" onclick="click_adv_action('dns');"><b><span>$ddns_head</span></b></a></dt>
-		<% advanced_sub_menu("vpn", "sub_back", "vpn_head")%>
-		<% advanced_sub_menu("pptp_vpn", "sub_back", "pptp_vpn_head")%>
-		<dt id="static" class="sub_back"><a  target="formframe" onclick="click_adv_action('static');"><b><span>$static_router_head</span></b></a></dt>
-		<dt id="remote" class="sub_back"><a target="formframe" onclick="click_adv_action('remote');"><b><span>$remote_head</span></b></a></dt>
-		<% advanced_sub_menu("usb", "sub_back", "usb_settings") %>
-		<dt id="upnp" class="sub_back"><a  target="formframe" onclick="click_adv_action('upnp');"><b><span>$upnp_head</span></b></a></dt>
-		<% advanced_sub_menu("ipv6", "sub_back", "ipv6_head") %>
-		<% advanced_sub_menu("sim", "sub_back", "sim_head") %>
-		<% advanced_sub_menu("traffic", "sub_back", "traffic_head") %>
-		<% advanced_sub_menu("vlan", "sub_back", "vlan_head") %>
-		<% advanced_sub_menu("led", "long_name", "led_head")%>
-		<% advanced_sub_menu("fbwifi", "sub_back", "facebook_head")%>
-		<% advanced_sub_menu("devname", "sub_back", "edit_devname")%>
-		<% advanced_sub_menu("priozone", "sub_back", "priority_zone")%>
-		<% advanced_sub_menu("devmode", "sub_back", "dsl_device_mode")%>
+		<% advanced_sub_menu("plc", "sub_back", "plc_head", "advanced_plc") %>
+		<% advanced_sub_menu("wladv", "sub_back","wlan_mark", "advanced_wireless", "adv_wireless_set") %>
+		<% advanced_sub_menu("wlap", "sub_back", "wlan_ap", "advanced_wirelessap") %>
+		<% advanced_sub_menu("rae", "sub_back", "rae_header", "advanced_rae") %>
+		<% advanced_sub_menu("wl_bridge", "sub_back", "bridge_head", "advanced_bridge") %>
+		<% advanced_sub_menu("wds", "long_name", "wds_head", "advanced_wds", "wds") %>
+		<% advanced_sub_menu("forwarding_triggering", "long_name", "logs_port_forward_trigger", "advanced_pf_pt", "forwarding_triggering") %>
+		<% advanced_sub_menu("dns", "sub_back", "ddns_head", "advanced_ddns", "dns") %>
+		<% advanced_sub_menu("vpn", "sub_back", "vpn_head", "Advanced_vpnservice")%>
+		<% advanced_sub_menu("pptp_vpn", "sub_back", "pptp_vpn_head", "advanced_pptpvpn")%>
+		<% advanced_sub_menu("static", "sub_back", "static_router_head", "advanced_static", "static") %>
+		<% advanced_sub_menu("remote", "sub_back", "remote_head", "advanced_remote", "remote") %>
+		<% advanced_sub_menu("usb_set", "sub_back", "usb_settings", "advanced_usb", "usb") %>
+		<% advanced_sub_menu("upnp", "sub_back", "upnp_head", "advanced_upnp", "upnp") %>
+		<% advanced_sub_menu("ipv6", "sub_back", "ipv6_head", "advanced_ipv6", "ipv6") %>
+		<% advanced_sub_menu("sim", "sub_back", "sim_head", "advanced_sim", "adv_wireless_set") %>
+		<% advanced_sub_menu("traffic", "sub_back", "traffic_head", "advanced_traffic", "traffic") %>
+		<% advanced_sub_menu("vlan", "sub_back", "vlan_head", "advanced_vlan") %>
+		<% advanced_sub_menu("led", "long_name", "led_head", "advanced_led")%>
+		<% advanced_sub_menu("fbwifi", "sub_back", "facebook_head", "advanced_fbwifi")%>
+		<% advanced_sub_menu("priozone", "sub_back", "priority_zone", "advanced_priozone")%>
+		<% advanced_sub_menu("devmode", "sub_back", "dsl_device_mode", "advanced_devmode")%>
 
 	</dl>	
 	</div>	

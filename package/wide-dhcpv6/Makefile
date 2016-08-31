@@ -5,27 +5,39 @@ PKG_NAME:=wide-dhcpv6
 PKG_VERSION:=20080615
 PKG_RELEASE:=2
 
-# PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-# PKG_SOURCE_URL:=$(DNI_DL_WEB) \
-# 	http://downloads.sourceforge.net/project/wide-dhcpv6/wide-dhcpv6/wide-dhcpv6-20080615
-# PKG_MD5SUM:=1011e165850fe40d3e332dad2bfd30b3
+ccflags-$(CONFIG_wide-dhcpv6_KERNEL_NO_IN6_PKTINFO) += -DKERNEL_NO_IN6_PKTINFO
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_getifaddrs) += -DNETGEAR_getifaddrs
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_lease_phase) += -DNETGEAR_lease_phase
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_reconfig) += -DNETGEAR_reconfig
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_user_class) += -DNETGEAR_user_class
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_select_server) += -DNETGEAR_select_server
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_dhcp6c_gw) += -DNETGEAR_dhcp6c_gw
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_dhcp6c_dad) += -DNETGEAR_dhcp6c_dad
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_dhcp6s_iata) += -DNETGEAR_dhcp6s_iata
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_script) += -DNETGEAR_script
+ccflags-$(CONFIG_wide-dhcpv6_NETGEAR_dhcp6c_inforeq) += -DNETGEAR_dhcp6c_inforeq
 
-PKG_GIT_TREEISH=wide-dhcpv6-dni87
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-EXTRA_CFLAGS += -DNETGEAR_getifaddrs -DNETGEAR_lease_phase \
-	-DNETGEAR_reconfig -DNETGEAR_user_class -DNETGEAR_select_server \
-	-DNETGEAR_dhcp6c_gw -DNETGEAR_dhcp6c_dad -DNETGEAR_dhcp6s_iata \
-	-DNETGEAR_script -DNETGEAR_dhcp6c_inforeq -I./missing
+EXTRA_CFLAGS += $(ccflags-y) -I./missing
 CONFIGURE_ARGS += --sysconfdir=/etc --with-localdbdir=/tmp
+
+define Package/$(PKG_NAME)
+  SECTION:=ipv6
+  CATEGORY:=IPv6
+  TITLE:=WIDE-DHCPv6
+  DEPENDS:=+kmod-ipv6
+  URL:=https://sourceforge.net/projects/wide-dhcpv6/
+  MENU:=1
+endef
 
 define Package/wide-dhcpv6/Default
   SECTION:=ipv6
   CATEGORY:=IPv6
   TITLE:=WIDE-DHCPv6
-  SUBMENU:=wide-dhcpv6
-  DEPENDS:=+kmod-ipv6
+  DEPENDS:=+kmod-ipv6 wide-dhcpv6
   URL:=https://sourceforge.net/projects/wide-dhcpv6/
 endef
 
@@ -81,6 +93,8 @@ define Package/wide-dhcpv6-control/description
 	This package installs the client and server control utility.
 endef
 
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
 define Build/Prepare
 	$(CP) $(GIT_HOME)/wide-dhcpv6.git/* $(PKG_BUILD_DIR)/
 endef
@@ -99,7 +113,7 @@ define Package/wide-dhcpv6-client/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dhcp6c $(1)/usr/sbin/
-	sed 's/wanifname/$(subst ",,$(CONFIG_WAN_IFNAME))/g' ./files/dhcp6c.conf > $(1)/etc/dhcp6c.conf
+	$(INSTALL_BIN) ./files/dhcp6c.conf $(1)/etc/
 	$(INSTALL_BIN) ./files/wide-script $(1)/etc/
 endef
 
@@ -122,6 +136,7 @@ define Package/wide-dhcpv6-control/install
 	$(INSTALL_BIN) ./files/dhcp6sctlkey $(1)/etc/
 endef
 
+$(eval $(call BuildPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,wide-dhcpv6-client))
 $(eval $(call BuildPackage,wide-dhcpv6-server))
 $(eval $(call BuildPackage,wide-dhcpv6-relay))

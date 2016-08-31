@@ -4,13 +4,13 @@
 <div class="fix_button">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR><TD colspan=2 align=center>
-	<input class="common_bt" type="button" name="refresh" value=" $refresh_mark " onClick='location.href="USB_approved.htm";'> &nbsp;&nbsp;
+	<input class="common_bt" type="button" name="refresh" id="refresh" value=" $refresh_mark " onClick='location.href="USB_approved.htm";'> &nbsp;&nbsp;
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-    document.write('<input class="apply_bt" type="button" name="apply" value=" $apply_mark " onClick="click_apply();">');
+    document.write('<input class="apply_bt" type="button" name="apply" id="apply" value=" $apply_mark " onClick="click_apply();">');
 else
-	document.write('<input class="apply1_bt" type="button" name="apply" value=" $apply_mark " disabled>');
+	document.write('<input class="apply1_bt" type="button" name="apply" id="apply" value=" $apply_mark " disabled>');
 </script>
 </TD></TR>
 </TABLE>
@@ -75,6 +75,7 @@ function click_add_device()
 		alert("$choose_device");
 		return false;
 	}
+	form.submit();
 	return true;
 }
 function click_apply()
@@ -94,11 +95,11 @@ function click_apply()
 </script>
 <input type="hidden" name="enableUSB">
 <input type="hidden" name="select_approved_item">
-<TR><TD colspan=2><input type="checkbox" name="allow_approved">$allow_approved_device</TD></TR>
+<TR><TD colspan=2><input type="checkbox" name="allow_approved" id="allow_approved">$allow_approved_device</TD></TR>
 <TR><TD colspan=2>&nbsp;</TD></TR>
 <TR><TD colspan=2><b>$approved_usb_devices</b></TD></TR>
 <TR><TD colspan=2>
-	<TABLE class=tables id="app_table" border ="0" cellpadding ="2" cellspacing ="0" width="100%">
+	<TABLE class=tables id="approved_device" border ="0" cellpadding ="2" cellspacing ="0" width="100%">
 	<TR class=table_header>
 		<TD nowrap align="center" width="20%"><span class="thead">&nbsp;</span></TD>
 		<TD nowrap align="center"><span class="thead">$volume_name</span></TD>
@@ -111,16 +112,16 @@ function click_apply()
 </TR>
 <script>
 if( master == "admin" )
-    document.write('<TR><TD colspan=2 align=left><input class="delete_bt" type="button" name="delete" value=" $delete_mark " onClick="delete_app();"></TD></TR>');
+    document.write('<TR><TD colspan=2 align=left><input class="delete_bt" type="button" name="delete" id="delete" value=" $delete_mark " onClick="delete_app();"></TD></TR>');
 else
-	document.write('<TR><TD colspan=2 align=left><input class="delete1_bt" type="button" name="delete" value=" $delete_mark " disabled></TD></TR>');
+	document.write('<TR><TD colspan=2 align=left><input class="delete1_bt" type="button" name="delete" id="delete" value=" $delete_mark " disabled></TD></TR>');
 </script>
 <TR><TD colspan=2>&nbsp;</TD></TR>
 <TR><TD colspan=2>&nbsp;</TD></TR>
 
 <TR><TD colspan=2><b>$available_usb_devices</b></TD></TR>
 <TR><TD colspan=2>
-	<TABLE class=tables id="ava_table" border ="0" cellpadding ="2" cellspacing ="0" width="100%">
+	<TABLE class=tables id="available_device" border ="0" cellpadding ="2" cellspacing ="0" width="100%">
 	<TR class=table_header>
 		<TD nowrap align="center" width="20%"><span class="thead">&nbsp;</span></TD>
 		<TD nowrap align="center"><span class="thead">$volume_name</span></TD>
@@ -132,9 +133,9 @@ else
 </TD></TR>
 <script>
 if( master == "admin" )
-    document.write('<TR><TD colspan=2 align=left><input class="add_bt" type="submit" name="add" value="  $add_mark  " onClick="return click_add_device();"></TD></TR>');
+    document.write('<TR><TD colspan=2 align=left><input class="add_bt" type="button" name="add" id="add" value="  $add_mark  " onClick="return click_add_device();"></TD></TR>');
 else
-	document.write('<TR><TD colspan=2 align=left><input class="add_gray_bt" type="button" name="add" value="  $add_mark  " disabled></TD></TR>');
+	document.write('<TR><TD colspan=2 align=left><input class="add_gray_bt" type="button" name="add" id="add" value="  $add_mark  " disabled></TD></TR>');
 </script>
 <TR><TD colspan=2>&nbsp;</TD></TR>
 </TABLE>

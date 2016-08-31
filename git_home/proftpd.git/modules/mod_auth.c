@@ -36,6 +36,7 @@
 #endif /* HAVE_REGEX_H */
 
 extern pid_t mpid;
+extern char *lan_ifname;
 
 module auth_module;
 
@@ -687,8 +688,8 @@ static int net_ftp_access(char *fromip)
   struct in_addr lan_ip;
   struct in_addr lan_mask;
 
-  lan_ip = get_ipaddr(LAN_IFNAME);
-  lan_mask = get_netmask(LAN_IFNAME);
+  lan_ip = get_ipaddr(lan_ifname);
+  lan_mask = get_netmask(lan_ifname);
 
   return (inet_addr(fromip) & lan_mask.s_addr) != (lan_ip.s_addr & lan_mask.s_addr);
 }

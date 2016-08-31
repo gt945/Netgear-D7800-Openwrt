@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. /dni-gconfig
+
+ip=$(config get lan_ipaddr)
+name=$(config get netbiosname)
+if [ "x$name" = "x" ]; then
+	name=$(config get Device_name)
+	[ "x$name" = "x" ] && name=${DGC_PRODUCT_NAME}
+fi
+
+[ "x$ip" = "x" ] && ip=192.168.1.1
+cat <<EOF >/tmp/hosts
+127.0.0.1 localhost
+$ip $name
+EOF

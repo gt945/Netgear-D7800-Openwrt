@@ -1,10 +1,3 @@
-config MINIDLNA_GIT_TREEISH
-	string
-	prompt "treeish of minidlna git repository"
-	default "HEAD"
-	help
-	  input the treeish of minidlna git repository which you want to build
-
 config MINIDLNA_MODELNAME
 	string
 	prompt "Model name of the UPnP MediaServer in router"

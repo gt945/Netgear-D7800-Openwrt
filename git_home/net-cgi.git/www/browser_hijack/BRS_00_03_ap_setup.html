@@ -32,6 +32,7 @@ function initPage()
 </script>
 </head>
 <body>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 <% form_submit("apply", "BRS_04_applySettings.html", "wl_ap_mode")  %>
 <script language="javascript" type="text/javascript">

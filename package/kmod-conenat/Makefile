@@ -13,7 +13,6 @@ PKG_NAME:=kmod-conenat
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-conenat-v3.4-dni1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/conenat
   FILES:= \
 	$(PKG_BUILD_DIR)/ipt_CONENAT.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,ipt_CONENAT)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-conenat.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 #ifeq ($(BOARD),brcm)
 #BUILDFLAGS := -DBROADCOM -DBCMDRIVER -I$(LINUX_DIR)/arch/mips/bcm947xx/include

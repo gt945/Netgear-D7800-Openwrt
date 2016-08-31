@@ -1,5 +1,5 @@
 <% http_header("style/basic.css", "funcs.js", "basic.js", "top.js" ) %>
-<body onload="loadvalue();" onResize="change_size();">
+<body onload="loadvalue();" onResize="change_size(); setHeight_for_IE6();">
 <!--[if IE 6]>
 <script type="text/javascript">
 document.execCommand("BackgroundImageCache", false, true);
@@ -8,8 +8,8 @@ document.execCommand("BackgroundImageCache", false, true);
 <script>
 var timeoutfunc;
 var enable_action=1;
-var enabled_wds=<% wds_enable() %>;
-var enabled_wps=<% wps_menu() %>;
+var enabled_wds="<% wds_enable() %>";
+var enabled_wps="<% wps_menu() %>";
 var type="basic";
 var charcount=0;
 var file_version=0;
@@ -80,6 +80,7 @@ var pre_url = document.referrer;
 var access_guest_manage = "<% cfg_get("access_guest_manage") %>";
 <% cfg_set("access_guest_manage","0") %>;
 
+var master = "<% cfg_get("http_loginname") %>"
 var lang_select = "<% cfg_get("Language_Selection") %>";
 var browser_lang = "<% get_browser_language() %>";
 var bgn_pr_wds_support_wpa=0;
@@ -130,8 +131,11 @@ function loadvalue()
 	}
 	else if( auto_change_lang == 0 )/* if auto_change_lang == 0, it will show basic home page, else it will go to lang_check.html */
 		click_action("home");
+	else if( master == "guest")
+		click_action("home");
 	if(window.location.href.indexOf("qq") != -1)
 		click_action("internet");
+	setHeight_for_IE6();
 }
 
 	
@@ -145,14 +149,10 @@ function loadvalue()
 
 <div id="middle">
 <div id="menu" class="menu_common_words"><!--fix bug 30075-->
-	<div id="home" class="basic_button_purple" onclick="click_action('home');"><b><span>$hom</span></b></div>
+	<div id="home" class="basic_button_purple" onclick="click_action('home');"><b><span id="basic_home">$hom</span></b></div>
 	<% basic_menu_3g()%>
-	<div id="wireless" class="basic_button" onclick="click_action('wireless');"><b><span>$wireless</span></b></div>
-	<div id="attached" class="basic_button" onclick="click_action('attached');"><b><span>$attach_device</span></b></div>
-	<script>
-	if(top.have_dynamic_qos == 1)
-		document.write("<div id=intqos class=basic_button onclick=\"click_action('intqos');\"><b><span>$home_net</span></b></div>");
-	</script>
+	<% basic_menu_wifi() %>
+	<div id="attached" class="basic_button" onclick="click_action('attached');"><b><span id="basic_attached">$attach_device</span></b></div>
 	<% basic_menu() %>
 </div>
 <div id="formframe_div">

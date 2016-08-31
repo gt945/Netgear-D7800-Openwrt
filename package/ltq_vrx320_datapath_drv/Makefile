@@ -98,7 +98,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) ./files/dni_scan_isp_info.sh $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/dni_dsl_debug_advanced.sh $(1)/usr/sbin/
 	$(INSTALL_BIN) ./files/dni_dsl_log_upload.sh $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/dsl.sh $(1)/lib/cfgmgr/
+	$(INSTALL_BIN) ./files/dsl_prepare.sh $(1)/lib/cfgmgr/
+	$(INSTALL_BIN) ./files/dsl.sh $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/dsl_time.sh $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/dsl_log_zip.sh $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/xdslrc.sh $(1)/etc/init.d/

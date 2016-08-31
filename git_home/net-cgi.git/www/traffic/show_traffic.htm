@@ -28,7 +28,7 @@ function loadvalue()
 {
 	var form=document.forms[0];
 
-	form.timeset.value=timereset;
+	form.interval.value=timereset;
 	if(warning_value!="" && (warning_limit=="1" || warning_left=="1"))
 		alert(warning_value);
 }
@@ -99,13 +99,13 @@ else
 <TR> 
 	<TD nowrap>
 		<B>$statistics_poll :</B>
-		<INPUT TYPE="TEXT" NAME="timeset" SIZE="5" MAXLENGTH="5" onKeyPress="return getkey('num', event)"> $traffic_secs
+		<input type="text" name="interval" id="interval" size="5" maxlength="5" onKeyPress="return getkey('num', event)"> $traffic_secs
 	</TD>
 	<script>
 	if( master == "admin" )
-		document.write('<TD nowrap><input class="long_common_bt" TYPE="submit" NAME="settime" VALUE="$statistics_set" WIDTH="80" onClick="return reset_time();"></TD>');
+		document.write('<TD nowrap><input class="long_common_bt" type="button" name="SetIntvl" id="set_intvl" VALUE="$statistics_set" WIDTH="80" onClick="return reset_time();"></TD>');
 	else
-		document.write('<TD nowrap><input class="long_common_gray_bt" TYPE="submit" NAME="settime" VALUE="$statistics_set" WIDTH="80" disabled></TD>');
+		document.write('<TD nowrap><input class="long_common_gray_bt" type="button" name="SetIntvl" id="set_intvl" VALUE="$statistics_set" WIDTH="80" disabled></TD>');
 	</script>
 </TR>
 </TABLE>

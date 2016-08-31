@@ -28,9 +28,9 @@ $bluebar
 <TD nowrap colspan=2 align=center>
 <script>
 if(master == "admin")
-	document.write('<input class="common_key_bt" type="BUTTON" name="Backup" value="$backup_mark" onClick="click_backup()">');
+	document.write('<input class="common_key_bt" type="button" id="backup" name="Backup" value="$backup_mark" onClick="click_backup()">');
 else
-	document.write('<input class="common1_key_bt" type="BUTTON" name="Backup" value="$backup_mark" disabled>');
+	document.write('<input class="common1_key_bt" type="button" id="backup" name="Backup" value="$backup_mark" disabled>');
 </script></TD>
 </TR>
 $bluebar
@@ -41,15 +41,17 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap>
-	<input type="FILE" name="mtenRestoreCfg" value="" size="40" maxlength="128">
+	<input name="mtenRestoreCfg" type="file" size="32" id="restore_cfg" maxlength="1024" class="type-file-file" onchange="this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);" contentEditable=false onkeydown="return false;" onbeforeeditfocus="return false;" onpaste="return false;" onmouseover="this.style.cursor='pointer';" />
+	<input type="text" name="upfile" size="20" maxlength="1024" readonly />&nbsp;
+	<input type="button" value="$browse_mark"  id="browse" name="Browse" class="middle_common_bt" onclick="if(IE_version()!=6){this.form.restore_cfg.click();}" onmouseover="this.style.cursor='pointer';" />
 	</TD>
 </TR>
 <TR>
 <script>
 if( master == "admin" )
-	document.write('<TD nowrap colspan=2 align=center><input class="common_key_bt" type="submit" name="mtenRestore" value="$restore_mark" onClick="check_restore();return false;">	</TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="common_key_bt" type="button" name="mtenRestore" id="restore" value="$restore_mark" onClick="check_restore();return false;">	</TD>');
 else
-	document.write('<TD nowrap colspan=2 align=center><input class="common1_key_bt" type="submit" name="mtenRestore" value="$restore_mark" disabled></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="common1_key_bt" type="button" name="mtenRestore" id="restore" value="$restore_mark" disabled></TD>');
 	
 </script>
 	
@@ -65,9 +67,9 @@ $bluebar
 	<TD nowrap colspan=2 align=center>
 <script>
 	if(master == "admin")
-		document.write('<input class="common_key_bt" type="button" name="defaults" value="$erase_mark" onClick="location.href=\'BAK_factory.htm\';">');
+		document.write('<input class="common_key_bt" type="button" name="defaults" id="erase" value="$erase_mark" onClick="location.href=\'BAK_factory.htm\';">');
 	else
-		document.write('<input class="common1_key_bt" type="button" name="defaults" value="$erase_mark" disabled>');
+		document.write('<input class="common1_key_bt" type="button" name="defaults" id="erase" value="$erase_mark" disabled>');
 </script>
 	</TD>
 </TR>

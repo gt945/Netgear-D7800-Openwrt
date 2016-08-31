@@ -1,0 +1,13 @@
+diff --git a/sbin/update-wifi b/sbin/update-wifi
+index b942a66..f0dc36f 100755
+--- a/sbin/update-wifi
++++ b/sbin/update-wifi
+@@ -618,7 +618,7 @@ if [ "$_tmp_wla_onoff" = "on" ]; then
+     generate_ssid "wla"
+     generate_hide_ssid "wla"
+     generate_puren "wla"
+-    generate_doth "wla"
++    #generate_doth "wla"
+     generate_disablecoext "wla"
+     generate_security "wla"
+     generate_protocol_setting "wla"

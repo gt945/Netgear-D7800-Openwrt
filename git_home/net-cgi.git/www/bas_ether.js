@@ -493,6 +493,7 @@ function check_ether(cf,check)
 	cf.ether_subnet.value = address_parseInt(cf.ether_subnet.value);
 	cf.ether_gateway.value = address_parseInt(cf.ether_gateway.value);
 	parent.ether_post_flag = 1;
+	cf.submit();
 	return true;
 }
 

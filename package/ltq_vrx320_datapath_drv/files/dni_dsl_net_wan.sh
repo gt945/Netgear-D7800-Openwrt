@@ -1,5 +1,5 @@
 #!/bin/sh
-. /lib/cfgmgr/dsl.sh
+. /lib/cfgmgr/dsl_prepare.sh
 
 #1. Call lantiq_dsl_wan.sh to configure/start WAN connection
 #2. Do DNI WAN process
@@ -9,7 +9,6 @@ LOCK_FILE=/tmp/.dni_dsl_net_wan_lock
 CONFIG=/bin/config
 DSL_WAN=/usr/sbin/lantiq_dsl_wan.sh
 DSL_WAN2=/usr/sbin/lantiq_dsl_wan2.sh
-FIREWALL="/www/cgi-bin/firewall.sh"
 
 lock(){
 if [ -f $LOCK_FILE ]; then
@@ -30,21 +29,6 @@ help()
 	echo "Usage:"
 	echo "$0 configure_wan_mode|start|stop"
 }
-
-check_qca_nss() {
-	proto=$1
-	if [ "$proto" = "ipoa" ] || [ "$($CONFIG get qos_endis_on)" = "1" ] ; then
-		/etc/init.d/qca-nss-ecm stop &
-	else
-		/etc/init.d/qca-nss-ecm stop
-		pppmod=`lsmod |grep pppoe`
-		[ "x$pppmod" = "x" ] && insmod pppox && insmod pppoe
-		pppmod=`lsmod |grep pppoatm`
-		[ "x$pppmod" = "x" ] && insmod pppoatm
-		/etc/init.d/qca-nss-ecm start
-	fi
-}
-
 
 configure_wan_mode() # $1: adsl/vdsl
 {
@@ -252,13 +236,6 @@ dsl_start()
 	proto=`$CONFIG get wan_proto`
 
 	prepare_dsl_scr_and_restart_dsl_link_if_needed
-	/etc/init.d/dni-qos start
-
-	# Restart dnsmasq
-	/etc/init.d/dnsmasq stop
-	/etc/init.d/dnsmasq start
-
-	check_qca_nss $proto
 
 	$CONFIG set dsl_need_double_vpi=0
 
@@ -306,8 +283,8 @@ dsl_start()
 		if [ "x$($CONFIG get dsl_wan2_bridge_mode)" != "x1" ]; then
 			real_wan2_ifname_setting
 			$CONFIG set wan_endis_igmp=1
-			/sbin/cmdigmp stop
-			/sbin/cmdigmp start &
+			cmd_igmp stop
+			cmd_igmp start &
 		fi
 	fi
 
@@ -326,10 +303,6 @@ dsl_start()
 	$CONFIG commit
 
 	[ "$($CONFIG get device_mode)" = "modem" ] && return
-	### DNI stuff ###
-	/etc/init.d/upnp start
-	/etc/init.d/ddns start
-#	/etc/init.d/traffic_meter start
 }
 
 dsl_stop()
@@ -342,39 +315,6 @@ dsl_stop()
 	#WAN2 stop should be always excuted, if no WAN2, stop_connection will return straightly.
 	$DSL_WAN2 stop_connection
 	$CONFIG set real_wan2_ifname=
-
-	### DNI stuff ###
-
-#	/etc/init.d/traffic_meter stop
-	/etc/init.d/ddns stop
-	/etc/init.d/upnp stop
-
-	# log for static mode when wan disconnects.
-	local wan_proto=$($CONFIG get wan_proto)
-	[ "x$wan_proto" = "xstatic" ] && /usr/bin/logger "[Internet disconnected]"
-	/sbin/ledcontrol -n wan -c amber -s on
-
-	/etc/init.d/igmpproxy stop
-	/usr/bin/killall -SIGINT ripd
-	/sbin/cmdroute restart         # Restart static route for LAN
-	$FIREWALL stop
-
-	killall bpalogin
-	# Because the ipv6 pppoe may be connecting.
-	local ipv4_pppd=`ps | grep "pppd call dial-provider updetach" | grep -v "grep" |awk '{print $1}'`
-	if [ "x$ipv4_pppd" != "x" ]; then
-		/bin/kill -SIGHUP $ipv4_pppd
-		/bin/kill $ipv4_pppd
-	fi
-
-	killall -SIGUSR2 udhcpc; killall udhcpc; killall udhcpc; sleep 1
-	/sbin/rmmod pptp; /sbin/rmmod pppoe; /sbin/rmmod pppox; sleep 2
-	/sbin/rmmod ppp_generic; /sbin/rmmod slhc
-
-	# Clear dns in /tmp/resolv.conf
-	echo "" > /tmp/resolv.conf; rm /etc/ppp/pppoe2-domain.conf; rm /etc/ppp/enable_ppp1
-
-	/etc/init.d/dni-qos stop
 }
 
 lock

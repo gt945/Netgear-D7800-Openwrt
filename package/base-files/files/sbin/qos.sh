@@ -1,9 +1,9 @@
 #!/bin/sh
-TC="/usr/sbin/tc"
-IPTABLES="/usr/sbin/iptables"
-NVRAM="/bin/config"
-ECHO="/bin/echo"
-WAN_IF=brwan
+TC="$(which tc)"
+IPTABLES="$(which iptables)"
+NVRAM="$(which config)"
+ECHO="$(which echo)"
+WAN_IF="brwan"
 WAN_PROTO="$($NVRAM get wan_proto)"
 FILTER_ADD="$TC filter add dev $WAN_IF"
 UPRATE="$($NVRAM get qos_uprate)"

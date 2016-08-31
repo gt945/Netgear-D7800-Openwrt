@@ -166,7 +166,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=true;
 		document.getElementById("download_save_path").style.color="gray";
 		form_1.green_link_basic.disabled=true;
-		form_1.green_link_basic.className = "edit_gray_bt";
+		form_1.green_link_basic.className = "long_edit_gray_bt";
 		document.getElementById("type").style.color="gray";
 		document.getElementById("pc").style.color="gray";
 		form_1.download_type_1.disabled=true;
@@ -181,8 +181,8 @@ function loadvalue()
 		form_2.reset.disabled=true;
 		form_1.Add.className = "add_gray_bt";
 		form_2.Add.className = "add_gray_bt";
-		form_1.reset.className = "delete_gray_bt";
-		form_2.reset.className = "delete_gray_bt";
+		form_1.reset.className = "long_delete_gray_bt";
+		form_2.reset.className = "long_delete_gray_bt";
 	}
 	else if(disk_num !=0 && green_download_enable == "0")
 	{
@@ -194,7 +194,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		form_1.green_link_basic.disabled=false;
-		form_1.green_link_basic.className = "edit_bt";
+		form_1.green_link_basic.className = "long_edit_bt";
 		document.getElementById("type").style.color="gray";
 		document.getElementById("pc").style.color="gray";
 		form_1.download_type_1.disabled=true;
@@ -209,8 +209,8 @@ function loadvalue()
 		form_2.reset.disabled=true;
 		form_1.Add.className = "add_gray_bt";
 		form_2.Add.className = "add_gray_bt";
-		form_1.reset.className = "delete_gray_bt";
-		form_2.reset.className = "delete_gray_bt";
+		form_1.reset.className = "long_delete_gray_bt";
+		form_2.reset.className = "long_delete_gray_bt";
 	}
 	else
 	{
@@ -222,7 +222,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		form_1.green_link_basic.disabled=false;
-		form_1.green_link_basic.className = "edit_bt";
+		form_1.green_link_basic.className = "long_edit_bt";
 		document.getElementById("type").style.color="black";
 		document.getElementById("pc").style.color="black";
 		form_1.download_type_1.disabled=false;
@@ -237,8 +237,8 @@ function loadvalue()
                 form_2.reset.disabled=false;
                 form_1.Add.className = "add_bt";
                 form_2.Add.className = "add_bt";
-                form_1.reset.className = "cancel_bt";
-                form_2.reset.className = "cancel_bt";
+                form_1.reset.className = "long_delete_bt";
+                form_2.reset.className = "long_delete_bt";
 		
 	}
 }
@@ -277,7 +277,7 @@ function change_downlaod_type(obj)
 		</script>
 	</TD>
 	<TD nowrap align="center">
-		<input class="edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
+		<input class="long_edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
 	</TD>
 </TR>
 $bluebar
@@ -314,7 +314,7 @@ $bluebar
         <TR>
                 <TD nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_item();">&nbsp;&nbsp;
-                <input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
+                <input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
                 </TD>
         </TR>
 </TABLE>
@@ -340,7 +340,7 @@ $bluebar
         <TR>
                 <TD nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_magnet();">&nbsp;&nbsp;
-                <input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
+                <input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
                 </TD>
         </TR>
 </TABLE>
@@ -368,7 +368,7 @@ $bluebar
         <TR>
                 <TD nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_BT();">&nbsp;&nbsp;
-		<input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
+		<input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_BT_item.htm";'>
                 </TD>
         </TR>
 </TABLE>

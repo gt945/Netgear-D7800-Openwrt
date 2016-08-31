@@ -15,7 +15,8 @@ function loadvalue()
 {
 	var country = "<% cfg_get("dsl_wan_country") %>";
 	var isp = "<% cfg_get("dsl_wan_isp") %>";
-	if(country == "UK" && isp == "Sky")
+	var  dsl_port_status = "<% cat_file("/tmp/dsl_port_status") %>";	
+	if(country == "UK" && isp == "Sky" && dsl_port_status == "1")
 		this.location.href = "BRS_03A_B_dhcp_uk_sky.html";
 	else
 		this.location.href = "BRS_dsl_type_detc.html";

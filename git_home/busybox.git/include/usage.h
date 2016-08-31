@@ -539,6 +539,15 @@
 #define deluser_full_usage \
        "Delete user USER from the system"
 
+#define devmem_trivial_usage \
+	"ADDRESS [WIDTH [VALUE]]"
+
+#define devmem_full_usage "\n\n" \
+       "Read/write from physical address\n" \
+     "\n	ADDRESS	Address to act upon" \
+     "\n	WIDTH	Width (8/16/...)" \
+     "\n	VALUE	Data to be written" \
+
 #define devfsd_trivial_usage \
        "mntpnt [-v]" \
 	USE_DEVFSD_FG_NP("[-fg][-np]" )

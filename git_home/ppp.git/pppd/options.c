@@ -119,9 +119,12 @@ int maxoctets_dir = 0;       /* default - sum of traffic */
 int maxoctets_timeout = 1;   /* default 1 second */ 
 #endif
 
-#ifdef DNI_DETECT_PPP
-bool do_detect;
-#endif
+/* DNI self define*/
+char	*ip_cflt_cmd = NULL;
+char	*firewall_cmd = NULL;
+char	*dns_setup_cmd = NULL;
+char	*wan_eth_if = NULL;
+bool 	do_detect = 0;
 
 extern option_t auth_options[];
 extern struct stat devstat;
@@ -301,7 +304,7 @@ option_t general_options[] = {
       OPT_PRIV|OPT_STATIC, NULL, MAXPATHLEN },
     { "no-replace-dns", o_bool, &no_replace_dns,
       "Don't replace the DNS that saved in resolv.conf", 1 },
-       
+
 #ifdef HAVE_MULTILINK
     { "multilink", o_bool, &multilink,
       "Enable multilink operation", OPT_PRIO | 1 },
@@ -350,10 +353,16 @@ option_t general_options[] = {
       "Check for traffic limit every N seconds", OPT_PRIO | OPT_LLIMIT | 1 },
 #endif
 
-#ifdef DNI_DETECT_PPP
+	{ "dni_ip_conflict_cmd", o_string, &ip_cflt_cmd,
+		"IP conflict cmd" },
+	{ "dni_firewall_cmd", o_string, &firewall_cmd,
+		"Firewall start cmd" },
+	{ "dni_dns_setup_cmd", o_string, &dns_setup_cmd,
+		"DNS setup cmd" },
+	{ "wan_eth_if", o_string, &wan_eth_if,
+		"WAN Ethernet interface name" },
 	{ "do_detect", o_bool, &do_detect,
-	  "do ppp server detect, for PPPoA", OPT_INITONLY | 1 },
-#endif
+		"do ppp server detect, for PPPoA", OPT_INITONLY | 1 },
 
     { NULL }
 };

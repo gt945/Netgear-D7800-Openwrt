@@ -14,6 +14,10 @@ CUSTOMER:=dni
 LINUX_TREEISH:=linux-v3.4-dni1
 NETFILTER_TREEISH:=netfilter-v3.4-dni1
 
+ifeq ($(CONFIG_DGC_PRODUCT_NAME),"D7800")
+	KERNEL_PATCH_SUFFIX:=d7800
+endif
+
 CFLAGS:=-Os -pipe -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=softfp
 
 include $(INCLUDE_DIR)/target.mk

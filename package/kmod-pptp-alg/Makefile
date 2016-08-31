@@ -14,11 +14,9 @@ PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 
-PKG_GIT_TREEISH:=alg-pptp-dni7
-
 include $(INCLUDE_DIR)/package.mk
 
-define KernelPackage/pptp-alg
+define KernelPackage/pptp-alg-dni
   SUBMENU:=Other modules
   TITLE:=PPTP ALG linux kernel module
   VERSION:=$(LINUX_VERSION)-$(PKG_RELEASE)
@@ -28,11 +26,14 @@ define KernelPackage/pptp-alg
 	$(PKG_BUILD_DIR)/nf_conntrack_proto_gre.$(LINUX_KMOD_SUFFIX) \
 	$(PKG_BUILD_DIR)/nf_nat_proto_gre.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,nf_nat_proto_gre nf_conntrack_proto_gre nf_conntrack_pptp nf_nat_pptp )
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-pptp.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 #ifeq ($(BOARD),brcm)
 #BUILDFLAGS := -DBROADCOM -DBCMDRIVER -I$(LINUX_DIR)/arch/mips/bcm947xx/include
@@ -51,4 +52,4 @@ define Build/Compile
 		modules
 endef
 
-$(eval $(call KernelPackage,pptp-alg))
+$(eval $(call KernelPackage,pptp-alg-dni))

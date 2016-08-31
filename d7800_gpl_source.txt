@@ -133,6 +133,11 @@ User application
         http://busybox.net/downloads/
         GPL
         Source Code
+[dnitoolbox]
+		dnitoolbox
+		DNI
+		DNI
+		Binary	
 [dni_enet]
 		dni_enet
 		DNI
@@ -181,6 +186,11 @@ User application
 [ebtables]
         ebtables-v2.0.9-1
         http://ebtables.sourceforge.net
+        GPL
+        Source Code
+[amule]
+        aMule-2.3.1.tar.bz2
+        @SF/amule
         GPL
         Source Code
 [ethtool]
@@ -328,6 +338,16 @@ User application
         http://www.jblache.org/projects/daapd/
         GPL
         Source Code
+[libcryptoxx]
+        libcryptoxx-5.6.0
+        http://ftp.de.debian.org/debian/pool/main/libc/libcrypto++/
+        GPL
+        Source Code
+[libcurl]
+        curl-7.23.1
+        http://curl.haxx.se/download/
+        GPL
+        Source Code
 [libdaemon]
         libdaemon-0.14
         http://0pointer.de/lennart/projects/libdaemon/
@@ -441,6 +461,11 @@ User application
 [libvorbis]
         libvorbis-1.2.0
         http://www.xiph.org
+        GPL
+        Source Code
+[libwxwidgets]
+        wxWidgets-2.8.12
+        @SF/wxwindows
         GPL
         Source Code
 [libxml2]
@@ -718,6 +743,11 @@ User application
         https://www.codeaurora.org/cgit/quic/qsdk/oss
         Dual BSD/GPL
         Source Code
+[qca-nss-fw]
+	qca-nss-fw
+	Atheros
+	Atheros
+	Binary
 [qca-nss-gmac]
         qca-nss-gmac
         https://www.codeaurora.org/cgit/quic/qsdk/oss
@@ -893,6 +923,11 @@ User application
         DNI
         DNI
         Binary
+[transmission]
+        transmission-2.61
+        http://mirrors.m0k.org/transmission/files
+        GPL
+        Source Code
 [tresbar]
         tresbar
         Atheros
@@ -938,6 +973,11 @@ User application
         DNI
         DNI
         Binary
+[wget]
+        wget-1.13.4
+        downloads.openwrt.org/sources/wget-1.13.4.tar.bz2
+        GPL
+        Source Code
 [wide-dhcpv6]
         wide-dhcpv6-20080615
         https://sourceforge.net/projects/wide-dhcpv6

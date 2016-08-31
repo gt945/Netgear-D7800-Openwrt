@@ -23,7 +23,7 @@ define Package/$(PKG_NAME)
   URL:=http://www.qca.qualcomm.com
   MAINTAINER:=Qualcomm Atheros
   TITLE:=QCA Spectral Analysis
-  DEPENDS:=kmod-qca-wifi-10.4 +libpthread
+  DEPENDS:=kmod-qca-wifi +libpthread
 endef
 
 define KernelPackage/$(PKG_NAME)/config
@@ -40,7 +40,6 @@ MAKEOPTS+= \
 	QSDK_SPECTRAL=1
 
 define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) $(GIT_HOME)/qca-spectral.git/* $(PKG_BUILD_DIR)/
 endef
 

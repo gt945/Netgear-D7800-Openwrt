@@ -12,19 +12,19 @@ if [ "$wan6_type" = "autoDetect" ]; then
 		;;
 		"6rd Tunnel")
 			export w6_type="6rd"
-			;;
+		;;
 		"DHCP")
 			export w6_type="dhcp"
 		;;
-                "Address/Prefix Not Available")
-                        export w6_type="dhcp"
-                ;;
-                "Address Not Available")
-                        export w6_type="dhcp"
-                ;;
-                "Prefix Not Available")
-                        export w6_type="dhcp"
-                ;;
+		"Address/Prefix Not Available")
+			export w6_type="dhcp"
+		;;
+		"Address Not Available")
+			export w6_type="dhcp"
+		;;
+		"Prefix Not Available")
+			export w6_type="dhcp"
+		;;
 		"Auto Config")
 		        export w6_type="autoConfig"
 		;;							
@@ -56,66 +56,63 @@ radvd_write_config() {
 	printf '\tAdvCurHopLimit 64;\n'
 	printf '\tMinRtrAdvInterval 198;\n'
 	printf '\tMaxRtrAdvInterval 600;\n'
+	printf '\tAdvOtherConfigFlag on;\n'
 	printf '\tAdvDefaultLifetime 1800;\n'
 	printf '\tAdvReachableTime 0;\n'
 	printf '\tAdvRetransTimer 0;\n'
 	printf '\tAdvDefaultPreference low;\n'
 	printf '\tAdvHomeAgentFlag off;\n'
 	if [ "$DHCPS_ENABLE" = "0" ]; then
-		printf '\tAdvOtherConfigFlag on;\n'
 		printf '\tAdvManagedFlag off;\n'
-		if [ "x$PREFIX" != "x" -a "x$PRELEN" != "x" ]; then
-			printf '\tprefix %s/%s {\n' "$PREFIX" "$PRELEN"
-			printf '\t\tAdvOnLink on;\n'
-			printf '\t\tAdvAutonomous on;\n'
-			if [ "x$w6_type" = "xdhcp" -o "x$w6_type" = "xpppoe" -o "x$w6_type" = "xautoConfig" ]; then
-				printf '\t\tAdvValidLifetime %s;\n' "$VALID_TIME"
-				printf '\t\tAdvPreferredLifetime %s;\n' "$PREFER_TIME"
-			else
-				printf '\t\tAdvValidLifetime 2400;\n'
-				printf '\t\tAdvPreferredLifetime 1800;\n'
-				VALID_TIME=2400
-				PREFER_TIME=1800
-			fi
-			printf '\t};\n'
-
-			# To fix Bug 24414 [IPv6-Auto Config] When the LAN prefix is changed, an implementation MUST 
-			# send out MAX_FINAL_RTR_ADVERTISEMENTS Router Advertisements.
-			# Here we write old pd info to radvd.conf.
-			#PD_INFO=$VALID_TIME" "$PREFER_TIME" "$PREFIX" "$PRELEN
-			[ -s $OLD_PD ] && OLD_PD_INFO="`cat $OLD_PD`"
-			OLD_PREFIX=`echo "$OLD_PD_INFO" | awk '{print $3}'`
-			OLD_PRELEN=`echo "$OLD_PD_INFO" | awk '{print $4}'`
-			if [ "x$OLD_PD_INFO" != "x" -a "${OLD_PREFIX}${OLD_PRELEN}" != "${PREFIX}${PRELEN}" ]; then
-				# Sanity check the prefix_len
-				if [ "$OLD_PRELEN" -ge "0" ] && [ "$OLD_PRELEN" -le "128" ]; then
-					printf '\tprefix %s/%s {\n' "$OLD_PREFIX" "$OLD_PRELEN"
-					printf '\t\tAdvOnLink off;\n'
-					printf '\t\tAdvAutonomous on;\n'
-					printf '\t\tAdvValidLifetime 0;\n'
-					printf '\t\tAdvPreferredLifetime 0;\n'
-					printf '\t};\n'
-				fi
-			fi
-			echo $PD_INFO >$OLD_PD
-		else
-			# if now we couldn't get correct pd info(eg. prefix is NULL, len =0), delete old pd info file.
-			[ -s $OLD_PD ] && rm -f $OLD_PD
-		fi
-		# To fix bug 22829,spec 2.0: The router's Auto Config function on the LAN has to include the RDNSS option in the RA's and it
-		# uses the router's unicast link-local IPv6 address as the recursive DNS server.
-		IPV6_ADDR=$(/sbin/ifconfig br0 | grep 'Scope:Link' | awk -F/ '{print$1}' | awk -F'inet6 addr:' '{print$2}');
-		printf '\tRDNSS %s {\n' "$IPV6_ADDR"
-		printf '\t\tAdvRDNSSPreference 8;\n'
-		printf '\t\tAdvRDNSSLifetime 1200;\n'
-		printf '\t};\n'
 	else
-		printf '\tAdvOtherConfigFlag on;\n'
 		printf '\tAdvManagedFlag on;\n'
-		# if lan mode change to dhcp server, delete old pd info file
-		[ -s $OLD_PD ] && rm -f $OLD_PD
 	fi
 
+	if [ "x$PREFIX" != "x" -a "x$PRELEN" != "x" ]; then
+		printf '\tprefix %s/%s {\n' "$PREFIX" "$PRELEN"
+		printf '\t\tAdvOnLink on;\n'
+		printf '\t\tAdvAutonomous on;\n'
+		if [ "x$w6_type" = "xdhcp" -o "x$w6_type" = "xpppoe" -o "x$w6_type" = "xautoConfig" ]; then
+			printf '\t\tAdvValidLifetime %s;\n' "$VALID_TIME"
+			printf '\t\tAdvPreferredLifetime %s;\n' "$PREFER_TIME"
+		else
+			printf '\t\tAdvValidLifetime 2400;\n'
+			printf '\t\tAdvPreferredLifetime 1800;\n'
+			VALID_TIME=2400
+			PREFER_TIME=1800
+		fi
+		printf '\t};\n'
+
+		# To fix Bug 24414 [IPv6-Auto Config] When the LAN prefix is changed, an implementation MUST 
+		# send out MAX_FINAL_RTR_ADVERTISEMENTS Router Advertisements.
+		# Here we write old pd info to radvd.conf.
+		PD_INFO=$VALID_TIME" "$PREFER_TIME" "$PREFIX" "$PRELEN
+		[ -s $OLD_PD ] && OLD_PD_INFO="`cat $OLD_PD`"
+		OLD_PREFIX=`echo "$OLD_PD_INFO" | awk '{print $3}'`
+		OLD_PRELEN=`echo "$OLD_PD_INFO" | awk '{print $4}'`
+		if [ "x$OLD_PD_INFO" != "x" -a "${OLD_PREFIX}${OLD_PRELEN}" != "${PREFIX}${PRELEN}" ]; then
+			# Sanity check the prefix_len
+			if [ "$OLD_PRELEN" -ge "0" ] && [ "$OLD_PRELEN" -le "128" ]; then
+				printf '\tprefix %s/%s {\n' "$OLD_PREFIX" "$OLD_PRELEN"
+				printf '\t\tAdvOnLink off;\n'
+				printf '\t\tAdvAutonomous on;\n'
+				printf '\t\tAdvValidLifetime 0;\n'
+				printf '\t\tAdvPreferredLifetime 0;\n'
+				printf '\t};\n'
+			fi
+		fi
+		echo $PD_INFO >$OLD_PD
+	else
+		# if now we couldn't get correct pd info(eg. prefix is NULL, len =0), delete old pd info file.
+		[ -s $OLD_PD ] && rm -f $OLD_PD
+	fi
+	# To fix bug 22829,spec 2.0: The router's Auto Config function on the LAN has to include the RDNSS option in the RA's and it
+	# uses the router's unicast link-local IPv6 address as the recursive DNS server.
+	IPV6_ADDR=$(/sbin/ifconfig br0 | grep 'Scope:Link' | awk -F/ '{print$1}' | awk -F'inet6 addr:' '{print$2}');
+	printf '\tRDNSS %s {\n' "$IPV6_ADDR"
+	printf '\t\tAdvRDNSSPreference 8;\n'
+	printf '\t\tAdvRDNSSLifetime 1200;\n'
+	printf '\t};\n'
 	printf '};\n'
 }
 
@@ -154,7 +151,7 @@ get_prefix_dhcp() {
 		# "lease_time	prefix	prefix_len"
 		# Spec Rev.10 P337,the subnet prefix of the router's LAN is unknown until the IPv6 WAN connection is brought up successfully.
 		local wan6_ip=`ifconfig $WAN |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
-		if [ $w6_type != dhcp ] || [ -e $SRVC_RELOAD_FILE ] || [ "x$wan6_ip" != "x" ]; then
+		if [ "x$w6_type" != "xdhcp" ] || [ -e $SRVC_RELOAD_FILE ] || [ "x$wan6_ip" != "x" ]; then
 			[ -s $DHCP6S_PD ] && cat $DHCP6S_PD && return 0
 		fi
 
@@ -210,7 +207,7 @@ get_prefix_6rd() {
 
 	printf "$DHCP6S_DEFAULT_TIME  $DHCP6S_PREFER_TIME  %s  %s" $prefix $prelen
 }
-				
+
 get_prefix() {
 	local prefix
 	case "$w6_type" in
@@ -433,7 +430,6 @@ restart() {
 }
 
 reload() {
-	local DHCP6S_ENABLE=`$CONFIG get ipv6_dhcps_enable`
 	PID_file=/var/run/6service.pid
 	test -f $PID_file && {
 		kill $(cat $PID_file)
@@ -447,14 +443,6 @@ reload() {
 	#make dhcpv6 server apply the new config file
 	echo "6service reload now"
 	/usr/sbin/dhcp6ctl -S reload
-	#it occasionally loses dhcp6s process in comcast environment,restart dhcp6s to fix it.
-	killall dhcp6s
-	if [ "x$DHCP6S_ENABLE" = "x1" ]; then
-		/usr/sbin/dhcp6s -3 -c "$DHCP6S_CONF" "$bridge"
-	else
-		/usr/sbin/dhcp6s -3 -c "$DHCP6S_CONF" -i "$bridge"
-	fi
-
 	#make radvd apply the new config file
 	killall -SIGHUP radvd
 	rm -f $SRVC_RELOAD_FILE

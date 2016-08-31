@@ -92,28 +92,6 @@ function initPage()
         showFirmVersion("");
 }
 
-function manuallyConfig()
-{
-        if(confirm(bh_no_genie_help_confirm) == false)
-                return false;
-	if(top.dsl_enable_flag == 1)
-	  this.location.href="BRS_log12_incorrect_go_to_internet.html";
-	else{
-          var forms = document.getElementsByTagName("form");
-          var cf = forms[0];
-
-          if( hijack_process == "1" )
-          {
-                cf.action = "/apply.cgi?/welcomeok.htm timestamp=" + ts;
-                cf.submit_flag.value = "hijack_toBasic";
-                cf.submit();
-          }
-          else
-                location.href="BAS_basic.htm";
-	}
-        return true;
-}
-
 function checkL2TP()
 {
 	var forms = document.getElementsByTagName("form");

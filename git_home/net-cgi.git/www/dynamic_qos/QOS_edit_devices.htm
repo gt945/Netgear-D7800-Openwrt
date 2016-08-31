@@ -31,7 +31,7 @@
 		if( master=="admin" )
 			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'QOS_device.htm\';"><input class="new_apply_bt ui-corner-all" type="submit" name="Apply" value="$apply_mark" onClick="return check_device_edit_apply(document.forms[0]);">');
 		else
-			document.write('<input class="new_greycancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_greyapply_bt ui-corner-all" type="submiti" name="Apply" value="$apply_mark" disabled>');
+			document.write('<input class="new_greycancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_greyapply_bt ui-corner-all" type="submit" name="Apply" value="$apply_mark" disabled>');
 	</script>
 	</TD>
 </TR>
@@ -122,14 +122,20 @@ function check_device_edit_apply(cf)
 		sAlert("Value of priority or type cannot be NULL!");
 		return false;
 	} else {
-		cf.hid_edit_device.value = "".concat(value_mac," ",value_priority," ",value_type," ",value_name);
+		cf.hid_edit_mac.value = value_mac;
+		cf.hid_edit_priority.value = value_priority;
+		cf.hid_edit_type.value = value_type;
+		cf.hid_edit_name.value = value_name;
 	}
 	cf.submit();
 }
 
 </script>
 <div id="main" class="main_top_button">
-<input type="hidden" name="hid_edit_device">
+<input type="hidden" name="hid_edit_mac">
+<input type="hidden" name="hid_edit_priority">
+<input type="hidden" name="hid_edit_type">
+<input type="hidden" name="hid_edit_name">
 
 <div class="oneline">
 	<div class="lineleft">

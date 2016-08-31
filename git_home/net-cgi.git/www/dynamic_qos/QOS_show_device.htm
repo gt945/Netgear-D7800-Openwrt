@@ -821,7 +821,7 @@ function show_all()
 			linehtml=linehtml+'<div class="flowline">';
 			if(subList) linehtml=linehtml+'<img class="down_showsub" onclick="show_down_sub(this, \''+dev.mac+'\')"  src='+down_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 			linehtml=linehtml+'<div class="title">';
-			linehtml=linehtml+'$inter_down</div>';
+			linehtml=linehtml+"$inter_down</div>";
 			linehtml=linehtml+'<div class="flowshow" name="d'+dev.mac+'">';
 				linehtml=linehtml+band_width_html(dev.down_rate,downlink_value, "#5bb6e5");
 			linehtml=linehtml+'</div>';
@@ -862,7 +862,7 @@ function show_all()
 			linehtml=linehtml+'<div class="flowline">';
 			if(subList) linehtml=linehtml+'<img class="showsub" onclick="show_up_sub(this, \''+dev.mac+'\')"  src='+up_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 			linehtml=linehtml+'<div class="title">';
-			linehtml=linehtml+'$inter_up</div>';
+			linehtml=linehtml+"$inter_up</div>";
 			linehtml=linehtml+'<div class="flowshow" name="u'+dev.mac+'">';
 				linehtml=linehtml+band_width_html(dev.up_rate,downlink_value, "#ababab");
 			linehtml=linehtml+'</div>';
@@ -935,7 +935,7 @@ function show_all()
 			linehtml=linehtml+'<div class="flowline">';
 			if( subList) linehtml=linehtml+'<img class="down_showsub" onclick="show_down_sub(this, \''+app_name+'\')" src='+down_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 			linehtml=linehtml+'<div class="title">';
-			linehtml=linehtml+'$inter_down</div>';
+			linehtml=linehtml+"$inter_down</div>";
 			linehtml=linehtml+'<div class="flowshow" name="d'+app_name+'">';
 				linehtml=linehtml+band_width_html(a.down_rate,downlink_value, "#5bb6e5");
 			linehtml=linehtml+'</div>';
@@ -973,7 +973,7 @@ function show_all()
 			linehtml=linehtml+'<div class="flowline">';
 			if( subList) linehtml=linehtml+'<img class="showsub" onclick="show_up_sub(this, \''+app_name+'\')" src='+up_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 			linehtml=linehtml+'<div class="title">';
-			linehtml=linehtml+'$inter_up</div>';
+			linehtml=linehtml+"$inter_up</div>";
 			linehtml=linehtml+'<div class="flowshow" name="u'+app_name+'">';
 				linehtml=linehtml+band_width_html(a.up_rate,downlink_value, "#ababab");
 			linehtml=linehtml+'</div>';
@@ -1076,7 +1076,7 @@ function show_all()
 					linehtml=linehtml+'<div class="flowline">';
 					if(subList) linehtml=linehtml+'<img class="down_showsub" onclick="zone_show_down_sub(this, \''+dev.mac+'\', \''+zone_count+'\')"  src='+down_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 					linehtml=linehtml+'<div class="title">';
-					linehtml=linehtml+'$inter_down</div>';
+					linehtml=linehtml+"$inter_down</div>";
 					linehtml=linehtml+'<div class="flowshow" name="d'+dev.mac+'">';
 					linehtml=linehtml+band_width_html(dev.down_rate,downlink_value, "#5bb6e5");
 					linehtml=linehtml+'</div>';
@@ -1117,7 +1117,7 @@ function show_all()
 					linehtml=linehtml+'<div class="flowline">';
 					if(subList) linehtml=linehtml+'<img class="showsub" onclick="zone_show_up_sub(this, \''+dev.mac+'\', \''+zone_count+'\')"  src='+up_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 					linehtml=linehtml+'<div class="title">';
-					linehtml=linehtml+'$inter_up</div>';
+					linehtml=linehtml+"$inter_up</div>";
 					linehtml=linehtml+'<div class="flowshow" name="u'+dev.mac+'">';
 					linehtml=linehtml+band_width_html(dev.up_rate,downlink_value, "#ababab");
 					linehtml=linehtml+'</div>';
@@ -1197,7 +1197,7 @@ function show_all()
 					linehtml=linehtml+'<div class="flowline">';
 					if(subList) linehtml=linehtml+'<img class="down_showsub" onclick="show_down_sub(this, \''+dev.mac+'\')"  src='+down_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 					linehtml=linehtml+'<div class="title">';
-					linehtml=linehtml+'$inter_down</div>';
+					linehtml=linehtml+"$inter_down</div>";
 					linehtml=linehtml+'<div class="flowshow" name="d'+dev.mac+'">';
 					linehtml=linehtml+band_width_html(dev.down_rate,downlink_value, "#5bb6e5");
 					linehtml=linehtml+'</div>';
@@ -1238,7 +1238,7 @@ function show_all()
 					linehtml=linehtml+'<div class="flowline">';
 					if(subList) linehtml=linehtml+'<img class="showsub" onclick="show_up_sub(this, \''+dev.mac+'\')"  src='+up_ssrc+' >&nbsp;&nbsp;&nbsp; ';
 					linehtml=linehtml+'<div class="title">';
-					linehtml=linehtml+'$inter_up</div>';
+					linehtml=linehtml+"$inter_up</div>";
 					linehtml=linehtml+'<div class="flowshow" name="u'+dev.mac+'">';
 					linehtml=linehtml+band_width_html(dev.up_rate,downlink_value, "#ababab");
 					linehtml=linehtml+'</div>';
@@ -1370,13 +1370,13 @@ function refresh_device_info()
 </script>
 </div>
 <div class="zone">$access_control_url1
-<a href=# onclick="goto_url(); return false;" class="ui-corner-all">&nbsp; Priority Zone &nbsp;</a>
-to setup priority zones.<br/>
+<a href=# onclick="goto_url(); return false;" class="ui-corner-all">&nbsp; $priority_zone &nbsp;</a>
+$set_priority_zone<br/>
 <script>
 if(priority_zone_enable == "1")
-	document.write("Priority Zone: <b>$acc_turned_on</b>");
+	document.write("$priority_zone: <b>$acc_turned_on</b>");
 else
-	document.write("Priority Zone: <b>$acc_turned_off</b>");
+	document.write("$priority_zone: <b>$acc_turned_off</b>");
 </script>
 </div>
 <div class="top-settings">
@@ -1424,7 +1424,7 @@ $ls_by &nbsp;<div id="listByApplication" class="btclose ui-corner-all" onclick="
 <div class="application_num">
 <table>
 <tr><td><input type="checkbox" name="limit_app_name" onclick="show_all()"></td>
-<td><b>Display only top 5 application bandwidth</b></td>
+<td><b>$display_top_5_band</b></td>
 </tr>
 </table>
 </div>

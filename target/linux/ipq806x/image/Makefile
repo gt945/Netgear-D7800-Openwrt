@@ -3,19 +3,27 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/image.mk
 
-MODULE_NAME=D7800
-HW_VERSION=D7800
-FW_VERSION=V1.0.0.48
-LG_VERSION=V1.0.0.246
-CLOUD_VERSION=20150307
-HW_ID="29764958+0+128+512+4x4+4x4"
+MODULE_NAME=$(CONFIG_DGC_MODULE_NAME)
+HW_VERSION=$(CONFIG_DGC_HW_VERSION)
+FW_VERSION=$(CONFIG_DGC_FW_VERSION)
+LG_VERSION=$(CONFIG_DGC_LG_VERSION)
+CLOUD_VERSION=$(CONFIG_DGC_CLOUD_VERSION)
+HW_ID=$(CONFIG_DGC_HW_ID)
 ifndef FW_REGION
-	FW_REGION=""
+	FW_REGION=$(CONFIG_DGC_FW_REGION)
 endif
 
-KERNEL_SIZE=2176k # kernel blocks * 128 = 17 * 128 = 2176
-MAX_KERNEL_SIZE=2228224	# KERNEL_SIZE * 1024
-MAX_IMAGE_SIZE=23461888	# (kernel blocks + rootfs blocks - reserved block for bad block) * 128 * 1024 = (17 + 191 - 29) * 128 * 1024 = 23461888
+# 2015/03/19
+# Torby and Tony confirmed that Netgear have sent new requirement out to resize
+# whole kernel and rootfs to 32MB.
+# Leave 4MB to kernel and others will be reserved to rootfs and bad block.
+#
+# * page size = 2KB, block size = 128KB.
+# * kernel + rootfs = 32MB = 256 blocks
+# * bad blocks = 2MB = 16 blocks
+# Partitions have to align to block size.
+MAX_KERNEL_SIZE=$(shell echo $$((17 * 128 * 1024))) # kernel blocks * 128 * 1024
+MAX_IMAGE_SIZE=$(shell echo $$(((256 - 16) * 128 * 1024))) # (kernel blocks + rootfs blocks - reserved block for bad block) * 128 * 1024
 
 UBIFS_OPTS = -m 2048 -e 124KiB -c 4096 -U -F
 UBINIZE_OPTS = -m 2048 -p 128KiB
@@ -40,15 +48,15 @@ define MkImageLzma
 		-d $(1) $(2)
 endef
 
-define Image/Build/D7800
-	echo "Image/Build/D7800"
+define Image/Build/R7500v2
+	echo "Image/Build/R7500v2"
 	dd if=$(LINUX_DIR)/arch/arm/boot/uImage of=$(KDIR)/vmlinux-$(2).uImage
-	$(STAGING_DIR_HOST)/bin/D7800 \
+	$(STAGING_DIR_HOST)/bin/R7500v2 \
 		$(KDIR)/vmlinux-$(2).uImage \
 		$(KDIR)/vmlinux-$(2).uImage.normal
 	dd if=$(KDIR)/root.$(1) of=$(KDIR)/root.$(1).final bs=2k conv=sync
 	$(call MkImageLzma,$(KDIR)/root.$(1).final,$(KDIR)/squashfs-$(2).uImage)
-	$(STAGING_DIR_HOST)/bin/D7800 \
+	$(STAGING_DIR_HOST)/bin/R7500v2 \
 		$(KDIR)/squashfs-$(2).uImage \
 		$(KDIR)/squashfs-$(2).uImage.tmp
 	cat $(KDIR)/vmlinux-$(2).uImage.normal > $(KDIR)/vmlinux-$(2).uImage.tmp
@@ -56,7 +64,7 @@ define Image/Build/D7800
 	dd if=$(KDIR)/vmlinux-$(2).uImage.tmp bs=$(shell expr $(MAX_KERNEL_SIZE) - 64) conv=sync of=$(KDIR)/vmlinux-$(2).uImage.final
 	dd if=$(KDIR)/squashfs-$(2).uImage.tmp bs=64 count=1 >> $(KDIR)/vmlinux-$(2).uImage.final
 	( \
-		dd if=$(KDIR)/vmlinux-$(2).uImage.final bs=$(KERNEL_SIZE) conv=sync; \
+		dd if=$(KDIR)/vmlinux-$(2).uImage.final bs=$(MAX_KERNEL_SIZE) conv=sync; \
 		dd if=$(KDIR)/root.$(1).final bs=64k; \
 	) > $(BIN_DIR)/$(IMG_PREFIX)-sysupgrade.bin
 	$(STAGING_DIR_HOST)/../../tools/checksize $(BIN_DIR)/$(IMG_PREFIX)-sysupgrade.bin $(MAX_IMAGE_SIZE)
@@ -76,7 +84,7 @@ define Image/Build
 	$(call Image/Build/$(1),$(1))
 	mkdir -p $(BIN_DIR)
 	dd if=$(KDIR)/root.$(1) of=$(BIN_DIR)/$(IMG_PREFIX)-$(1)-root.img bs=2k conv=sync
-	$(call Image/Build/D7800,$(1),d7800)
+	$(call Image/Build/R7500v2,$(1),r7500v2)
 endef
 
 define Sysupgrade

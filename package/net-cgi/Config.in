@@ -1,0 +1,113 @@
+#config HAVE_MACRO
+#	bool "compile feature MACRO into gui binary"
+#	default n
+#	help
+#	  help message of feature MACRO
+#
+#config STRING_MACRO
+#	string "specify MACRO's value"
+#	default ""
+#	help
+#	  help message of MACRO
+
+config net-cgi_USE_NEW_SOURCE
+	bool "Use new source code to compile"
+	default y
+	help
+	  please select it if you want compile net-cgi/src.new
+
+config net-cgi_HAVE_DSL
+	bool "DSL feature"
+	default n
+	help
+	  please select it if the project support DSL feature
+
+config net-cgi_HAVE_BROADBAND
+	bool "Broadband feature"
+	default n
+	help
+	  please select it if the project support Broadband feature
+
+config net-cgi_HAVE_LTE
+	bool "LTE feature"
+	default n
+	help
+	  please select it if the project support LTE feature
+
+config net-cgi_HAVE_IPv6
+	bool "IPv6 feature"
+	default y
+	help
+	  please select it if the project support IPv6 feature
+
+config net-cgi_MULTI_OPMODE
+	bool "Multiple operation mode"
+	default y
+	help
+	  please select it if the project support multiple operation mode, like ap mode, bridge mode, extender mode.
+
+config net-cgi_HAVE_QoS
+	bool "QoS feature"
+	default y
+	help
+	  please select it if the project support QoS feature
+
+config net-cgi_SOAP_ON
+	bool "Enable SOAP"
+	default y
+	help
+	  please select it if the project support SOAP feature
+
+config net-cgi_HAVE_TR069
+	bool "TR069 feature"
+	default n
+	help
+	  please select it if the project support TR069 feature
+
+config net-cgi_USB_STORAGE
+	bool "USB storage"
+	default y
+	help
+	  please select it if the project support USB storage feature
+
+config net-cgi_HAVE_VLAN
+	bool "VLAN feature"
+	default y
+	help
+	  please select it if the project support VLAN feature
+
+config net-cgi_HAVE_VPN
+	bool "VPN feature"
+	default y
+	help
+	  please select it if the project support VPN feature
+
+config net-cgi_CD_LESS
+	bool "CD-less"
+	default y
+	help
+	  please select it if the project support CD-less feature
+
+config net-cgi_HAVE_WIFI
+	bool "Wireless"
+	default y
+	help
+	  please select it if the project have wireless
+
+config net-cgi_HAVE_SECURITY
+	bool "Security feature"
+	default y
+	help
+	  please select it if the project support security feature
+
+config net-cgi_HAVE_ADVANCED
+	bool "Advanced feature"
+	default y
+	help
+	  please select it if the project support advanced feature
+
+config net-cgi_HAVE_WAN
+	bool "Have WAN"
+	default y
+	help
+	  please select it if the project have WAN interface

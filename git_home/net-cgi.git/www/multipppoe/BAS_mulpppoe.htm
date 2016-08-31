@@ -25,18 +25,18 @@ var eastHTML="";
 var otherHTML="";
 var pppoe2_policy="<% cfg_get("wan_mulpppoe2_policy") %>"
 
-var east_username="<% cfg_sed_xss("wan_mulpppoe2_east_username") %>";
-var east_password="<% cfg_sed_xss("wan_mulpppoe2_east_password") %>";
-var west_username="<% cfg_sed_xss("wan_mulpppoe2_west_username") %>";
-var west_password="<% cfg_sed_xss("wan_mulpppoe2_west_password") %>";
-var other_username="<% cfg_sed_xss("wan_mulpppoe2_other_username") %>";
-var other_password="<% cfg_sed_xss("wan_mulpppoe2_other_password") %>";
-var username="<% cfg_sed_xss("wan_mulpppoe2_username") %>";
-var password="<% cfg_sed_xss("wan_mulpppoe2_password") %>";
-var east_servicename="<% cfg_sed_xss("wan_mulpppoe2_servicename") %>";
-var west_servicename="<% cfg_sed_xss("wan_mulpppoe2_servicename") %>";
-var other_servicename="<% cfg_sed_xss("wan_mulpppoe2_servicename") %>";
-var servicename="<% cfg_sed_xss("wan_mulpppoe2_servicename") %>";
+var east_username="<% cfg_sed("wan_mulpppoe2_east_username") %>";
+var east_password="<% cfg_sed("wan_mulpppoe2_east_password") %>";
+var west_username="<% cfg_sed("wan_mulpppoe2_west_username") %>";
+var west_password="<% cfg_sed("wan_mulpppoe2_west_password") %>";
+var other_username="<% cfg_sed("wan_mulpppoe2_other_username") %>";
+var other_password="<% cfg_sed("wan_mulpppoe2_other_password") %>";
+var username="<% cfg_sed("wan_mulpppoe2_username") %>";
+var password="<% cfg_sed("wan_mulpppoe2_password") %>";
+var east_servicename="<% cfg_sed("wan_mulpppoe2_servicename") %>";
+var west_servicename="<% cfg_sed("wan_mulpppoe2_servicename") %>";
+var other_servicename="<% cfg_sed("wan_mulpppoe2_servicename") %>";
+var servicename="<% cfg_sed("wan_mulpppoe2_servicename") %>";
 var wanproto_type="mulpppoe1";
 var wan_mtu_now='<% wan_mtu() %>';
 var netgear_region=top.netgear_region;
@@ -51,7 +51,9 @@ var old_wan_ip2="<% bas_multipppoe_ip("wan_mulpppoe2_wan_assign","wan_mulpppoe2_
 if( old_wan_ip2 == "" )
 	old_wan_ip2 = "0.0.0.0";
 var old_pppoe_wan_assign2="<% cfg_get("wan_mulpppoe2_wan_assign") %>";
-
+var vpn_enable = "<% cfg_get("vpn_enable") %>";
+var readycloud_enable = "<% cfg_get("readycloud_enable") %>";
+var upnp_enableMedia = "<% cfg_get("upnp_enableMedia") %>";
 
 function loadvalue()
 {
@@ -243,7 +245,7 @@ function click_jump()
 	<td nowrap><a tabindex=-1 href="javascript:loadhelp('_BAS_mulpppoe','isp')"><b><script>document.write(basic_intserv_provider)</script></b></a></td>
 	<td nowrap align=right>
 		<SELECT name="login_type" onChange="change_serv(document.forms[0])">
-			<OPTION value="Other" ><script>document.write(basic_intserv_pppoe)</script></OPTION>
+			<OPTION value="PPPoE" ><script>document.write(basic_intserv_pppoe)</script></OPTION>
 			<OPTION value="multiPPPoE" ><script>document.write(basic_intserv_mulpppoe)</script></OPTION>
 		</SELECT>
 		<script>document.getElementsByName("login_type")[0].value="multiPPPoE";</script>

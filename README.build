@@ -11,24 +11,24 @@ Note:
  Build code
 ============
 
-1. uncompress source code file D7800-V1.0.0.XX_gpl_src.tar.bz2.
+1. uncompress source code file D7800-V1.0.1.XX_gpl_src.tar.bz2.
 
-	tar -jxvf D7800-V1.0.0.XX_gpl_src.tar.gz.bz2
+	tar -jxvf D7800-V1.0.1.XX_gpl_src.tar.gz.bz2
 
 2. run following commands to build toolchain and firmware.
 
 	1) build toochain only.
-		cd D7800-V1.0.0.XX_gpl_src
+		cd D7800-V1.0.1.XX_gpl_src
 		cp configs/defconfig-d7800 .config
 		GIT_HOME=`pwd`/git_home make prepare V=99
 
 	2) build toolchain and firmware, if toolchain has built and no update, these commands
 	   will only build firmware and not re-build toolchain.
-		cd D7800-V1.0.0.XX_gpl_src
+		cd D7800-V1.0.1.XX_gpl_src
 		cp configs/defconfig-d7800 .config
 		GIT_HOME=`pwd`/git_home make V=99
 
-3. the final image is "bin/ipq806x/D7800-V1.0.0.XX.img".
+3. the final image is "bin/ipq806x/D7800-V1.0.1.XX.img".
 
 
 

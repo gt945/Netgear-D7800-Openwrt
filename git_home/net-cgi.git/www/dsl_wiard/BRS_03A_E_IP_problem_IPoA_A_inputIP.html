@@ -16,6 +16,7 @@ var lan_subnet="<% cfg_get("lan_netmask") %>";
 var wan_phy_mode="<% cfg_get("wan_phy_mode") %>";
 var vpc_string="<% cat_file("/tmp/auto_pvc") %>";
 var checking_result = "<% detwan_status() %>";
+var wan_proto = "<% cfg_get("wan_proto")%>";
 </script>
 
 </head>
@@ -27,7 +28,13 @@ var checking_result = "<% detwan_status() %>";
 
 	<div class="wizard_words_div">
 		
-			<h1><script>document.write(bh_fix_ip_setting)</script></h1>
+			<h1><script>
+			if(wan_proto == "ipoa")
+				document.write("IPoA "+"Internet IP Settings");	
+			else
+				document.write(bh_fix_ip_setting);
+
+			</script></h1>
 			<p><script>document.write(bh_enter_ip_setting)</script></p>
 			
 			<div id="mainContent_div">					

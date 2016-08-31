@@ -4,11 +4,10 @@
 CONFIG="/bin/config"
 ECHO="/bin/echo"
 DATE="/bin/date"
-RM="/bin/rm"
 IFCONFIG="/sbin/ifconfig"
 ROUTE="/sbin/route"
 CMDUPNP="/sbin/cmdupnp"
-FIREWALL="/www/cgi-bin/firewall.sh"
+FIREWALL="firewall.sh"
 WAN_PROTO=$($CONFIG get wan_proto)
 WAN6_PROTO=$($CONFIG get ipv6_type)
 LAN_NETMASK=$($CONFIG get lan_netmask)
@@ -17,7 +16,6 @@ WAN_IPUP="/sbin/wan-ipup"
 SR33_FILE="/tmp/udhcpc_static_route"
 CSR121_FILE="/tmp/udhcpc_classless_static_route"
 CSR249_FILE="/tmp/udhcpc_microsoft_classless_static_route"
-ENVS_P_FILE="/tmp/dhcpc_script_envs"
 
 compare_the_same_subnet(){
 	num=0
@@ -92,50 +90,6 @@ elif [ "x$WAN6_PROTO" = "xautoDetect" ] && [ "x$update_6rd" = "x1" ] ;then
 	restart_ipv6=1
 fi
 
-ipv4_lease_changed()
-{
-	[ -f "$ENVS_P_FILE" ] && . $ENVS_P_FILE
-	[ -z "$ip" ] && ip="$ip_p"
-	[ -z "$subnet" ] && subnet="$subnet_p"
-	[ -z "$domain" ] && domain="$domain_p"
-	[ -z "$dns" ] && dns="$dns_p"
-	[ -z "$router" ] && router="$router_p"
-	[ -z "$serverid" ] && serverid="$serverid_p"
-	cat > $ENVS_P_FILE << EOF
-	ip_p="$ip"
-	subnet_p="$subnet"
-	domain_p="$domain"
-	dns_p="$dns"
-	router_p="$router"
-	serverid_p="$serverid"
-EOF
-
-	[ "$ip" != "$ip_p" ] && return 0
-	[ "$subnet" != "$subnet_p" ] && return 0
-	[ "$domain" != "$domain_p" ] && return 0
-	[ "$dns" != "$dns_p" ] && return 0
-	[ "$router" != "$router_p" ] && return 0
-	[ "$serverid" != "$serverid_p" ] && return 0
-
-	return 1
-}
-
-if [ "$WAN_PROTO" = "dhcp" ] && [ -n "$1" ] && [ "$1" != "deconfig" ] && ! ipv4_lease_changed
-then
-	# start 6to4/6rd when ipv4 wan type is changed.
-	if [ "x$restart_ipv6" = "x1" ] ; then
-		killall net6conf
-		/etc/net6conf/net6conf restart
-	fi
-	$ECHO "dhcpc lease is not changed !"
-	[ -n "$lease" ] && $CONFIG set dhcpc_lease_time=$lease
-
-	$CONFIG set dhcpc_lease_obtain="$(cat /proc/uptime | awk -F. '{print $1}')"
-	exit 0
-fi
-
-$ECHO "dhcpc lease changed !"
-
 DNS_ASSIGN=0
 if [ "$WAN_PROTO" = "bigpond" ]; then
 	if [ "$($CONFIG get wan_bpa_dns_assign)" = "1" ]; then
@@ -145,7 +99,7 @@ elif [ "$WAN_PROTO" = "pptp" ]; then
 	DNS_ASSIGN=1	
 elif [ "$WAN_PROTO" = "l2tp" ]; then
 	DNS_ASSIGN=1
-elif [ "$WAN_PROTO" = "pppoe" -o "$WAN_PROTO" = "pppoa" -o "$WAN_PROTO" = "ipoa" ]; then
+elif [ "$WAN_PROTO" = "pppoe" ]; then
 	DNS_ASSIGN=1
 elif [ "$($CONFIG get wan_ether_dns_assign)" = "1" ]; then
 	DNS_ASSIGN=1
@@ -168,8 +122,6 @@ $ECHO -n > "$CSR249_FILE"
 case "$1" in
 	deconfig)
 		/sbin/ledcontrol -n wan -c amber -s on
-		# remove dhcp release file
-		[ -f "$ENVS_P_FILE" ] && $RM -rf $ENVS_P_FILE
 		[ -f /tmp/boot_status ] && exit 0
 		#in russia dynamic pppoe,it will need udhcpc to realize Ethernet Interface 
 		if [ "$WAN_PROTO" != "pppoe" ]; then
@@ -187,9 +139,8 @@ case "$1" in
 		fi
 		# Restart static route & ripd
 		/sbin/cmdroute stop
-		/usr/bin/killall -SIGINT ripd 2> /dev/null
 		/sbin/cmdroute restart
-		/usr/sbin/ripd
+		/usr/etc/functions/ripd_functions restart
 		;;
 
 	renew|bound)
@@ -272,17 +223,17 @@ case "$1" in
 		#Bug 31657[DHCP]Can't access the website after reboot until I click apply/test on Internet Setup page.
 		#If $router and lan ip are the same,then we can't add the default route.So we add default route after doing ipconflict
 		$CONFIG set wan_dhcp_gateway=0.0.0.0
-		if [ -n "$router" ] && [ "$WAN_PROTO" != "pptp" ] && [ "$WAN_PROTO" != "l2tp" ] && [ "$WAN_PROTO" != "pppoe" ] && [ "$WAN_PROTO" != "pppoa" ] && [ "$WAN_PROTO" != "ipoa" ]; then
+		if [ -n "$router" ] && [ "$WAN_PROTO" != "pptp" ] && [ "$WAN_PROTO" != "l2tp" ] && [ "$WAN_PROTO" != "pppoe" ]; then
 			$ECHO "deleting routers"
 			while $ROUTE del default gw 0.0.0.0 dev $interface >&- 2>&-; do
 				:
 			done
 
 			for i in $router ; do
+				$ECHO "adding router $i"
 				if compare_the_same_subnet "$ip" "$i" "$subnet"; then
 					$ROUTE add -net $i netmask 255.255.255.255 dev $interface
 				fi
-				$ECHO "adding router $i"
 				$ROUTE add default gw $i dev $interface 
 			done
 			$CONFIG set wan_dhcp_gateway=$router
@@ -342,9 +293,8 @@ case "$1" in
 
 			# Restart static route & ripd
 			/sbin/cmdroute stop
-			/usr/bin/killall -SIGINT ripd 2> /dev/null
 			/sbin/cmdroute restart
-			/usr/sbin/ripd
+			/usr/etc/functions/ripd_functions restart
 
 			bpaconf="/tmp/bpalogin.conf"
 			[ -n "$domain" ] && authdomain=$domain
@@ -364,9 +314,8 @@ case "$1" in
 
 			# Restart static route & ripd
 			/sbin/cmdroute stop
-			/usr/bin/killall -SIGINT ripd
 			/sbin/cmdroute restart
-			/usr/sbin/ripd
+			/usr/etc/functions/ripd_functions restart
 
 			# As New GUI spec V10, CD-less feature require resolve and ping www.netgear.com
 			if [ "$($CONFIG get dns_hijack)" = "1" -a "$($CONFIG get hijack_process)" = "1" ]; then
@@ -375,7 +324,7 @@ case "$1" in
 			fi
 
 			# in ppp mode,after idle time and dhcp renew, it should not change the led color to green
-			if [ "$WAN_PROTO" != "pppoe" ] && [ "$WAN_PROTO" != "pptp" ] && [ "$WAN_PROTO" != "l2tp" ] && [ "$WAN_PROTO" != "pppoa" ] && [ "$WAN_PROTO" != "ipoa" ]; then
+			if [ "$WAN_PROTO" != "pppoe" ] && [ "$WAN_PROTO" != "pptp" ] && [ "$WAN_PROTO" != "l2tp" ]; then
 				/sbin/ledcontrol -n wan -c green -s on
 			fi
 

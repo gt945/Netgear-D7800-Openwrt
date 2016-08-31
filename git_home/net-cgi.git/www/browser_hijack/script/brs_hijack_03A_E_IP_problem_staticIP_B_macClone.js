@@ -28,22 +28,19 @@ function initPage()
 	
 
 	//set input event action
-	var mac_input = document.getElementById("inputMAC");
+	var mac_input = document.getElementById("spoofmac");
 	mac_input.onkeypress = macKeyCode;
 	
 
 	//buttons
-	var btns_container_div = document.getElementById("btnsContainer_div");
-	
+
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
 	if( master == "admin" )	
-	btns_container_div.onclick = function() 
+	btn.onclick = function() 
 	{
 		return 	checkMacApply();
 	}
-	
-	var btn = document.getElementById("btn_div");	
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
 	
 	//show firmwar version
 	showFirmVersion("");
@@ -56,7 +53,7 @@ function checkMacApply()
 	var cf = forms[0];
 
 	//set input event action
-	var mac_input = document.getElementById("inputMAC");
+	var mac_input = document.getElementById("spoofmac");
 	var the_mac = mac_input.value;
 
 	if(the_mac.indexOf(":")==-1 && the_mac.length=="12")

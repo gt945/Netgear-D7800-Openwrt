@@ -10,7 +10,6 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=kmod-dnih323
 PKG_RELEASE:=1
-PKG_GIT_TREEISH:=alg-h323-v3.4-dni3
 NF=nf
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 
@@ -24,11 +23,14 @@ define KernelPackage/dnih323
 	$(PKG_BUILD_DIR)/$(NF)_conntrack_dnih323.$(LINUX_KMOD_SUFFIX) \
 	$(PKG_BUILD_DIR)/$(NF)_nat_dnih323.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,$(NF)_conntrack_dnih323 $(NF)_nat_dnih323)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-dnih323.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

@@ -339,7 +339,7 @@ main(argc, argv)
     strlcpy(path_ipdown, _PATH_IPDOWN, sizeof(path_ipdown));
     strlcpy(pap_file, _PATH_UPAPFILE, sizeof(pap_file));
     strlcpy(chap_file, _PATH_CHAPFILE, sizeof(chap_file));
-    
+
     link_stats_valid = 0;
     new_phase(PHASE_INITIALIZE);
 
@@ -538,9 +538,20 @@ main(argc, argv)
 		 * Setup NAT and bogus nameserver for activing connection
 		 * by LAN's traffic first time.
 		 */
-		system(FIREWALL_START_CMD);
-		if (usepeerdns)
-			system(DNS_SETUP_CMD);
+		if(firewall_cmd)
+			system(firewall_cmd);
+		else{
+			warn("FIREWALL_START_CMD not set, use default: %s", FIREWALL_START_CMD);
+			system(FIREWALL_START_CMD);
+		}
+		if (usepeerdns){
+			if( dns_setup_cmd)
+				system(dns_setup_cmd);
+			else{
+				warn("DNS_SETUP_CMD not set, use default: %s", DNS_SETUP_CMD);
+				system(DNS_SETUP_CMD);
+			}
+		}
 		warn("Run in Daemon now on D-o-D!");
 	    }
 

@@ -44,7 +44,7 @@ setup_interface_static() # $1: apmode/brmode/extmode/factory
 		ifconfig br0 $($CONFIG get lan_ipaddr) netmask $($CONFIG get lan_netmask)
 		;;
 	esac
-	/sbin/ledcontrol -n wan -c green -s on
+	ledcontrol -n wan -c green -s on
 }
 
 setup_interface_dhcp() # $1: apmode/brmode/extmode
@@ -52,16 +52,16 @@ setup_interface_dhcp() # $1: apmode/brmode/extmode
 	ifconfig br0 0.0.0.0
 	case "$1" in
 	apmode)
-		/sbin/udhcpc -a -b -i br0 \
+		udhcpc -a -b -i br0 \
 			-h "$(get_hostname)" -r $($CONFIG get ap_dhcp_ipaddr) &
 		;;
 	brmode)
-		/sbin/udhcpc -a -b -i br0 \
+		udhcpc -a -b -i br0 \
 			-h "$(get_hostname)" -r $($CONFIG get ap_dhcp_ipaddr) &
 		/etc/init.d/net-br-dhcpc-helper &
 		;;
 	extmode)
-		/sbin/udhcpc -a -b -i br0 \
+		udhcpc -a -b -i br0 \
 			-h "$(get_hostname)" -r $($CONFIG get ap_dhcp_ipaddr) &
 		/etc/init.d/net-br-dhcpc-helper &
 		;;
@@ -86,25 +86,24 @@ start0() # $1: boot/start
 {
 	local opmode=$($CONFIG get i_opmode)
 
-	[ "$opmode" = "apmode" ] && /etc/init.d/qca-nss-ecm stop 
 	setup_hostname $opmode
 
 	ifconfig ethlan up
 	ifconfig ethwan up
 	ifconfig br0 up
 
-	[ "$opmode" = "apmode" -o "$opmode" = "extmode" ] && brctl stp br0 on
-
 	# Pull low PHY 9 seconds then pull high PHY to let wired client re-obtain IP address
 	echo -n '911111' > /proc/switch_phy && sleep 10
 	setup_interface $opmode
 
-	/sbin/cmd_ebtables start
+	cmd_ebtables start
 	/etc/init.d/net-scan $1      # daemon for getting attached devices
 	/etc/init.d/lltd $1          # Link Layer Topology Discovery Daemon
 	/etc/init.d/telnet $1        # telnet daemon for Router Debugging Mode ...
 	/etc/init.d/samba $1         # samba daemon
-	/sbin/cmddlna ip_restart &   # dlan daemon
+	cmddlna ip_restart &   # dlan daemon
+	/etc/init.d/upnp $1
+	[ "$opmode" = "apmode" -o "$opmode" = "extmode" ] && brctl stp br0 on
 }
 
 start()
@@ -117,24 +116,25 @@ start()
 
 stop()
 {
-	[ "$($CONFIG get i_opmode)" = "apmode" ] && /etc/init.d/qca-nss-ecm start
 	# wan service
 	/etc/init.d/dnsmasq stop
 	/etc/init.d/cron stop
 	/etc/init.d/ntpclient stop
 
 	# lan service
+	/etc/init.d/upnp stop
 	/etc/init.d/samba stop
 	/etc/init.d/telnet stop
 	/etc/init.d/lltd stop
 	/etc/init.d/net-scan stop
-	/sbin/cmd_ebtables stop
+	cmd_ebtables stop
 
-	/sbin/ledcontrol -n wan -c amber -s on
+	ledcontrol -n wan -c amber -s on
 	killall net-br-dhcpc-helper
 	killall zcip
 	killall -SIGUSR2 udhcpc; killall udhcpc; killall udhcpc; sleep 1
 
+	brctl stp br0 off
 	ifconfig br0 down
 	ifconfig ethwan down
 	ifconfig ethlan down
@@ -148,6 +148,6 @@ restart()
 
 boot()
 {
-	/sbin/ledcontrol -n wan -c amber -s on
+	ledcontrol -n wan -c amber -s on
 	start0 boot
 }

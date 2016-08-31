@@ -13,39 +13,23 @@ PKG_RELEASE:=4
 
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 
-#PKG_GIT_TREEISH=pot-v1.0.4
-
 include $(INCLUDE_DIR)/package.mk
 
-define Package/pot
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=@TARGET_dniwndr3700u2631||TARGET_wndr4300
   TITLE:=POT
 endef
 
 define Build/Prepare
-	#test x$(GIT_HOME) != x
-	#test -d $(GIT_HOME)/$(PKG_NAME).git
-	#(cd $(GIT_HOME)/$(PKG_NAME).git; git-cat-file -e $(PKG_GIT_TREEISH))
-	#(cd $(BUILD_DIR); git-archive --format=tar --prefix=$(PKG_NAME)/ --remote=$(GIT_HOME)/$(PKG_NAME).git $(PKG_GIT_TREEISH) | tar -xvf -)
-	#$(call Build/Patch/Default)
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
+	$(CP) $(GIT_HOME)/pot.git/* $(PKG_BUILD_DIR)/
 endef
 
-define Build/Configure
-	$(CP) ./files/config.h $(BUILD_DIR)/$(PKG_NAME)/
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Package/pot/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/potd $(1)/usr/sbin/
-	install -m0755 $(PKG_BUILD_DIR)/potval $(1)/usr/sbin/
-	install -m0755 $(PKG_BUILD_DIR)/ntpst $(1)/usr/sbin/
-	install -m0755 $(PKG_BUILD_DIR)/stamac $(1)/usr/sbin/
-	install -d -m0755 $(1)/etc/init.d
+	$(MAKE) -C $(PKG_BUILD_DIR) install INS_DIR_PRE=$(1)
 	install -m0755 ./files/pot.init $(1)/etc/init.d/pot
 endef
 
-$(eval $(call BuildPackage,pot))
+$(eval $(call BuildPackage,$(PKG_NAME)))

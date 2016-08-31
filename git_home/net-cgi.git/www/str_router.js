@@ -216,6 +216,7 @@ function check_router_add(cf,flag)
 	Add replace(/&/g, "&#38;"), then, "&nbsp;" will save as "&38;nbsp;" and page will show "&nbsp", not show " " */
 	cf.route_name.value = cf.route_name.value.replace(/&/g, "&#38;").replace(/\s/g, "&nbsp;");
 
+	cf.submit();
 	return true;
 }
 function check_router_editnum()
@@ -251,6 +252,7 @@ function check_router_editnum()
 		document.forms[0].select_edit.value=select_num;
 		document.forms[0].submit_flag.value="st_router_editnum";
 		document.forms[0].action="/apply.cgi?/STR_routes_edit.htm timestamp="+ts;
+		document.forms[0].submit();
 		return true;
 	}
 }
@@ -292,5 +294,224 @@ function check_router_del()
 		}
 	}
 	document.forms[0].select_del.value=del_num;
+	document.forms[0].submit();
+	return true;
+}
+function check_routers_add2(cf)
+{
+	if(ipv6_array_num == 32)
+	{
+		alert("$routes_length_10");
+		return false;
+	}
+	else
+		location.href="STR_routes_add2.htm";
+}
+
+function check_router_add2(cf,flag)
+{
+	if(flag == 'add' && ipv6_array_num == 32 )
+	{
+		alert("$routes_length_10");
+		return false;
+	}
+	var name = cf.route_name.value;
+	if(name == "" )
+	{
+		alert("$routes_name_null");
+		return false;
+	}
+	for(i=0;i<name.length;i++)
+	{
+		if(isValidChar_space(name.charCodeAt(i))==false)
+		{
+			alert("$invalid_router_name");
+			return false;
+		}
+	}
+	if(isNaN(parseInt(cf.route_metric.value,10))==true || parseInt(cf.route_metric.value,10)<2|| parseInt(cf.route_metric.value,10)>15)
+	{
+		alert("$routes_metric_error");
+		return false;
+	}
+	cf.route_metric.value = parseInt(cf.route_metric.value,10);
+	
+	var route_dest, route_gtw;
+	route_dest = "";
+	route_gtw = "";
+	for(i=0; i<cf.SRouteDestAddr.length; i++)
+	{
+		if(check_ipv6_IP_address(cf.SRouteDestAddr[i].value) == false)
+		{
+			alert("$invalid_des_ipv6_hex");
+			return false;
+		}
+		if(cf.SRouteDestAddr[i].value != "")
+		{
+			cf.SRouteDestAddr[i].value = parseInt(cf.SRouteDestAddr[i].value, 16).toString(16);
+			route_dest = route_dest + cf.SRouteDestAddr[i].value + ":";
+		}
+		else
+			route_dest = route_dest + "0" + ":";
+		if(check_ipv6_IP_address(cf.SRouteGatewayAddr[i].value) == false)
+		{
+			alert("$invalid_gtw_ipv6_hex");
+			return false;
+		}
+		if(cf.SRouteGatewayAddr[i].value != "")
+		{
+			cf.SRouteGatewayAddr[i].value = parseInt(cf.SRouteGatewayAddr[i].value, 16).toString(16);
+			route_gtw = route_gtw + cf.SRouteGatewayAddr[i].value +":";
+		}
+		else
+			route_gtw = route_gtw + "0" + ":";
+	}
+	route_dest = route_dest.substring(0, route_dest.length - 1);
+	route_gtw = route_gtw.substring(0, route_gtw.length - 1);
+	if(route_dest == ":::::::")
+		route_dest = ""
+	else if(route_dest == "0:0:0:0:0:0:0:0")
+	{
+		alert("$invalid_des_ip");
+		return false;
+	}
+	if(check_addr_legality(route_dest) == false)
+	{
+		alert("$invalid_des_ip");
+		return false;
+	}
+	if(check_ipv6_IP_address(cf.SRouteDestAddrPrefix.value) == false)
+	{
+		alert("$invalid_des_ipv6_pre_length");
+		return false;
+	}
+	if(cf.SRouteDestAddrPrefix.value == "" ||  parseInt(cf.SRouteDestAddrPrefix.value, 10) > 126 || parseInt(cf.SRouteDestAddrPrefix.value, 10) < 4)
+	{
+		alert("$invalid_des_ipv6_pre_length");
+		return false;
+	}
+	
+	if(route_gtw == ":::::::")
+		route_gtw = "";
+	else if(route_gtw == "0:0:0:0:0:0:0:0")
+	{
+		alert("$invalid_gateway");
+		return false;
+	}
+	if(check_addr_legality(route_gtw) == false)
+	{
+		alert("$invalid_gateway");
+		return false;
+	}
+
+	for(i=1;i<=ipv6_array_num;i++)
+	{
+		var str = eval ( 'ipv6_routerArray' + i ).replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+		var each_info=str.split(' ');
+		each_info[0] = each_info[0].replace(/&nbsp;/g, " ").replace(/&#38;/g,"&");
+		if(flag == 'edit')
+		{
+			if( cf.route_name.value == each_info[0]&& select_editnum != i)
+			{
+				alert("$routes_name_dup");
+				return false;
+			}
+			if( route_dest == each_info[2] && select_editnum != i)
+			{
+				alert("$routes_condition_dup");
+				return false;
+			}
+		}
+		else
+		{
+			if( cf.route_name.value == each_info[0])
+			{
+				alert("$routes_name_dup");
+				return false;
+			}
+			if( route_dest == each_info[2] )
+			{
+				alert("$routes_condition_dup");
+				return false;
+			}
+		}
+	}
+	cf.route_name.value = cf.route_name.value.replace(/&/g, "&#38;").replace(/\s/g, "&nbsp;");
+	cf.route_dest.value = route_dest;
+	cf.route_dest_pre.value = cf.SRouteDestAddrPrefix.value;
+	cf.route_gtw.value = route_gtw;
+	if (cf.SRouteActive.checked==false)
+		cf.route_ac.value = 0;
+	else
+		cf.route_ac.value = 1;
+	return true;
+}
+
+function check_router_editnum2()
+{
+	var count_select=0;
+	var select_num;
+	if (ipv6_array_num == 0)
+	{
+		alert("$port_edit");
+		return false;
+	}
+	if(ipv6_array_num == 1)
+	{
+		if(document.forms[1].select.checked == true)
+		{
+			count_select++;
+			select_num=1;
+		}
+	}
+	else for(i=0;i<ipv6_array_num;i++)
+		if(document.forms[1].select[i].checked == true)
+		{
+			count_select++;
+			select_num=i+1;
+		}
+	if(count_select==0)
+	{
+		alert("$port_edit");
+		return false;
+	}
+	document.forms[1].select_edit.value=select_num;
+	document.forms[1].submit_flag.value="st_router_editnum2";
+	document.forms[1].action="/apply.cgi?/STR_routes_edit2.htm timestamp="+ts;
+	return true;
+}
+
+function check_router_del2()
+{
+	var count_select=0;
+	var del_num;
+	if(ipv6_array_num == 0)
+	{
+		alert("$port_del");
+		location.href="STR_routes.htm";
+		return false;
+	}
+	if(ipv6_array_num == 1)
+	{
+		if(document.forms[1].select.checked == true)
+		{
+			del_num=1;
+			count_select++;
+		}
+	}
+	else for(i=0; i<ipv6_array_num; i++)
+		if(document.forms[1].select[i].checked == true)
+		{
+			count_select++;
+			del_num=i+1;
+		}
+	if(count_select==0)
+	{
+		alert("$port_del");
+		location.href="STR_routes.htm";
+		return false;
+	}
+	document.forms[1].select_del.value=del_num;
+	document.forms[1].action = "/apply.cgi?/STR_routes.htm timestamp="+ts;
 	return true;
 }

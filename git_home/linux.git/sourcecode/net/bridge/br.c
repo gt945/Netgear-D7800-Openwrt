@@ -127,7 +127,7 @@ void create_porc_entry(void)
       }
 
       memset(mac_cache, 0, MCAST_ENTRY_SIZE* sizeof(struct __mac_cache));
-      igmp_snoop_enable = 1;
+      igmp_snoop_enable = 0;
 
       mcast_set_proc_entry = create_proc_entry(BR_MCAST_SET_NAME, 0666, NULL);
 

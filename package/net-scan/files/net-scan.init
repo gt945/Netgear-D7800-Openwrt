@@ -1,17 +1,32 @@
 #!/bin/sh /etc/rc.common
 
+CONF_FILE="${CFGDIR}/netscan.conf"
+
 start()
 {
-	/usr/sbin/net-scan
+	net-scan -f ${CONF_FILE}
 }
 
 stop()
 {
-	killall net-scan
+	pid_file=$(grep "pid_file" ${CONF_FILE} | awk '{print $2}')
+	[ -z ${pid_file} ] && pid_file="/var/run/netscan.pid"
+
+	kill -9 $(cat ${pid_file})
+}
+
+config()
+{
+
+	[ ! -d ${CFGDIR} ] && mkdir -p ${CFGDIR}
+	cat > $CONF_FILE <<-EOF
+		arp_ifname "${DGC_LAN_BR_IF}"
+	EOF
 }
 
 boot()
 {
 	mkdir -p /tmp/netscan
+	config
 	start
 }

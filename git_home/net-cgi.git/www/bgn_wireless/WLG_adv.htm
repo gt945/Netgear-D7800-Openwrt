@@ -130,8 +130,8 @@ function loadvalue()
 	//bug 29873 [Wireless]The GUI should show wireless radio as checked when user enable wireless router radio
 	change_web_format();
 	
-	top.enabled_wps=<% wps_menu() %>;
-	top.enabled_wds=<% wds_enable() %>;
+	top.enabled_wps="<% wps_menu() %>";
+	top.enabled_wds="<% wds_enable() %>";
         if( top.location.href.indexOf("adv_index.htm") != -1 )
                 menu_color_change('wladv');
         else //bug23925 in basic page: if the radio is Off, the wireless button will link to wladv page.

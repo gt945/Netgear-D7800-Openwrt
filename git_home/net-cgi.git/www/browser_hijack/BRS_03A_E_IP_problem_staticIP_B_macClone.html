@@ -14,6 +14,9 @@
 <% wizlog_problem_ck10("1") %>
 <body>
 <% form_submit("apply", "BRS_03A_E_IP_problem_staticIP_B_macClone_plzWait.html", "hijack_mac_clone") %>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+</script>
 
 <div class="wizard_content_div">
 
@@ -24,23 +27,13 @@
 		<p><!--enter_mac--></p>
 		
 		<div id="mac_input_div" align="center">
-			<input type="text" id="inputMAC" name="mac_address" maxlength="17" class="mac_input"  /><!--mac_format-->
+			<input type="text" id="spoofmac" name="spoofmac" maxlength="17" class="mac_input"  /><!--mac_format-->
 		</div>
 	
 	</div>
 
-	<div id="buttons_div" class="wizard_buttons_div" align="right">
-		<div id="btnsContainer_div" class="buttons_img_div" align="center">
-		<script>
-		var master="<% cfg_get("http_loginname") %>";
-		if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-		else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-		</script>
-			
-			<div id="btn_div" class="buttons_words_div"><!--next_mark--></div>
-		</div>
+	<div id="buttons_div" class="wizard_buttons_div" align="center">
+		<input type="button" name="Next" id="next" class="purple_short_btn"><!--next_mark-->
 	</div>
 	
 </div>

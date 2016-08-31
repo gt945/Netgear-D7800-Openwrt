@@ -12,12 +12,12 @@ EXEC_RESULT="register_fail"
 if [ -f /www/cgi-bin/readycloud_control.cgi ];then
 case "$FORM_submit_flag" in
 	register_user)
-		echo "{\"state\":\"1\",\"owner\":\"$FORM_TXT_remote_login\",\"password\":\"$FORM_TXT_remote_password\"}"|REQUEST_METHOD=PUT PATH_INFO=/api/services/readycloud /www/cgi-bin/readycloud_control.cgi  > /dev/console
+		echo "{\"state\":\"1\",\"owner\":\"$FORM_TXT_remote_login\",\"password\":\"$FORM_TXT_remote_passwd\"}"|REQUEST_METHOD=PUT PATH_INFO=/api/services/readycloud /www/cgi-bin/readycloud_control.cgi  > /dev/console
 		RESULT=$(${nvram} get readycloud_registration_owner)
 
 		if [ "x$RESULT" = "x" ]; then
 			sleep 3
-			echo "{\"state\":\"1\",\"owner\":\"$FORM_TXT_remote_login\",\"password\":\"$FORM_TXT_remote_password\"}"|REQUEST_METHOD=PUT PATH_INFO=/api/services/readycloud /www/cgi-bin/readycloud_control.cgi  > /dev/console
+			echo "{\"state\":\"1\",\"owner\":\"$FORM_TXT_remote_login\",\"password\":\"$FORM_TXT_remote_passwd\"}"|REQUEST_METHOD=PUT PATH_INFO=/api/services/readycloud /www/cgi-bin/readycloud_control.cgi  > /dev/console
 			RESULT=$(${nvram} get readycloud_registration_owner)
 		fi
 
@@ -31,6 +31,19 @@ case "$FORM_submit_flag" in
 			fi
 
 			EXEC_RESULT="register_ok"
+
+			if [ "$FORM_change_wan_pppoe_demand" = "1" ]; then
+				${nvram} set wan_pppoe_demand=0;
+			fi
+			if [ "$FORM_change_wan_pptp_demand" = "1" ]; then
+				${nvram} set wan_pptp_demand=0;
+			fi
+			if [ "$FORM_change_wan_mulpppoe_demand" = "1" ]; then
+				${nvram} set wan_mulpppoe_demand=0;
+			fi
+			if [ "$FORM_change_wan_l2tp_demand" = "1" ]; then
+				${nvram} set wan_l2tp_demand=0;
+			fi
 		fi
 	;;
     unregister_user)

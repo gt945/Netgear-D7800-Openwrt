@@ -3,27 +3,78 @@ START=20
 . /lib/cfgmgr/cfgmgr.sh
 . /lib/cfgmgr/opmode.sh
 
+vlan_iptv_wl_enable()
+{
+	local i
+	local value
+	local wl
+
+	local vlan_iptv_enable=$($CONFIG get i_opmode)
+
+	case $vlan_iptv_enable in
+	vlan)
+		for i in 1 2 3 4 5 6 7 8 9 10; do
+			value=$($CONFIG get vlan_tag_$i)
+			if [ "x$value" = "x" ] ;then
+				break
+			fi
+			wl=`echo $value|awk '{print $6}'`
+			[ "x$wl" != "x0" ] && return 0
+		done
+		;;
+	iptv)
+		[ "$($CONFIG get wan_brig_ssid1)" = "1" ] && return 0
+		[ "$($CONFIG get wan_brig_ssid2)" = "1" ] && return 0
+		[ "$($CONFIG get wan_brig_guest_ssid1)" = "1" ] && return 0
+		[ "$($CONFIG get wan_brig_guest_ssid2)" = "1" ] && return 0
+
+	;;
+	*) return 1 ;;
+	esac
+	return 1
+}
+
+bridge_stop_nss()
+{
+	case "$($CONFIG get i_opmode)" in
+	apmode|extmode)
+		return 0
+		;;
+	*)
+		return 1
+		;;
+	esac
+}
+
 start0() # $1: boot/start
 {
 	op_set_induced_configs
 	op_create_brs_and_vifs
 
+	# pas0 interface is for IPv6 passthrough. Which created by dni_enet.ko.
+	# dni_enet.ko was insmod in boot script(line load_modules /etc/modules.d/*)
 	brctl addif br0 pas0
 	ifconfig pas0 up
 
 	[ "X$($CONFIG get modem_mode)" = "X1" ] && $CONFIG set device_mode="modem" || $CONFIG set device_mode="router"
 
+
 	case "$($CONFIG get i_opmode)" in
 	normal|iptv|vlan)
 		/etc/init.d/net-lan $1
 		/etc/init.d/net-wan $1
-		[ "$($CONFIG get device_mode)" = "modem" ] && return
-		/etc/init.d/init6 $1
+		if [ "$($CONFIG get device_mode)" != "modem" ]; then
+			/etc/init.d/init6 $1
+		fi
 		;;
 	*)
 		/etc/init.d/net-br $1
 		;;
 	esac
+
+	if vlan_iptv_wl_enable || bridge_stop_nss; then
+		/etc/init.d/qca-nss-ecm stop &
+	fi
 }
 
 stop0()
@@ -75,9 +126,39 @@ boot()
 EXTRA_COMMANDS="reset_wan_dsl_or_eth"
 EXTRA_HELP="	reset_wan_dsl_or_eth	switch wan cable type"
 
+dsl_wan_pf_change()
+{
+	pf_n=$($CONFIG get dsl_wan_preference)
+	pf_o=$($CONFIG get dsl_wan_preference_old)
+
+	case "x$1" in
+		xcheck)
+			if [ "x$pf_n" != "x$pf_o" ]; then
+				case "$pf_n" in
+					1|2)
+						return 0
+						;;
+					*)
+						return 1
+						;;
+				esac
+			fi
+			return 1
+			;;
+		xdone)
+			$($CONFIG set dsl_wan_preference_old=$pf_n)
+			$($CONFIG commit)
+			;;
+	esac
+}
+
 reset_wan_dsl_or_eth()
 {
 	local nif vid pri opmode_tmp brx br_s
+
+	# Check whether we need do someting
+	dsl_wan_pf_change check || return
+
 	opmode_tmp=$($CONFIG get i_opmode)
 	echo "switch to `[ "x$WanIndepPhy" = "x1" ] && echo xdsl || echo ether` #################" > /dev/console
 
@@ -252,4 +333,5 @@ reset_wan_dsl_or_eth()
 			;;
 	esac
 	/etc/init.d/ntpclient start
+	dsl_wan_pf_change done
 }

@@ -23,14 +23,14 @@ function loadValue()
 	if( apmode_flag == "1" && ap_mode == "1" && ap_mode_detection_flag == "1" )
 	{
 		if(ping_result == "success")
-			this.location.href = "BRS_success.html";
+			this.location.href = "BRS_security.html";
 		else if(ping_result == "failed")
 			this.location.href = "BRS_05_networkIssue.html";
 	}
 	if(wan_proto == "3g") //3g
 	{
 		if(ping_result == "success")
-			this.location.href = "BRS_success.html";
+			this.location.href = "BRS_security.html";
 		else if(ping_result == "failed")
 			this.location.href = "BRS_05_networkIssue.html";
 	}
@@ -58,7 +58,7 @@ function loadValue()
 	else
 	{
 		if(ping_result == "success")
-			this.location.href = "BRS_success.html";
+			this.location.href = "BRS_security.html";
 		else if(ping_result == "failed")
 			this.location.href = "BRS_05_networkIssue.html";
 	}
@@ -70,13 +70,14 @@ function loadValue()
 	{
 		this.location.href = "BRS_01_obtain_ip_lift_hijack.html";
 	}else{
+		//alert("04_applySettings_ping ip:" + ping_ip_result + " gateway:" + ping_gate_result + "  "+ping_result);
 		if(ping_result == "success"){
 			if(ping_ip_result == "success" && ping_gate_result == "success"){
 				this.location.href = "BRS_log11_ping_success.html";
 			}
-			else if(ping_ip_result == "success" && ping_gate_result == "fail")
+			else if(ping_ip_result == "success" && ping_gate_result == "failed")
 				this.location.href = "BRS_log11_ping_successi_ip_success_gate_fail.html";
-			else if(ping_ip_result == "fail" && ping_gate_result == "success")
+			else if(ping_ip_result == "failed" && ping_gate_result == "success")
 				this.location.href = "BRS_log11_ping_success_ip_fail_gate_success.html";
 			else
 				this.location.href = "BRS_log11_ping_success_ip_fail.html";
@@ -84,9 +85,9 @@ function loadValue()
 		else{
 			if(ping_ip_result == "success" && ping_gate_result == "success")
 				this.location.href = "BRS_log11_ping_fail.html";
-			else if(ping_ip_result == "success" && ping_gate_result == "fail")
+			else if(ping_ip_result == "success" && ping_gate_result == "failed")
 				this.location.href = "BRS_log11_ping_fail_ip_sucess_gate_fail.html";
-			else if(ping_ip_result == "fail" && ping_gate_result == "success")
+			else if(ping_ip_result == "failed" && ping_gate_result == "success")
 				this.location.href = "BRS_log11_ping_faili_ip_fail_gate_success.html";
 			else
 				this.location.href = "BRS_log11_ping_fail_ip_fail.html";

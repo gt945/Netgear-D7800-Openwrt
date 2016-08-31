@@ -1,0 +1,53 @@
+diff -Nur dnibusybox.old//dni-examples/dsyslog dnibusybox/dni-examples/dsyslog
+--- dnibusybox.old//dni-examples/dsyslog	2016-05-05 14:08:37.920288364 -0400
++++ dnibusybox/dni-examples/dsyslog	2016-05-05 14:18:18.130288294 -0400
+@@ -34,8 +34,10 @@
+ 	local LRMC=$((${val:-0} << 9))
+ 	val=$($CONFIG get log_vpn_head)
+ 	local LVPN=$((${val:-0} << 10))
++	val=$($CONFIG get log_wire_signal_sched)
++	local LWLSCHED=$((${val:-0} << 11))
+ 
+-	g_total=$(($LAS + $LBSS + $LCWI + $LRO + $LDAPS + $LPFT + $LWA + $LACR + $LRDS +$LRMC + $LVPN))
++	g_total=$(($LAS + $LBSS + $LCWI + $LRO + $LDAPS + $LPFT + $LWA + $LACR + $LRDS +$LRMC + $LVPN + $LWLSCHED))
+ }
+ 
+ start ()
+diff -Nur dnibusybox.old//sysklogd/syslogd.c dnibusybox/sysklogd/syslogd.c
+--- dnibusybox.old//sysklogd/syslogd.c	2016-05-05 14:08:37.940288364 -0400
++++ dnibusybox/sysklogd/syslogd.c	2016-05-05 14:12:23.950288337 -0400
+@@ -604,7 +604,7 @@
+ 	{"Traffic Meter",                                       4},     /* 21, 22. Router operation */
+ 	{"trafficmeter",                                        4},     /* 21, 22. Router operation */
+ 	{"Internet disconnected",				8},	/* 27. Automatic Internet connection reset */
+-	{"Wireless signal schedule",				9},	/* 28. ReadyShare */
++	{"Wireless signal schedule",				           12},     /* 24. Wireless signal schedule */	
+ 	{"Log Cleared",                                         4},     /* Should have a log to note "log clear" opration */
+ 	{"USB device attached",                                 9},     /* 23. ReadyShare */
+ 	{"USB device detached",                                 9},     /* 24. ReadyShare */
+@@ -646,6 +646,7 @@
+ 	msg[8] = (logmsg >> 8) & 0x01;
+ 	msg[9] = (logmsg >> 9) & 0x01;
+ 	msg[10] = (logmsg >> 10) & 0x01;
++	msg[11] = (logmsg >> 11) & 0x01;
+ 
+ 	return;
+ }
+@@ -732,7 +733,7 @@
+ 	char loc_tm[128];
+ 	char buffer[LOG_LEN];
+ 	char log_message[LOG_LEN];
+-	int log_info[9];
++	int log_info[12];
+ 
+ 	time(&now);
+ 	systime = uptime();
+@@ -818,7 +819,7 @@
+ /* decide the log should or not display in the UI */
+ int check_log_message(char *msg, int loginfo)
+ {
+-	int log_msg[11];
++	int log_msg[12];
+ 
+ 	/* get the log category information */
+ 	get_log_category(loginfo, log_msg);

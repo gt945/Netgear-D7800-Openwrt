@@ -44,7 +44,7 @@ define Host/Compile
 	$(call cc,osbridge-crc)
 	$(call cc,wrt400n cyg_crc32)
 	$(call cc,wndr3700)
-	$(call cc,D7800)
+	$(call cc,R7500v2)
 	$(call cc,mkdniimg)
 	$(call cc,mktitanimg)
 	$(call cc,mkchkimg)

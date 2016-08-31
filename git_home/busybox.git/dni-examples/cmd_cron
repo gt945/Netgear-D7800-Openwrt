@@ -15,9 +15,8 @@ start () {
 
 	# Generate `Block Sites` && `Block Services` && `E-mail Notification`
 	# for scheduling.
-	# This `firewall_function.sh` script will call `/sbin/cmdsched`, then
-	# re-start firewall setting.
-	/www/cgi-bin/firewall_function.sh blk_sched restart
+	/sbin/cmdsched
+	firewall.sh restart
 
 	# Start NTP when `time_zone` is reset.
 

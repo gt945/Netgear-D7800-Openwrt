@@ -17,7 +17,7 @@ PKG_MD5SUM:=65b4e0df4934a6cd08c506cabcbe584f
 
 include $(INCLUDE_DIR)/package.mk
 
-TARGET_CFLAGS += $(TARGET_CPPFLAGS) -lconfig
+TARGET_CFLAGS += $(TARGET_CPPFLAGS)
 
 define Package/ssmtp
   SECTION:=mail
@@ -25,6 +25,7 @@ define Package/ssmtp
   DEPENDS:=+libopenssl
   TITLE:=A minimal and secure mail sender
   URL:=http://packages.debian.org/ssmtp
+  MENU:=1
 endef
 
 define Package/ssmtp/description
@@ -45,6 +46,12 @@ CONFIGURE_VARS += \
 
 CONFIGURE_ARGS += \
 	--enable-ssl
+
+define Build/Prepare
+	$(CP) $(GIT_HOME)/ssmtp.git/* $(PKG_BUILD_DIR)/
+endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Package/ssmtp/install
 	#$(INSTALL_DIR) $(1)/etc/ssmtp

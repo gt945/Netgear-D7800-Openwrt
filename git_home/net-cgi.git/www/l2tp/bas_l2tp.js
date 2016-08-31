@@ -402,7 +402,15 @@ function check_l2tp(cf,check)
                         return false;
                 }
         }
-
+	if( cf.l2tp_dod.value == "1" || cf.l2tp_dod.value == "2" )
+	{
+		if( readycloud_enable == "1" || vpn_enable == "1" || upnp_enableMedia == "1" || parent.geniecloud_flag == 1)
+		{
+			if(confirm("$ppp_dial_on_demand_query") == false)
+					return false;
+		}
+	}
+	cf.submit();
 	return true;
 }
 

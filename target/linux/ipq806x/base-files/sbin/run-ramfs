@@ -55,6 +55,7 @@ run_ramfs() { # <command> [...]
 	dd if=/dev/zero of=/tmp/tmp11 bs=20M count=1
 	rm /tmp/tmp11 -rf
 	install_bin /bin/busybox /bin/ash /bin/sh /bin/mount /bin/umount /sbin/pivot_root /sbin/reboot /bin/sync /bin/sleep /bin/cat /bin/echo /sbin/ifconfig
+	install_bin /bin/config
 	install_bin /sbin/artmtd
 	install_bin /usr/sbin/nandwrite
 	install_bin /usr/sbin/net-cgi

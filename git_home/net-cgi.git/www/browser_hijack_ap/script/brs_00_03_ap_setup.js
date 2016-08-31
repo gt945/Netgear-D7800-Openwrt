@@ -32,7 +32,13 @@ function goto_route()
 
 function go_back()
 {
-	this.location.href = "BRS_ap_detect_01_ap_02.html";
+	var pre_url = document.referrer;
+	if(pre_url.indexOf("BRS_ap_detect_01_ap_02.html?id=0") != -1)
+		this.location.href = "BRS_ap_detect_01_ap_02.html?id=0";
+	else if(pre_url.indexOf("BRS_ap_detect_01_ap_02.html?id=1") != -1)
+		this.location.href = "BRS_ap_detect_01_ap_02.html?id=1";
+	else
+		this.location.href = "BRS_ap_detect_01_ap_02.html";
 	return true;
 
 }

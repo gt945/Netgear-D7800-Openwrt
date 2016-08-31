@@ -57,8 +57,8 @@ define Package/ebtables/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/extensions/*.so $(1)/usr/lib/ebtables/
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ebtables $(1)/usr/sbin/
-	$(INSTALL_DIR) $(1)/sbin
-	$(INSTALL_BIN) ./files/cmd_ebtables $(1)/sbin/
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_ebtables $(1)/$(CONFIG_DGC_DNI_CMD_DIR)/
 endef
 
 define Package/ebtables-utils/install

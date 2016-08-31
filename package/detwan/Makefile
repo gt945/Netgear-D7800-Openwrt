@@ -9,24 +9,25 @@ PKG_VERSION:=1.0
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
-PKG_GIT_TREEISH:=wan-detection-dni31
-
 include $(INCLUDE_DIR)/package.mk
 
-define Package/detwan
+define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Network
-	DEPENDS:=@TARGET_ipq806x
 	TITLE:=Detection of Internet Connection Type
+	MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/wan-detection.git/* $(PKG_BUILD_DIR)/
 endef
 
-define Package/detwan/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/detwan $(1)/usr/sbin/
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/install
+	$(MAKE) -C $(PKG_BUILD_DIR) install PREFIX=$(1)
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/detwan.sh $(1)/usr/sbin/
 endef
 
-$(eval $(call BuildPackage,detwan))
+$(eval $(call BuildPackage,$(PKG_NAME)))

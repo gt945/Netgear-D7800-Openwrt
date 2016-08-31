@@ -15,6 +15,10 @@
 /* the period of time the client is allowed to use that address */
 #define LEASE_TIME              (60*60*24*10) /* 10 days of seconds */
 
+
+/* the period of time the guest client is allowed to use that address */
+#define GUEST_LEASE_TIME        1800 /* 30 minutes */
+
 /* where to find the DHCP server configuration file */
 #define DHCPD_CONF_FILE         "/etc/udhcpd.conf"
 

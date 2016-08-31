@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2006 OpenWrt.org
-START=50
+START=70
 
 CRONTABS=/tmp/etc/crontabs
 CRON_SPOOL=/var/spool/cron
@@ -22,6 +22,30 @@ prepare_crontab()
 
 start () {
 	prepare_crontab
+	/usr/sbin/dsyslog restart
+
+	mkdir -p $CRON_SPOOL
+	[ -d $CRONTABS ] && rm -fr $CRONTABS
+	mkdir -p $CRONTABS
+	[ -L ${CRON_SPOOL}/crontabs ] || ln -s $CRONTABS ${CRON_SPOOL}/crontabs
+
+	# Generate `Block Sites` && `Block Services` && `E-mail Notification`
+	# for scheduling.
+	/sbin/cmdsched
+	firewall.sh restart
+
+	# Start NTP when `time_zone` is reset.
+	# check if booting or not.if not booting, run ntpclient 
+	if [ ! -f /tmp/boot_status ]; then
+		killall ntpclient
+		sleep 1
+		if [ "$($CONFIG get endis_ntp)" = "1" ]; then
+			/etc/init.d/ntpclient start
+		fi
+		# sleep 1 second wait for ntpclient to get time
+		sleep 1
+	fi
+
 	crond -c $CRONTABS -T "$($CONFIG get time_zone)"
 }
 

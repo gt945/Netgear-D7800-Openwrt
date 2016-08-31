@@ -58,7 +58,7 @@ function goto_next(cf, wl_login)
 	}
 	else
 	{
-		alert(warning_info);
+		alert(bh_warning_info);
 		return false;
 	}	
 }

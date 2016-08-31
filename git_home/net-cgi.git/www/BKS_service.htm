@@ -9,9 +9,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" name="Cancel" type="reset" value="$cancel_mark" onClick="location.href=\'/BKS_service.htm\';return false;">&nbsp;&nbsp;<input class="apply_bt" name="Apply" type="submit" value="$apply_mark" onClick="return check_block_services_apply(document.forms[0])"></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" id="cancel" name="Cancel" type="button" value="$cancel_mark" onClick="location.href=\'/BKS_service.htm\';">&nbsp;&nbsp;<input class="apply_bt" name="Apply" id="apply" type="button" value="$apply_mark" onClick="return check_block_services_apply(document.forms[0])"></TD>');
 else
-	document.write('<TD nowrap colspan=2 align=center><input class="cancel1_bt" name="Cancel" type="reset" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="Apply" type="submit" value="$apply_mark" disabled></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel1_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" id="apply" name="Apply" type="button" value="$apply_mark" disabled></TD>');
       
 </script>
 </TR>
@@ -72,17 +72,17 @@ function loadvalue()
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type='radio' name='skeyword' value='never'>$never_mark
+	<input type='radio' name='skeyword' id="skeyword_never" value='never'>$never_mark
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="skeyword" value="perschedule">$per_schedule_mark
+	<input type="radio" name="skeyword" id="skeyword_sched" value="perschedule">$per_schedule_mark
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type=radio name=skeyword value="always">$always_mark
+	<input type=radio name=skeyword id="skeyword_always" value="always">$always_mark
 	</TD>
 </TR>
 $bluebar
@@ -93,7 +93,7 @@ $bluebar
 </TR>
 <TR>
 	<TD  nowrap colspan=2>
-	<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
+	<TABLE class=tables id="services_table" border=0 cellpadding=2 cellspacing=0 width=100%>
 	<TR class=table_header>
 	<TD nowrap align=center width=20%>&nbsp; </TD>
 	<TD nowrap align=center><span class="subhead">#</span></TD>
@@ -111,12 +111,12 @@ if (array_num > 0)
 		if( i%2== 0 )
 		{
 			document.write("<TR class=\"even_line\">");
-			document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" value="'+j+'"></TD><TD nowrap align=center><span class="subhead">'+i+'</span></TD><TD nowrap align=center>'+each_info[4].replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&#38;/g,"&")+'</TD><TD nowrap align=center>'+each_info[2]+'-'+each_info[3]+'</TD><TD nowrap align=center>'+each_info[6]+'</TD></TR>');
+			document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="service_select'+i+'" value="'+j+'"></TD><TD nowrap align=center><span class="subhead">'+i+'</span></TD><TD nowrap align=center>'+each_info[4].replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&#38;/g,"&")+'</TD><TD nowrap align=center>'+each_info[2]+'-'+each_info[3]+'</TD><TD nowrap align=center>'+each_info[6]+'</TD></TR>');
 		}
 		else
 		{
 			document.write("<TR class=\"odd_line\">");
-			document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" value="'+j+'"></TD><TD nowrap align=center><span class="subhead">'+i+'</span></TD><TD nowrap align=center>'+each_info[4].replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&#38;/g,"&")+'</TD><TD nowrap align=center>'+each_info[2]+'-'+each_info[3]+'</TD><TD nowrap align=center>'+each_info[6]+'</TD></TR>');
+			document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="service_select'+i+'" value="'+j+'"></TD><TD nowrap align=center><span class="subhead">'+i+'</span></TD><TD nowrap align=center>'+each_info[4].replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/&#38;/g,"&")+'</TD><TD nowrap align=center>'+each_info[2]+'-'+each_info[3]+'</TD><TD nowrap align=center>'+each_info[6]+'</TD></TR>');
 		}
 	}
 }		
@@ -127,13 +127,13 @@ if (array_num > 0)
 $bluebar
 <TR>
 	<TD nowrap colspan=2 align=center>
-	<input class="add_bt" name="Add" type="button" value="$add_mark" onClick="if(array_num == 20){alert('$blockser_length_20'); return false;}location.href='BKS_service_add.htm';return false;">&nbsp;&nbsp;
-	<input class="edit_bt" name="Edit" type="button" value="$edit_mark" onClick="return check_block_services_edit(document.forms[0]);">&nbsp;&nbsp;
+	<input class="add_bt" name="Add" id="add" type="button" value="$add_mark" onClick="if(array_num == 20){alert('$blockser_length_20'); return false;}location.href='BKS_service_add.htm';return false;">&nbsp;&nbsp;
+	<input class="edit_bt" name="Edit" id="edit" type="button" value="$edit_mark" onClick="return check_block_services_edit(document.forms[0]);">&nbsp;&nbsp;
 	<script>
 	if( master == "admin" )
-		document.write('<input class="delete_bt" name="Delete" type="button" value="$delete_mark" onClick="return check_block_services_del(document.forms[0]);">');
+		document.write('<input class="delete_bt" name="Delete" id="delete" type="button" value="$delete_mark" onClick="return check_block_services_del(document.forms[0]);">');
 	else
-		document.write('<input class="delete1_bt" name="Delete" type="button" value="$delete_mark" disabled');
+		document.write('<input class="delete1_bt" id="delete" name="Delete" type="button" value="$delete_mark" disabled');
 	</script>
 	</TD>
 </TR>

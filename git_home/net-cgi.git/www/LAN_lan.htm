@@ -10,9 +10,9 @@ top.menu_color_change('lan');
 
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';"> &nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return checklan(document.forms[0]);"></td></tr>');
+	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';"> &nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return checklan(document.forms[0]);"></td></tr>');
 else
-	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="reset" name=="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></td></tr>');
+	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name=="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></td></tr>');
 </script>
 </TABLE>
 </div>
@@ -125,10 +125,10 @@ function loadvalue()
 <input type="hidden" name="lan_subnet">
 
 <input type="hidden" name="out_of_range">
-<!--Default DMZ IP address-->
+<!--Block sites: Trusted IP Address-->
 <input type="hidden" name="Trusted_IP_Enable" value="<% cfg_get("block_endis_Trusted_IP") %>">
 <input type="hidden" name="cfTrusted_IPAddress" value="<% cfg_get("block_trustedip") %>">
-<!--Default DMZ Server IP address-->
+<!--Default DMZ IP address-->
 <input type="hidden" name="dmz_value" value="<% cfg_get("wan_endis_dmz") %>">
 <input type="hidden" name="dmz_ipaddr" value="<% cfg_get("dmz_ipaddr") %>">
 <input type="hidden" name="net_leng">
@@ -150,9 +150,9 @@ function loadvalue()
 	if(consolidate_device_name == "1"){
 		document.write(dev_name);
 		document.write("&nbsp;&nbsp;&nbsp;");
-		document.write('<input type="hidden" name="device_name" value="<% cfg_sed_xss("Device_name") %>">');
+		document.write('<input type="hidden" name="device_name" id="device_name" value="<% cfg_sed_xss("Device_name") %>">');
 	}else
-		document.write('<input type="text" name="device_name" maxlength="12" value="<% cfg_sed_xss("netbiosname") %>">');
+		document.write('<input type="text" name="device_name" id="device_name" maxlength="12" value="<% cfg_sed_xss("netbiosname") %>">');
 	</script>
 	<input class="short_edit_bt" id="edit_devname_bt" style="display:none"  type="button" name="edit" value="$edit_mark" onClick="edit_devicename(dev_name)">
 	</TD>
@@ -166,25 +166,25 @@ $bluebar
 <TR>
 	<TD nowrap><span id="iptext">$lan_mark_ip</span></TD>
 	<TD nowrap align=right>
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr1" id="sys_lan_ipaddress1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr2" id="sys_lan_ipaddress2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr3" id="sys_lan_ipaddress3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr4" id="sys_lan_ipaddress4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><span id="subtext">$lan_mark_subnet</span></TD>
 	<TD nowrap align=right>
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
-	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask1" id="sys_lan_netmask1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask2" id="sys_lan_netmask2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask3" id="sys_lan_netmask3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask4" id="sys_lan_netmask4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$rip_dir</TD>
 	<TD nowrap align=right>
-	<select name="rip_direction">
+	<select name="rip_direction" id="rip_direction">
 		<option value="Both">$rip_both</option>
 		<option value="In only">$rip_in</option>
 		<option value="Out only">$rip_out</option>
@@ -194,7 +194,7 @@ $bluebar
 <TR>
 	<TD nowrap>$rip_ver</TD>
 	<TD nowrap align=right>
-	<select name="sysRIPVersion">
+	<select name="sysRIPVersion" id="sys_rip_version">
 		<option value="Disabled">$rip_disable</option>
 		<option value="RIP_1">$rip1</option>
 		<option value="RIP_2B">$rip2b</option>
@@ -205,26 +205,26 @@ $bluebar
 $bluebar
 <TR>
 	<TD nowrap>
-	<input type="checkbox" name="dhcp_server" value='1' onClick="dhcponoff()">
+	<input type="checkbox" name="dhcp_server" id="dhcp_server_enable" value='1' onClick="dhcponoff()">
 	<A tabindex=-1 href="javascript:loadhelp('_lan','dhcp')"><B>$lan_mark_dhcp</B></A>
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><span id="iptext">$lan_dhcp_start</span></TD>
 	<TD nowrap align=right>
-	<input type="text" name="sysPoolStartingAddr1" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolStartingAddr2" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolStartingAddr3" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolStartingAddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="sysPoolStartingAddr1" id="sys_pool_starting_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr2" id="sys_pool_starting_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr3" id="sys_pool_starting_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr4" id="sys_pool_starting_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><span id="subtext">$lan_dhcp_end</span></TD>
 	<TD nowrap align=right>
-	<input type="text" name="sysPoolFinishAddr1" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolFinishAddr2" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolFinishAddr3" size="3" autocomplete="off" maxlength="3" disabled>.
-	<input type="text" name="sysPoolFinishAddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="sysPoolFinishAddr1" id="sys_pool_finish_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr2" id="sys_pool_finish_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr3" id="sys_pool_finish_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr4" id="sys_pool_finish_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 $bluebar
@@ -240,7 +240,7 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2><div align=center>
-	<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
+	<TABLE id="address_reser_table" class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
 	<TR class=table_header>
 		<TD nowrap align=center>&nbsp;</TD>
 		<TD nowrap align=center><span class="subhead">#</span></TD>
@@ -266,8 +266,7 @@ if (array_num > 0)
 			document.write("<TR class=\"even_line\">");
 		else
 			document.write("<TR class=\"odd_line\">");
-			
-		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" value="'+i+'"></TD>');
+		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="address_select'+i+'" value="'+(i-1)+'"></TD>');
 		document.write('<TD nowrap align=center><span class="subhead">'+i+'</span></TD>');
 		if (each_info[0]=="<unknown>")
 			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD>');
@@ -289,13 +288,13 @@ if (array_num > 0)
 </TR>
 <TR>
 	<TD nowrap colspan=2 align=center>
-	<input class="add_bt"  type="submit" name="Add" value="$add_mark" onClick="valid_add();return false;">
-	<input class="edit_bt" type="submit" name="Edit" value="$edit_mark" onClick="return check_reservation_editnum(document.forms[0]);">
+	<input class="add_bt"  type="button" name="Add" id="add" value="$add_mark" onClick="valid_add();return false;">
+	<input class="edit_bt" type="button" name="Edit" id="edit" value="$edit_mark" onClick="return check_reservation_editnum(document.forms[0]);">
 	<script>
 	if( master == "admin" )
-		document.write('<input class="delete_bt" type="submit" name="Delete" value="$delete_mark" onClick="return check_reservation_del( document.forms[0]);">');
+		document.write('<input class="delete_bt" type="button" name="Delete" id="delete" value="$delete_mark" onClick="return check_reservation_del( document.forms[0]);">');
 	else
-		document.write('<input class="delete1_bt" type="submit" name="Delete" value="$delete_mark" disabled>');
+		document.write('<input class="delete1_bt" type="button" name="Delete" id="delete" value="$delete_mark" disabled>');
 	</script>
 	</TD>
 </TR>

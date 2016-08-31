@@ -5,40 +5,45 @@
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
         <TD nowrap colspan=2 align=center>
-        <input class="common_bt" type="submit" name="action_Refresh" value='$refresh_mark' onClick="return refresh_log(document.forms[0]);">&nbsp;&nbsp;
+        <input class="common_bt" type="button" name="action_Refresh" id="action_refresh" value='$refresh_mark' onClick="return refresh_log(document.forms[0]);">&nbsp;&nbsp;
 	<script>
+		var have_email_flag=(typeof(parent.have_email_flag) == "undefined")? 1 : parent.have_email_flag;
 		var gui_region="<% cfg_get("GUI_Region") %>";
 		var master="<% cfg_get("http_loginname") %>";
 		if(gui_region == "Greek")
 		{
 			if( master == "admin" )
 			{
-				document.write('<input class="common_big_bt" type="submit" name="action_Clear" value="$clear_log" onclick="return check_logs_clear(document.forms[0])">&nbsp;&nbsp;');
-				document.write('<input class="common_big_bt" type="submit" name="action_Send" value="$send_log" onclick="return check_logs_send(document.forms[0])">&nbsp;&nbsp;');
+				document.write('<input class="common_big_bt" type="button" id="action_clear" name="action_Clear" value="$clear_log" onclick="return check_logs_clear(document.forms[0])">&nbsp;&nbsp;');
+				document.write('<input class="common_big_bt" type="button" id="action_send" name="action_Send" value="$send_log" onclick="return check_logs_send(document.forms[0])">&nbsp;&nbsp;');
 			}
 			else
 			{
-				document.write('<input class="common_big_gray_bt" type="submit" name="action_Clear" value="$clear_log" disabled>&nbsp;&nbsp;');
-				document.write('<input class="common_big_gray_bt" type="submit" name="action_Send" value="$send_log" disabled>&nbsp;&nbsp;');
+				document.write('<input class="common_big_gray_bt" type="button" id="action_clear" name="action_Clear" value="$clear_log" disabled>&nbsp;&nbsp;');
+				document.write('<input class="common_big_gray_bt" type="button" id="action_send" name="action_Send" value="$send_log" disabled>&nbsp;&nbsp;');
 			}
 		}
 		else
 		{
 			if( master == "admin" )
 			{
-				document.write('<input class="common_bt" type="submit" name="action_Clear" value="$clear_log" onclick="return check_logs_clear(document.forms[0])">&nbsp;&nbsp;');
-				document.write('<input class="common_bt" type="submit" name="action_Send" value="$send_log" onclick="return check_logs_send(document.forms[0])">&nbsp;&nbsp;');
+				document.write('<input class="common_bt" type="button" id="action_clear" name="action_Clear" value="$clear_log" onclick="return check_logs_clear(document.forms[0])">&nbsp;&nbsp;');
+				document.write('<input class="common_bt" type="button" id="action_send" name="action_Send" value="$send_log" onclick="return check_logs_send(document.forms[0])">&nbsp;&nbsp;');
 			}
 			else
 			{
-				document.write('<input class="common1_bt" type="submit" name="action_Clear" value="$clear_log" disabled>&nbsp;&nbsp;');
-				document.write('<input class="common1_bt" type="submit" name="action_Send" value="$send_log" disabled>&nbsp;&nbsp;');
+				document.write('<input class="common1_bt" type="button" id="action_clear" name="action_Clear" value="$clear_log" disabled>&nbsp;&nbsp;');
+				document.write('<input class="common1_bt" type="button" id="action_send" name="action_Send" value="$send_log" disabled>&nbsp;&nbsp;');
 			}
 		}
 		if( master == "admin" )
-			document.write('<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_log_apply(document.forms[0])">');
+			document.write('<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_log_apply(document.forms[0])">');
 		else
-			document.write('<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled>');
+			document.write('<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled>');
+		if(have_email_flag == 1)
+			document.getElementById("action_send").style.display = "";
+		else
+			document.getElementById("action_send").style.display = "none";
 	</script>
         </TD>
 </TR>
@@ -73,22 +78,32 @@ var mobile_conn_flag=parent.mobile_conn_flag;
 var log_get_readyshare="<% cfg_get("log_readyshare") %>";
 var log_get_mobile_conn="<% cfg_get("log_mobile_conn") %>";
 var log_get_vpn_head="<% cfg_get("log_vpn_head") %>";
+var have_wifi_flag=(typeof(parent.have_wifi_flag) == "undefined") ? 1 :parent.have_wifi_flag;
+var vpn_show_flag=parent.vpn_show_flag;
+var port_forwarding_flag=(typeof(parent.port_forwarding_flag) == "undefined") ? 1 : parent.port_forwarding_flag;
+var port_triggering_flag=(typeof(parent.port_triggering_flag) == "undefined") ? 1 : parent.port_triggering_flag;
+var block_sites_flag=parent.block_sites_flag;
 
 function checkbox_show()
 {
 	if(logs_checkbox_flag == 1)
 	{
-		document.getElementById("logs_1").style.display="";
-		document.getElementById("logs_2").style.display="";
 		document.getElementById("logs_3").style.display="";
 		document.getElementById("logs_4").style.display="";
 		document.getElementById("logs_5").style.display="";
 		document.getElementById("logs_6").style.display="";
-		document.getElementById("logs_7").style.display="";
-		document.getElementById("logs_9").style.display="";
 		document.getElementById("logs_10").style.display="";
-		document.getElementById("logs_13").style.display="";
-
+		
+		if(block_sites_flag == 1)
+		{
+			document.getElementById("logs_1").style.display="";
+			document.getElementById("logs_2").style.display="";
+		}
+		else
+		{
+			document.getElementById("logs_1").style.display="none";
+			document.getElementById("logs_2").style.display="none";
+		}
 		if( autoconn_flag == 1 )
 			document.getElementById("logs_8").style.display="";
 		else
@@ -101,6 +116,21 @@ function checkbox_show()
 			document.getElementById("logs_12").style.display="";
 		else
 			document.getElementById("logs_12").style.display="none";
+		if( have_wifi_flag == 1)
+		{
+			document.getElementById("logs_7").style.display="";
+			document.getElementById("logs_9").style.display="";
+		}
+		else
+		{
+			document.getElementById("logs_7").style.display="none";
+			document.getElementById("logs_9").style.display="none";
+		}
+		if( vpn_show_flag == 1)
+			document.getElementById("logs_13").style.display="";
+		else
+			document.getElementById("logs_13").style.display="none"
+
 	}
 	else
 	{
@@ -123,8 +153,6 @@ function checkbox_show()
 function loadvalue()
 {
 	var form=document.forms[0];
-	
-	checkbox_show();
 	
 	if(log_get_site=='1')
 		form.log_site.checked = true;
@@ -189,48 +217,56 @@ function loadvalue()
 <input type="hidden" name="hidden_log_mobile_conn">
 <input type="hidden" name="hidden_log_vpn_head">
 <TR>
-	<TD nowrap colspan=2 align=center><B>$ntp_curtime: <script>document.write(cur_time)</script></B></TD>
+	<TD nowrap colspan=2 align=center><B id="current_time">$ntp_curtime: <script>document.write(cur_time)</script></B></TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2 align=center>
-	<pre><textarea NAME="log_detail" ROWS="20" cols="60" WRAP="vitural" readonly><% log_message() %></textarea>
+	<pre><textarea NAME="log_detail" ROWS="20" id="log_detail" cols="60" WRAP="vitural" readonly><% log_message() %></textarea>
 	</pre>	
 	</TD>
 </TR>
 $bluebar
 <TR id=logs_1>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_site" value="1">$logs_access_sites	
+	<input type="checkbox" name="log_site" id="log_asites" value="1">$logs_access_sites	
 	</TD>
 </TR>
 <TR id=logs_2>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_block" value="1">$logs_access_block_sites_services	
+	<input type="checkbox" name="log_block" id="log_block" value="1">$logs_access_block_sites_services	
 	</TD>
 </TR>
 <TR id=logs_3>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_conn" value="1">$logs_conn_web_interface	
+	<input type="checkbox" name="log_conn" id="log_conn" value="1">$logs_conn_web_interface	
 	</TD>
 </TR>
 <TR id=logs_4>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_router" value="1">$logs_router_operation	
+	<input type="checkbox" name="log_router" id="log_router" value="1">$logs_router_operation	
 	</TD>
 </TR>
 <TR id=logs_5>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_dosport" value="1">$logs_dos_attacks_port_scans	
+	<input type="checkbox" name="log_dosport" id="log_dosport" value="1">$logs_dos_attacks_port_scans	
 	</TD>
 </TR>
 <TR id=logs_6>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_port" value="1">$logs_port_forward_trigger	
+	<input type="checkbox" name="log_port" id="log_fwd" value="1">	
+	<script>
+	if(port_forwarding_flag ==1 && port_triggering_flag ==1)
+		document.write("$logs_port_forward_trigger");
+	else if(port_forwarding_flag ==1 && port_triggering_flag !=1)
+		document.write("$port_forward");
+	else if(port_forwarding_flag !=1 && port_triggering_flag ==1)
+		document.write("$port_trigger");
+	</script>
 	</TD>
 </TR>
 <TR id=logs_7>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="log_wire" value="1">$logs_wireless_access	
+	<input type="checkbox" name="log_wire" id="log_wlan" value="1">$logs_wireless_access	
 	</TD>
 </TR>
 <TR id=logs_8>
@@ -265,5 +301,8 @@ $bluebar
 </div>
 <% help_box("0","_CF_log") %>
 </form>
+<script>
+	checkbox_show();
+</script>
 </body>
 </html>

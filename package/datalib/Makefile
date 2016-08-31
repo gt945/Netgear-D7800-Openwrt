@@ -4,63 +4,52 @@
 
 include $(TOPDIR)/rules.mk
 
-REGION_TAG=REGION_WW
-ifeq ($(FW_REGION),NA)
-  REGION_TAG=REGION_NA
-endif
-ifeq ($(FW_REGION),GR)
-  REGION_TAG=REGION_GR
-endif
-ifeq ($(FW_REGION),PR)
-  REGION_TAG=REGION_PR
-endif
-ifeq ($(FW_REGION),KO)
-  REGION_TAG=REGION_KO
-endif
-
 PKG_NAME:=datalib
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 
-PKG_GIT_TREEISH:=datalib-dni10
-CONFIG_MAGIC=0x20131224
-RAND_MAGIC=0x20131224
-PATH_CONFIG_MTD=\\\"/dev/mtd19\\\"
+config-$(CONFIG_datalib_WITH_nvram)		+= --with_nvram
+config-$(CONFIG_datalib_WITH_readycloud_nvram)	+= --with_readycloud_nvram
+ifneq ($(CONFIG_datalib_SPACE_SIZE),)
+config-y					+= --config_space $(CONFIG_datalib_SPACE_SIZE)
+endif
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/datalib
+define Package/$(PKG_NAME)
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=Small application for saving data on embedded system
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/datalib.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./datalib_src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
 endef
 
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Build/Configure
+endef
+
 define Build/InstallDev
 	mkdir -p $(STAGING_DIR)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/libconfig.so $(STAGING_DIR)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/libconfig.so $(STAGING_DIR)/usr/lib/
 endef
 
 define Build/UninstallDev
 	rm -f $(STAGING_DIR)/usr/lib/libconfig.so
 endef
 
-define Package/datalib/install
-	install -d -m0755 $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/libconfig.so $(1)/usr/lib/
-	install -d -m0755 $(1)/bin
-	install -m0755 $(PKG_BUILD_DIR)/datalib $(1)/bin/
-	install -m0755 $(PKG_BUILD_DIR)/config $(1)/bin/
-	install -m0755 $(PKG_BUILD_DIR)/nvram $(1)/bin/
-	install -m0755 $(PKG_BUILD_DIR)/readycloud_nvram $(1)/bin/
+define Package/$(PKG_NAME)/install
+	PREFIX=$(1) $(MAKE) -C $(PKG_BUILD_DIR) install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/datalib.init $(1)/etc/init.d/datalib
 endef
 
-$(eval $(call BuildPackage,datalib))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -26,6 +26,8 @@ endef
 define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)
 	$(call Build/Patch/Default)
+
+	$(call DGC/ProductName,$(PKG_BUILD_DIR)/update_smb.c)
 endef
 
 define Package/samba-scripts/install
@@ -60,5 +62,7 @@ define Package/samba-scripts/install
 	ln -s /tmp/config/group $(1)/etc/group
 	-rm -f $(1)/etc/shadow
 	ln -s /tmp/config/shadow $(1)/etc/shadow
+
+	$(call DGC/ProductName,$(1)/usr/config/smb.conf)
 endef
 $(eval $(call BuildPackage,samba-scripts))

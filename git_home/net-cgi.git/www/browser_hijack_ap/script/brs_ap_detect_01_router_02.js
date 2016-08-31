@@ -1,6 +1,6 @@
 function goto_next(cf, wl_login)
 {
-	if(cf.use_ap[0].checked)
+	if(cf.choose[0].checked)
 	{	
 		if(checkpsk(cf.passphrase_an, cf.wla_sec_wpaphrase_len)== false)
 			return;
@@ -17,11 +17,11 @@ function goto_next(cf, wl_login)
 	
 		cf.submit();
 	}
-	else if(cf.use_ap[1].checked)
+	else if(cf.choose[1].checked)
 		this.location.href="BRS_01_checkNet_ping.html";
 	else
 	{
-		alert(warning_info);
+		alert(bh_warning_info);
 		return false;
 	}	
 }

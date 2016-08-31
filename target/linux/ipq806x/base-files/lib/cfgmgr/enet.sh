@@ -84,7 +84,9 @@ set_ssdp_bypass()
 	# 6. static 		< yes, never time aging>
 	# 7. leaky			< yes, make this entry take effect across VLANs >
 	# 8.9.10.11.12		mirror, clone, da_pri, queue, cross_pt_state
-	ssdk_sh fdb entry add 01-00-5e-7f-ff-fa 1 forward forward 6 yes yes no no no no no
+	# 13.14				white_list_en, load_balance_en
+	ssdk_sh fdb entry add 01-00-5e-7f-ff-fa 1 forward forward 6 yes yes no no no no no no no
+	[ "x$?" != "x0" ] && echo "### Set SSDP bypass failed! Need adjust!"
 }
 
 # Enable IGMP SNOOPING on LAN (0,2,3,4,5) ports
@@ -126,8 +128,8 @@ et_init()
 #    sw port4 -> LAN1 
 #    sw port5 -> WAN 
 
-ssdk_sh=/usr/sbin/ssdk_sh
-swconfig=/sbin/swconfig
+ssdk_sh=$(which ssdk_sh)
+swconfig=$(which swconfig)
 swconf=/tmp/sw.conf
 ssdk_cmds_file=/tmp/ssdk.sh
 

@@ -30,7 +30,7 @@ function initPage()
         var serverIP_text = document.createTextNode(bh_basic_pptp_servip);
         serverIP_div.appendChild(serverIP_text);
 
-	var Gateway_div = document.getElementById("Gateway");
+	var Gateway_div = document.getElementById("GatewayAddr");
 	var Gateway_text = document.createTextNode(bh_sta_routes_gtwip);
 	Gateway_div.appendChild(Gateway_text);
 	
@@ -40,74 +40,42 @@ function initPage()
 	
 
 	//set event action
-	var name_input = document.getElementById("inputName");
+	var name_input = document.getElementById("pptp_username");
 	name_input.onkeypress = ssidKeyCode;
 
-	var passwd_input = document.getElementById("inputPasswd");
+	var passwd_input = document.getElementById("pptp_passwd");
 	passwd_input.onkeypress = ssidKeyCode;
 	
-	var idle_input = document.getElementById("inputIdle");
+	var idle_input = document.getElementById("pptp_idletime");
 	idle_input.onkeypress = numKeyCode;
 
-	var IP_addr_input = document.getElementById("inputIPaddr");
-	IP_addr_input.onkeypress = ipaddrKeyCode;
-	
-	var severIP_input = document.getElementById("inputServerIP");
+	var severIP_input = document.getElementById("pptp_serv_ip");
 	severIP_input.value = "10.0.0.138";
 	severIP_input.disabled = true;
 
-	var gateway_input = document.getElementById("inputGateway");
-	gateway_input.onkeypress = ipaddrKeyCode;
-
-
 	//buttons
-	var btns_div1 = document.getElementById("btnsContainer_div1");
+	var btns1 = document.getElementById("self_config");
+	btns1.value = bh_manual_config_connection;
 	if( master == "admin" )
-	btns_div1.onclick = function()
+	btns1.onclick = function()
 	{
 		return manuallyConfig();
 	}
-	
-	var btn = btns_div1.getElementsByTagName("div");
-	var btn_text = document.createTextNode(bh_manual_config_connection);
-	btn[0].appendChild(btn_text);
+	else
+		btns1.className="grey_long_btn";
 
-	var btns_div2 = document.getElementById("btnsContainer_div2");
+	var btns2 = document.getElementById("again");
+	btns2.value = bh_try_again;
 	if( master == "admin" )
-	btns_div2.onclick = function()
+	btns2.onclick = function()
 	{
 		return checkPPTP();
 	}
-	
-	btn = btns_div2.getElementsByTagName("div");
-	btn_text = document.createTextNode(bh_try_again);
-	btn[0].appendChild(btn_text);
-
+	else
+		btns2.className="grey_common_btn";
 
 	//show firmware version
         showFirmVersion("");
-}
-
-function manuallyConfig()
-{
-	if(confirm(bh_no_genie_help_confirm) == false)
-		return false;
-	if(top.dsl_enable_flag == 1)
-		this.location.href="BRS_log12_incorrect_go_to_internet.html";
-	else{
-	  var forms = document.getElementsByTagName("form");
-	  var cf = forms[0];
-
-	  if( hijack_process == "1" )
-	  {
-        	cf.action = "/apply.cgi?/welcomeok.htm timestamp=" + ts;
-		cf.submit_flag.value = "hijack_toBasic";
-		cf.submit();
-	  }
-	  else
-		location.href="BAS_basic.htm";
-	}
-	return true;
 }
 
 function checkPPTP()
@@ -115,9 +83,9 @@ function checkPPTP()
 	var forms = document.getElementsByTagName("form");
         var cf = forms[0];
 	
-	var pptp_name = document.getElementById("inputName");
-	var pptp_passwd = document.getElementById("inputPasswd");
-	var pptp_idletime = document.getElementById("inputIdle");
+	var pptp_name = document.getElementById("pptp_username");
+	var pptp_passwd = document.getElementById("pptp_passwd");
+	var pptp_idletime = document.getElementById("pptp_idletime");
 
 	if(pptp_name.value == "")
 	{
@@ -158,45 +126,44 @@ function checkIPaddr()
 	var forms = document.getElementsByTagName("form");
         var cf = forms[0];
 
-	var pptp_myip = document.getElementById("inputIPaddr");
-        var pptp_gateway = document.getElementById("inputGateway");
+	cf.ip_address.value = cf.myip_1.value+'.'+cf.myip_2.value+'.'+cf.myip_3.value+'.'+cf.myip_4.value;
+	cf.gateway.value = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
 
-	if(pptp_myip.value != "")
+	if(cf.ip_address.value != "...")
 	{
 		cf.WANAssign.value = 1;
 
 		/* To fix Bug27179: [New GUI][CD-less]DUT should pop up error message if Gateway IP Address
 		 * and My IP Address are in different network. */
-		var pptp_myip1 = pptp_myip.value.split(".")[0];
 		var pptp_mask="255.255.255.0";
 
-		if( parseInt(pptp_myip1) < 128 )
+		if( parseInt(cf.myip_1.value) < 128 )
 			pptp_mask="255.0.0.0";
-		else if( parseInt(pptp_myip1) < 192 )
+		else if( parseInt(cf.myip_1.value) < 192 )
 			pptp_mask="255.255.0.0";
 		else
 			pptp_mask="255.255.255.0";
 
 		cf.pptp_subnet.value=pptp_mask;
 
-		if(checkipaddr(pptp_myip.value)==false)
+		if(checkipaddr(cf.ip_address.value)==false)
 		{
 			alert(bh_invalid_myip);
 			return false;
 		}
-		if(pptp_gateway.value != "" && checkgateway(pptp_gateway.value) == false)
+		if(cf.gateway.value != "..." && checkgateway(cf.gateway.value) == false)
 		{
 			alert(bh_invalid_gateway);
 			return false;
 		}
-		if(pptp_gateway.value != "")
+		if(cf.gateway.value != "...")
 		{
-			if(isSameIp(pptp_myip.value,pptp_gateway.value) == true)
+			if(isSameIp(cf.ip_address.value,cf.gateway.value) == true)
 			{
 				alert(bh_invalid_gateway);
 				return false;
 			}
-			if(isGateway(pptp_myip.value,cf.pptp_subnet.value,pptp_gateway.value) == false)
+			if(isGateway(cf.ip_address.value,cf.pptp_subnet.value,cf.gateway.value) == false)
 			{
 				alert(bh_invalid_gateway);
 				return false;

@@ -205,7 +205,7 @@ int main(int argc, char *argv[])
 			 * Bug 22814 [NETGARE]
 			 * create raw socket with PF_PACKET protocol family to obtain layer2 source mac address
 			 */
-			if ((raw_server_socket = raw_socket(server_config.ifindex)) < 0) {
+			if ((raw_server_socket = raw_socket(server_config.ifindex, 0)) < 0) {
 				LOG(LOG_ERR, "FATAL: couldn't create raw server socket, %s", strerror(errno));
 				exit_server(0);
 			}			
@@ -300,6 +300,13 @@ int main(int argc, char *argv[])
 #ifdef DHCPD_STATIC_LEASE
 		/* Look for a static lease */
                 static_lease_ip = get_ip_by_mac(&packet.chaddr);
+
+                /* If find static lease, but it out of current ip range, then fail */
+                if (static_lease_ip) {
+                       if (ntohl(static_lease_ip) < ntohl(server_config.start) ||
+                           ntohl(static_lease_ip) > ntohl(server_config.end))
+                               static_lease_ip = 0;
+                }
 #endif
 
 		/* ADDME: look for a static lease */

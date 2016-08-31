@@ -516,14 +516,15 @@ function check_wlan()
 				return false;
 		}
 	}
+	cf.submit();
 	return true;	
 }
 
 function check_wlan_guest(type)
 {
 	var cf=document.forms[0];
-	//bug 41791var ssid = document.forms[0].gssid.value.replace(/\\/g,"\\\\\\\\").replace(/`/g,"\\\\\\`").replace(/"/g,"\\\"");
-	var ssid = document.forms[0].gssid.value;
+	//bug 41791var ssid = document.forms[0].ssid.value.replace(/\\/g,"\\\\\\\\").replace(/`/g,"\\\\\\`").replace(/"/g,"\\\"");
+	var ssid = document.forms[0].ssid.value;
 	//var space_flag=0;
 	cf.s_gssid.value=ssid;
 	//bug 41791var wl_ssid=document.forms[0].wlssid.value.replace(/\\/g,"\\\\\\\\").replace(/`/g,"\\\\\\`").replace(/"/g,"\\\"");
@@ -563,7 +564,7 @@ function check_wlan_guest(type)
 	else
 		cf.hidden_enable_ssidbro.value=0;
 		
-	if(cf.allow_see_access.checked == true)
+	if(cf.allow_access.checked == true)
 		cf.hidden_allow_see_and_access.value=1;
 	else
 		cf.hidden_allow_see_and_access.value=0;
@@ -725,5 +726,6 @@ function check_wlan_guest(type)
 	else
 		cf.hidden_sec_type.value=1;
 		
+	cf.submit();
 	return true;
 }

@@ -1,7 +1,7 @@
 #!/bin/sh
 . /etc/net6conf/6data.conf
 
-WAN_IF=brwan
+WAN_IF=`config get wan_ifname`
 
 reset_iface_ip6() {
 	local dev=$1
@@ -43,9 +43,13 @@ start() {
 	else
 		start_service
 	fi
+	brctl addif $bridge pas0
+	ifconfig pas0 up
 }
 
 stop () {
+	ifconfig pas0 down
+	brctl delif $bridge pas0
 	if [ -e $IPV6_PSS_PROC ]; then
 		echo 0 > $IPV6_PSS_PROC
 		ifconfig $WAN_IF -promisc

@@ -18,11 +18,6 @@ function change_ipv6_pppoe_password(obj)
 
 function check_ipv6_pppoe(cf)
 {
-	if(enable_vpn == "1")
-        {
-                alert("$no_enable_ipv6");
-                return false;
-        }	
 	if(ipv6_save_common(cf)==false)
 		return false;
 
@@ -37,10 +32,10 @@ function check_ipv6_pppoe(cf)
 				return false;
 			}
 
-			cf.ipv6_pppoe_username.value = pppoe_username;
-			cf.ipv6_pppoe_passwd.value = pppoe_password;
-			cf.ipv6_pppoe_servername.value = pppoe_servername;
-			cf.ipv6_pppoe_mode.value = pppoe_dod;
+			cf.pppoe_username.value = pppoe_username;
+			cf.pppoe_passwd.value = pppoe_password;
+			cf.pppoe_servername.value = pppoe_servername;
+			cf.pppoe_dod.value = pppoe_dod;
 
 			cf.ipv6_hidden_sameinfo.value = "1";
 		}
@@ -48,37 +43,37 @@ function check_ipv6_pppoe(cf)
 		{
 			cf.ipv6_hidden_sameinfo.value = "0";
 
-			if(cf.ipv6_pppoe_username.value == "")
+			if(cf.pppoe_username.value == "")
 			{
 				alert("$login_name_null");
 				return false;
 			}
-        		for(i=0;i<cf.ipv6_pppoe_username.value.length;i++)
+        		for(i=0;i<cf.pppoe_username.value.length;i++)
         		{
-                		if(isValidChar(cf.ipv6_pppoe_username.value.charCodeAt(i))==false)
+                		if(isValidChar(cf.pppoe_username.value.charCodeAt(i))==false)
                 		{
                         		alert("$loginname_not_allowed");
                         		return false;
                 		}
         		}
 	
-			if(cf.ipv6_pppoe_passwd.value == "")
+			if(cf.pppoe_passwd.value == "")
 			{
 				alert("$password_null");
 				return false;
 			}
-        		for(i=0;i<cf.ipv6_pppoe_passwd.value.length;i++)
+        		for(i=0;i<cf.pppoe_passwd.value.length;i++)
         		{
-                		if(isValidChar(cf.ipv6_pppoe_passwd.value.charCodeAt(i))==false)
+                		if(isValidChar(cf.pppoe_passwd.value.charCodeAt(i))==false)
                 		{
                         		alert("$password_error");
                       		  	return false;
                 		}
         		}
 
-      		  	for(i=0;i<cf.ipv6_pppoe_servername.value.length;i++)
+      		  	for(i=0;i<cf.pppoe_servername.value.length;i++)
         		{
-                		if(isValidChar(cf.ipv6_pppoe_servername.value.charCodeAt(i))==false)
+                		if(isValidChar(cf.pppoe_servername.value.charCodeAt(i))==false)
                 		{
                         		alert("$servname_not_allowed");
                         		return false;
@@ -117,12 +112,12 @@ function setSameinfo()
 		document.getElementById("wan_line_2").style.display="none";
 		if(ipv6_pppoe_pwd == "")
 		{
-			cf.ipv6_pppoe_passwd.outerHTML='<input type="text" name="ipv6_pppoe_passwd" maxlength="64" size="18" onFocus="this.select();" onKeyPress="return getkey(\'ssid\', event)" value="">';
+			cf.pppoe_passwd.outerHTML='<input type="text" name="pppoe_passwd" id="pppoe_passwd" maxlength="64" size="18" onFocus="this.select();" onKeyPress="return getkey(\'ssid\', event)" value="">';
 		}
 		else
 		{
-			cf.ipv6_pppoe_passwd.outerHTML='<input type="password" name="ipv6_pppoe_passwd" maxlength="64" size="18" style="width: 143px" onFocus="change_ipv6_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)" value="">';
-			cf.ipv6_pppoe_passwd.value = ipv6_pppoe_pwd;
+			cf.pppoe_passwd.outerHTML='<input type="password" name="pppoe_passwd" id="pppoe_passwd" maxlength="64" size="18" style="width: 143px" onFocus="change_ipv6_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)" value="">';
+			cf.pppoe_passwd.value = ipv6_pppoe_pwd;
 		}
 	}
 }

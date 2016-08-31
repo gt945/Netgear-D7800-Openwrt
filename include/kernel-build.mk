@@ -91,8 +91,6 @@ define BuildKernel
 	) > $$@
 
   $(STAMP_CONFIGURED): $(STAMP_PREPARED) $(LINUX_KCONFIG_LIST) $(TOPDIR)/.config
-	(cd $(KERNEL_BUILD_DIR)/linux-$(LINUX_VERSION)/sourcecode/scripts/;  \
-		[ -f gcc-wrapper.py ] && chmod 0755 gcc-wrapper.py)
 	$(Kernel/Configure)
 	touch $$@
 

@@ -5,11 +5,6 @@ start () {
 	/etc/init.d/syslogd start
 	/etc/init.d/ntpclient start
 
-	# Generate `Block Sites` && `Block Services` && `E-mail Notification`
-	# for scheduling.
-	# This `firewall_function.sh` script will call `/sbin/cmdsched`, then
-	# re-start firewall setting.
-	/www/cgi-bin/firewall_function.sh blk_sched restart
 	/etc/init.d/cron start
 }
 

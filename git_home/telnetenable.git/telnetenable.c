@@ -64,13 +64,10 @@ struct PAYLOAD
 };
 
 #define __BIG_ENDIAN__	1
-
-#define LAN_IFNAME	"br0"
-
-#define TELNET_CMD	"/usr/sbin/utelnetd -d -i " LAN_IFNAME
+char *lan_ifname = "br0";
 
 #define REGION_FILE     "/tmp/firmware_region"
-extern char *config_get(char *name);
+//extern char *config_get(char *name);
 
 /* the content of file is stored in static array */
 static char *cat_file(char *name)
@@ -222,8 +219,8 @@ int EncodeString(void *ctx, char *pInput,char *pOutput, int lSize)
 	return lCount;
 }
 
-extern char *config_get(char *name);
-int fill_payload(char *p)
+//extern char *config_get(char *name);
+int fill_payload(char *p, char *http_passwd)
 {
 	int secret_len;
 	int encoded_len;
@@ -235,8 +232,8 @@ int fill_payload(char *p)
 	char mac[0x10], MD5_key[0x11];
 	char secret_key[0x40];
 
-	strncpy(password, config_get("http_passwd"), sizeof(password) - 1);
-	get_mac(mac, LAN_IFNAME);
+	strncpy(password, http_passwd, sizeof(password) - 1);
+	get_mac(mac, lan_ifname);
 	
 	memset(&payload, 0, sizeof(payload));
 	strcpy(payload.mac, mac);
@@ -272,8 +269,30 @@ int main(int argc, char * argv[])
 	int r, datasize;
 	char rbuf[512], output_buf[512];
 	char ack[] = "ACK";
+	int opt;
+	char *gui_region = NULL;
+	char *http_passwd = NULL;
+	char telnet_cmd[1024];
 
-	fd = open_telnet(LAN_IFNAME);
+	while((opt=getopt(argc, argv, "r:p:i:")) != -1)
+	{
+		switch(opt)
+		{
+			case 'r':
+				gui_region = optarg;
+				break;
+			case 'p':
+				http_passwd = optarg;
+				break;
+			case 'i':
+				lan_ifname = optarg;
+				break;
+			default:
+				exit(EXIT_FAILURE);
+		}
+	}
+
+	fd = open_telnet(lan_ifname);
 	if (fd < 0) {
 		printf("Can't open the socket!\n");
 		return -1;
@@ -294,14 +313,15 @@ int main(int argc, char * argv[])
 		if (r < 1)
 			continue;
 
-		datasize = fill_payload(output_buf);
+		datasize = fill_payload(output_buf, http_passwd);
 		if (r == datasize && memcmp(rbuf, output_buf, r) == 0) {
 			/* maybe it's better to judge whether utelnetd is running in real time here */
 			if (telnet_enabled == 0 && 
 			((strncmp(cat_file(REGION_FILE), "PR", 2) != 0) &&
-			!((strncmp(cat_file(REGION_FILE), "WW", 2) == 0) && (strcmp(config_get("GUI_Region"), "Chinese") == 0))) ) {
+			!((strncmp(cat_file(REGION_FILE), "WW", 2) == 0) && (strcmp(gui_region, "Chinese") == 0))) ) {
 				printf("The telnet server is enabled now!!!\n");
-				system(TELNET_CMD);
+				sprintf(telnet_cmd, "/usr/sbin/utelnetd -d -i %s", lan_ifname);
+				system(telnet_cmd);
 				telnet_enabled = 1;
 			}
 			sendto(fd, ack, 3, 0, (struct sockaddr *)&from, slen);

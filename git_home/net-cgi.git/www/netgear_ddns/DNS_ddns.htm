@@ -10,9 +10,9 @@
 	<script>
 		var master="<% cfg_get("http_loginname") %>";
 		if( master == "admin" )
-			document.write('<input class="cancel_bt" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'DNS_ddns.htm\';">&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return click_register(document.forms[0], 0);">');
+			document.write('<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'DNS_ddns.htm\';">&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="click_register(document.forms[0], 0);">');
 		else
-			document.write(' <input class="cancel1_bt" type="reset" name="Cancel" value="$cancel_mark" disabled>&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled>');
+			document.write(' <input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled>');
 	</script>
         </TD>
 </TR>
@@ -77,7 +77,7 @@ function ajaxCheckHost(host)
 	xmlHttp.onreadystatechange=function()
 	{
 		var cf=document.forms[0];
-		if(cf.have_account[1].checked == true && xmlHttp.readyState==4 && xmlHttp.status==200)
+		if(cf.account[1].checked == true && xmlHttp.readyState==4 && xmlHttp.status==200)
 		{
 			result=xmlHttp.responseText;
 			if(result == 1)
@@ -110,9 +110,9 @@ function changeYesNo(type)
 		document.getElementById("register_line").style.display="none";
 		document.getElementById("netgear_ddns_no").style.display="none";
 		document.getElementById("top_buttons").style.display="";
-		cf.nDNSHost.value=str_replace(old_nDNSHost);
-		cf.nDNSEmail.value=str_replace(old_nEmail);
-		cf.nDNSPassword.value="";
+		cf.sysDNSHost_Netgear.value=str_replace(old_nDNSHost);
+		cf.sysDNSEmail_Netgear.value=str_replace(old_nEmail);
+		cf.sysDNSPassword_Netgear.value="";
 	}
 	else
 	{
@@ -121,9 +121,9 @@ function changeYesNo(type)
 		document.getElementById("register_line").style.display="";
 		document.getElementById("netgear_ddns_no").style.display="";
 		document.getElementById("top_buttons").style.display="none";
-		cf.nDNSHost.value="";
-		cf.nDNSEmail.value="";
-		cf.nDNSPassword.value="";
+		cf.sysDNSHost_Netgear.value="";
+		cf.sysDNSEmail_Netgear.value="";
+		cf.sysDNSPassword_Netgear.value="";
 	}
 	clear_all_status();
 }
@@ -157,7 +157,7 @@ function changemode()
 		{
 			document.getElementById("netgear_ddns_reset").style.display="none";
 			document.getElementById("netgear_ddns_ask").style.display="";
-			if(cf.have_account[0].checked == true)
+			if(cf.account[0].checked == true)
 				changeYesNo(1);
 			else
 				changeYesNo(0);
@@ -275,8 +275,8 @@ function Chgmode()
 	}
 	else if(cf.sysDNSProviderlist.value == 'NETGEAR')
 	{
-		old_nDNSHost=cf.nDNSHost.value;
-		old_nEmail=cf.nDNSEmail.value;
+		old_nDNSHost=cf.sysDNSHost_Netgear.value;
+		old_nEmail=cf.sysDNSEmail_Netgear.value;
 	}
 }
 
@@ -285,8 +285,8 @@ function changeActive()
 	var cf = document.forms[0];
 	if(cf.sysDNSActive.checked == true)
 	{
-		setDisabled(false, cf.sysDNSProviderlist, cf.sysDNSHost, cf.sysDNSUser, cf.sysDNSPassword, cf.sysDNSWildCard, cf.have_account[0], cf.have_account[1], cf.nDNSHost, cf.nDNSEmail, cf.nDNSPassword, cf.reset)
-			cf.reset.className="common_bt";
+		setDisabled(false, cf.sysDNSProviderlist, cf.sysDNSHost, cf.sysDNSUser, cf.sysDNSPassword, cf.sysDNSWildCard, cf.account[0], cf.account[1], cf.sysDNSHost_Netgear, cf.sysDNSEmail_Netgear, cf.sysDNSPassword_Netgear, cf.Reset)
+			cf.Reset.className="common_bt";
 			changemode();
 			check_register_available();
 
@@ -298,10 +298,10 @@ function changeActive()
 			document.getElementById("top_buttons").style.display="";
 		}
 
-		setDisabled(true, cf.sysDNSProviderlist, cf.sysDNSHost, cf.sysDNSUser, cf.sysDNSPassword, cf.sysDNSWildCard, cf.have_account[0], cf.have_account[1], cf.nDNSHost, cf.nDNSEmail, cf.nDNSPassword, cf.reset)
-		cf.reset.className="common_gray_bt";
-		cf.register_bt.className="common_gray_bt";
-		cf.register_bt.disabled = true;
+		setDisabled(true, cf.sysDNSProviderlist, cf.sysDNSHost, cf.sysDNSUser, cf.sysDNSPassword, cf.sysDNSWildCard, cf.account[0], cf.account[1], cf.sysDNSHost_Netgear, cf.sysDNSEmail_Netgear, cf.sysDNSPassword_Netgear, cf.Reset)
+		cf.Reset.className="common_gray_bt";
+		cf.Register.className="common_gray_bt";
+		cf.Register.disabled = true;
 	}
 }
 
@@ -335,13 +335,13 @@ function check_register_available()
 	var cf = document.forms[0];
 	if(valid_host == 1 && valid_email == 1 && valid_passwd == 1 && master =="admin" )
 	{
-		cf.register_bt.className="common_bt";
-		cf.register_bt.disabled = false;
+		cf.Register.className="common_bt";
+		cf.Register.disabled = false;
 	}
 	else
 	{
-		cf.register_bt.className="common_gray_bt";
-		cf.register_bt.disabled = true;
+		cf.Register.className="common_gray_bt";
+		cf.Register.disabled = true;
 	}
 }
 
@@ -365,7 +365,7 @@ function keyup_check_host(e, ev)
 	if(keycode==37||keycode==39)
 		return true;
 
-	if(cf.have_account[1] && cf.have_account[1].checked == true)
+	if(cf.account[1] && cf.account[1].checked == true)
 		ajaxCheckHost(e.value);
 
 	return true;
@@ -389,7 +389,7 @@ function check_value(type, e)
 		}
 		valid_host= (error_flag == 1)? 0:1;
 
-		if(cf.have_account[1] && cf.have_account[1].checked == true)
+		if(cf.account[1] && cf.account[1].checked == true)
 			ajaxCheckHost(e.value);
 	}
 	else if(type == 'email')
@@ -509,12 +509,12 @@ function loadvalue()
 	else //dns_list == "NETGEAR"
 		cf.sysDNSProviderlist.value = "NETGEAR";
 
-	if(cf.have_account)
+	if(cf.account)
 	{
 		if(n_have_account == "1")
-			cf.have_account[0].checked = true;
+			cf.account[0].checked = true;
 		else
-			cf.have_account[1].checked = true;
+			cf.account[1].checked = true;
 	}
 
 	if( register_result == "10" && n_have_account == "0")
@@ -556,10 +556,26 @@ function click_disable(cf)
 function click_register(cf, isRegister)
 {
 	if(cf.sysDNSActive.checked == false)
-		return click_disable(cf);
+	{
+		if(click_disable(cf) == true)
+		{
+			cf.submit();
+			return true;
+		}
+		else
+			return false;
+	}
 	if(cf.sysDNSProviderlist.value != "NETGEAR" )	
-		return click_ddns(cf);
-	if((dns_list != "NETGEAR" || (n_show_reset == "0"&&dns_list == "NETGEAR" && cf.nDNSHost.value != old_sysDNSHost.split('.')[0])) && vpn_enable == "1" && cf.sysDNSActive.checked == true)
+	{
+		if(click_ddns(cf) == true)
+		{
+			cf.submit();
+			return true;
+		}
+		else
+			return false;
+	}
+	if((dns_list != "NETGEAR" || (n_show_reset == "0"&&dns_list == "NETGEAR" && cf.sysDNSHost_Netgear.value != old_sysDNSHost.split('.')[0])) && vpn_enable == "1" && cf.sysDNSActive.checked == true)
                 cf.hid_vpn_detect_ddns_change.value = 1;
         else
                 cf.hid_vpn_detect_ddns_change.value = 0;
@@ -573,6 +589,7 @@ function click_register(cf, isRegister)
 	else
 	{
 		cf.ddns_enabled.value="0";
+		cf.submit();
 		return true;
 	}
 
@@ -582,6 +599,7 @@ function click_register(cf, isRegister)
 		return false;
 	}
 
+	cf.submit();
 	return true;
 }
 
@@ -611,7 +629,7 @@ function click_reset()
 
 <TR>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="sysDNSActive" onclick="changeActive()">
+	<input type="checkbox" name="sysDNSActive" id="sys_dnsactive" onclick="changeActive()">
 	<A tabindex=-1 href="javascript:loadhelp('_DNS_ddns','setup')"><B>$ddns_use_dnsser</B></A>
 	</TD>
 </TR>
@@ -621,14 +639,14 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_DNS_ddns','provider')"><B>$ddns_serpro</B></A>
 	</TD>
 	<TD nowrap>
-	<select name="sysDNSProviderlist" onChange="changemode()" onfocus="Chgmode()">
+	<select name="sysDNSProviderlist" id="sys_dnsprovider_list" onChange="changemode()" onfocus="Chgmode()">
 		<option value="NETGEAR" selected>NETGEAR</option>
 <script>
 if( no_ip_flag == 1 )
                 document.write('<option value="www/var/dynupdate.no-ip.com">www.No-IP.com</option>');
 </script>
 
-		<option value="www/var/www.DynDNS.org">www.DynDNS.org</option>
+		<option value="www/var/www.DynDNS.org">www.Dyn.com</option>
 <script>
 if( pr_3322_flag == 1 )
                 document.write('<option value="www/var/www.3322.org">www.3322.org</option>');
@@ -642,19 +660,19 @@ if( pr_oray_flag == 1 )
 <TR id="sysDNShost_id">
 	<TD nowrap>$ddns_hostname</TD>
 	<TD nowrap>
-	<input type="text" name="sysDNSHost" size="32" maxlength="255" value="<% cfg_sed_xss("sysDNSHost") %>" onKeyPress="return getkey('ddns_hostname',event)">
+	<input type="text" name="sysDNSHost" id="sys_dnshost" size="32" maxlength="255" value="<% cfg_sed_xss("sysDNSHost") %>" onKeyPress="return getkey('ddns_hostname',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$ddns_username</TD>
 	<TD nowrap>
-	<input type="text" name="sysDNSUser" size="32" maxlength="64" value="<% cfg_sed_xss("sysDNSUser")%>">
+	<input type="text" name="sysDNSUser" id="sys_dnsuser" size="32" maxlength="64" value="<% cfg_sed_xss("sysDNSUser")%>">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$ddns_passwd</TD>
 	<TD nowrap>
-	<input type="password" name="sysDNSPassword" onfocus="change_ddns_password(this);" size="32" maxlength="64">
+	<input type="password" name="sysDNSPassword" id="sys_dnspassword" onfocus="change_ddns_password(this);" size="32" maxlength="64">
 	</TD>
 </TR>
 <TR id="oray_status" style="display:none">
@@ -729,12 +747,12 @@ if( pr_oray_flag == 1 )
 </tr>
 <tr>
         <td nowrap colspan=2>
-                <input type="radio" name="have_account" value="1" onclick="changeYesNo(1)"> $yes_mark
+                <input type="radio" name="account" id="account_yes" value="yes" onclick="changeYesNo(1)"> $yes_mark
         </td>
 </tr>
 <tr>
         <td nowrap colspan=2>
-         <input type="radio" name="have_account" value="0" onclick="changeYesNo(0)" checked> $no_mark
+         <input type="radio" name="account" id="account_no" value="no" onclick="changeYesNo(0)" checked> $no_mark
         </td>
 </tr>
 $bluebar
@@ -744,7 +762,7 @@ $bluebar
 <TR>
         <TD nowrap>$ddns_hostname</TD>
         <TD nowrap>
-        <input type="text" name="nDNSHost" size="16" maxlength="128" onKeyPress="return getkey('hostname',event)" onKeyup="return keyup_check_host(this, event);" onchange="check_value('host', this);" >.mynetgear.com  <img id="right_png" style="display:none" src=/image/check.png width=25 height=25 /> <img  id="x_png" style="display:none" src=/image/x.png width=25 height=25  />
+        <input type="text" name="sysDNSHost_Netgear" id="sys_dnshost" size="16" maxlength="128" onKeyPress="return getkey('hostname',event)" onKeyup="return keyup_check_host(this, event);" onchange="check_value('host', this);" >.mynetgear.com  <img id="right_png" style="display:none" src=/image/check.png width=25 height=25 /> <img  id="x_png" style="display:none" src=/image/x.png width=25 height=25  />
         </TD>
 </TR>
 <tr id="host_error" style="display: none; color:red">
@@ -754,7 +772,7 @@ $bluebar
 <tr>
         <td nowrap>$ddns_ntg_email</td>
         <td nowrap>
-        <input type="text" name="nDNSEmail" size="32" maxlength="48" onKeyPress="return getkey('ssid',event)" onchange="return check_value('email', this);" >
+        <input type="text" name="sysDNSEmail_Netgear" id="sys_dnsmail" size="32" maxlength="48" onKeyPress="return getkey('ssid',event)" onchange="return check_value('email', this);" >
         </td>
 </tr>
 <tr id="email_error" style="display: none; color:red">
@@ -764,7 +782,7 @@ $bluebar
 <TR>
         <TD nowrap>$ddns_ntg_password</TD>
         <TD nowrap>
-        <input type="password" name="nDNSPassword" size="32" maxlength="32" value="" onKeyPress="return getkey('ssid',event)" onKeyUp="return check_value('passwd', this);">
+        <input type="text" name="sysDNSPassword_Netgear" id="sys_dnspassword" size="32" maxlength="32" value="" onKeyPress="return getkey('ssid',event)" onKeyUp="return check_value('passwd', this);">
         </TD>
 </TR>
 <tr id="passwd_error" style="display: none; color:red">
@@ -801,9 +819,9 @@ $bluebar
         <td nowrap colspan=2>
         <script>
 		if( master == "admin" )
-			document.write('<input class="common_bt" type="submit" name="register_bt" value="$ddns_register" onclick="return click_register(document.forms[0], 1);">');
+			document.write('<input class="common_bt" type="button" name="Register" id="NRegister" value="$ddns_register" onclick="click_register(document.forms[0], 1);">');
 		else
-			document.write('<input class="common1_bt" type="submit" name="register_bt" value="$ddns_register" disabled>');
+			document.write('<input class="common1_bt" type="button" name="Register" id="NRegister" value="$ddns_register" disabled>');
 	</script>
 	<div>$ddns_ntg_agree_1 <a class='linktype' href='http://kb.netgear.com/app/answers/detail/a_id/23757' target='_blank'>$ddns_ntg_agree_2</a> $ddns_ntg_agree_3</div>
         </td>
@@ -839,9 +857,9 @@ $bluebar
 <tr>
 	<script>
 		if( master == "admin" )
-			document.write('<td nowrap colspan=2> $ddns_ntg_ret_1 <input type="button" name="reset" class="common_bt" value="$green_qos_reset" onclick="click_reset();"> $ddns_ntg_ret_2</td>');
+			document.write('<td nowrap colspan=2> $ddns_ntg_ret_1 <input type="button" name="Reset" id="NReset" class="common_bt" value="$green_qos_reset" onclick="click_reset();"> $ddns_ntg_ret_2</td>');
 		else
-			document.write('<td nowrap colspan=2> $ddns_ntg_ret_1 <input type="button" name="reset" class="common1_bt" value="$green_qos_reset" disabled> $ddns_ntg_ret_2</td>');
+			document.write('<td nowrap colspan=2> $ddns_ntg_ret_1 <input type="button" name="Reset" id="NReset" class="common1_bt" value="$green_qos_reset" disabled> $ddns_ntg_ret_2</td>');
 	</script>
 </tr>
 </tbody>

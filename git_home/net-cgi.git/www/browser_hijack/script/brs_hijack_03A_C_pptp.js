@@ -1,7 +1,7 @@
 function initPage()
 {
 	//head text
-	var head_tag = document.getElementsByTagName("h1");
+	var head_tag = document.getElementsByTagName("h2");
 	var head_text = document.createTextNode(bh_pptp_connection);
 	head_tag[0].appendChild(head_text);
 	
@@ -31,7 +31,7 @@ function initPage()
         var serverIP_text = document.createTextNode(bh_basic_pptp_servip);
         serverIP_div.appendChild(serverIP_text);
 
-	var Gateway_div = document.getElementById("Gateway");
+	var Gateway_div = document.getElementById("GatewayAddr");
 	var Gateway_text = document.createTextNode(bh_sta_routes_gtwip);
 	Gateway_div.appendChild(Gateway_text);
 	
@@ -41,37 +41,29 @@ function initPage()
 
 
 	//set input event action
-	var name_input = document.getElementById("inputName");
+	var name_input = document.getElementById("pptp_username");
 	name_input.onkeypress = ssidKeyCode;
 
-	var passwd_input = document.getElementById("inputPasswd");
+	var passwd_input = document.getElementById("pptp_passwd");
 	passwd_input.onkeypress = ssidKeyCode;
 
-	var idle_input = document.getElementById("inputIdle");
+	var idle_input = document.getElementById("pptp_idletime");
 	idle_input.onkeypress = numKeyCode;
 
-	var IP_addr_input = document.getElementById("inputIPaddr");
-	IP_addr_input.onkeypress = ipaddrKeyCode;
-	
-	var severIP_input = document.getElementById("inputServerIP");
+	var severIP_input = document.getElementById("pptp_serv_ip");
 	severIP_input.value = "10.0.0.138";
 	severIP_input.disabled = true;
 
-	var gateway_input = document.getElementById("inputGateway");
-	gateway_input.onkeypress = ipaddrKeyCode;
-
-
 	//buttons 
-	var btns_container_div = document.getElementById("btnsContainer_div");
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
 	if( master == "admin" )
-		btns_container_div.onclick = function()
+		btn.onclick = function()
 		{
 			return checkPPTP();
 		}
-	
-	var btn = document.getElementById("btn_text_div");
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
+	else
+		btn.className="grey_short_btn";
 
 	//show firmware version
         showFirmVersion("none");
@@ -82,9 +74,9 @@ function checkPPTP()
 	var forms = document.getElementsByTagName("form");
 	var cf = forms[0];
 
-	var pptp_username = document.getElementById("inputName");
-	var pptp_passwd = document.getElementById("inputPasswd");
-	var pptp_idletime = document.getElementById("inputIdle");
+	var pptp_username = document.getElementById("pptp_username");
+	var pptp_passwd = document.getElementById("pptp_passwd");
+	var pptp_idletime = document.getElementById("pptp_idletime");
 
 	if(pptp_username.value=="")
 	{
@@ -125,11 +117,12 @@ function checkIPaddr()
 	var forms = document.getElementsByTagName("form");
         var cf = forms[0];
 
-	var pptp_myip = document.getElementById("inputIPaddr");
-        var pptp_gateway = document.getElementById("inputGateway");
-	var pptp_serverip= document.getElementById("inputServerIP");
-
-	if(pptp_myip.value != "")
+	cf.ip_address.value = cf.myip_1.value+'.'+cf.myip_2.value+'.'+cf.myip_3.value+'.'+cf.myip_4.value;
+	cf.gateway.value = cf.mygw_1.value+'.'+cf.mygw_2.value+'.'+cf.mygw_3.value+'.'+cf.mygw_4.value;
+	
+	if(cf.gateway.value == "...")
+		cf.gateway.value = "";
+	if(cf.ip_address.value != "...")
 	{
 		cf.WANAssign.value = 1;
 
@@ -137,12 +130,11 @@ function checkIPaddr()
 		 * and My IP Address are in different network.
 		 */
 
-		var pptp_myip1 = pptp_myip.value.split(".")[0];
 		var pptp_mask="255.255.255.0";
 
-		if( parseInt(pptp_myip1) < 128 )
+		if( parseInt(cf.myip_1.value) < 128 )
 			pptp_mask="255.0.0.0";
-		else if( parseInt(pptp_myip1) < 192 )
+		else if( parseInt(cf.myip_1.value) < 192 )
 			pptp_mask="255.255.0.0";
 		else
 			pptp_mask="255.255.255.0";
@@ -150,38 +142,40 @@ function checkIPaddr()
 		cf.pptp_subnet.value=pptp_mask;
 
 
-		if(checkipaddr(pptp_myip.value)==false)
+		if(checkipaddr(cf.ip_address.value)==false)
 		{
 			alert(bh_invalid_myip);
 			return false;
 		}
 		/*Bug 30115 - [GUI][CD-less/Setup Wizard]I can set My IP address as 10.0.0.138 when detected as PPTP mode*/
-		if(isSameIp(pptp_myip.value,pptp_serverip.value) == true)
+		if(isSameIp(cf.ip_address.value,cf.pptp_serv_ip.value) == true)
 		{
 			alert(bh_same_server_wan_ip);
 			return false;
 		}
-		if(pptp_gateway.value != "" && checkgateway(pptp_gateway.value) == false)
+		if(cf.gateway.value != "..." && checkgateway(cf.gateway.value) == false)
 		{
 			alert(bh_invalid_gateway);
 			return false;
 		}
-		if(pptp_gateway.value != "")
+		if(cf.gateway.value != "...")
 		{
-			if(isSameIp(pptp_myip.value,pptp_gateway.value) == true)
+			if(isSameIp(cf.ip_address.value,cf.gateway.value) == true)
 			{
 				alert(bh_invalid_gateway);
 				return false;
 			}
-			if(isGateway(pptp_myip.value,cf.pptp_subnet.value,pptp_gateway.value) == false)
+			if(isGateway(cf.ip_address.value,cf.pptp_subnet.value,cf.gateway.value) == false)
 			{
 				alert(bh_invalid_gateway);
 				return false;
 			}
 		}
 	}
-	else
+	else{
+		cf.ip_address.value = "";
 		cf.WANAssign.value=0;
+	}
 
 	return true;
 }

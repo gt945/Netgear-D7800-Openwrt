@@ -12,6 +12,9 @@
 </head>
 
 <body>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+</script>
 
 <div class="wizard_content_div">
 
@@ -22,28 +25,19 @@
 		
 		<div id="staticIP_choices_div">
 			<div class="radio_div">
-				<input type="radio" name="static_ip_choice" value="0" /><!--yes_correct-->
+				<input type="radio" name="static_ip_choice" id="static_ip_yes" value="0" /><!--yes_correct-->
 			</div>
 			<div class="radio_div">
-				<input type="radio" name="static_ip_choice" value="1" /><!--not_have_static_ip-->
+				<input type="radio" name="static_ip_choice" id="static_ip_no" value="1" /><!--not_have_static_ip-->
 			</div>
 			<div class="radio_div">
-				<input type="radio" name="static_ip_choice" value="2" /><!--do_not_know-->
+				<input type="radio" name="static_ip_choice" id="static_ip_unknown" value="2" /><!--do_not_know-->
 			</div>
 		</div>
 	</div>
 
-	<div id="buttons_div" class="wizard_buttons_div" align="right">
-		<div id="btnsContainer_div" class="buttons_img_div" align="center">
-		<script>
-		var master="<% cfg_get("http_loginname") %>";
-		if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-		else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-		</script>	
-			<div id="btn_div" class="buttons_words_div"><!--next_mark--></div>
-		</div>
+	<div id="buttons_div" class="wizard_buttons_div" align="center">
+			<input type="button" name="Next" id="next" class="purple_short_btn"><!--next_mark-->
 	</div>
 		
 </div>

@@ -63,7 +63,7 @@ struct share_info
 #define USB_SESSION		"[USB Storage]"
 #define USB_INFO_FILE	".NETGEAR_disk_share_info"
 #define USB_SMB_CONF	"/etc/samba/smb.conf"
-#define USB_SMB_NAME	"NETGEAR D7800"
+#define USB_SMB_NAME	"NETGEAR R7500v2"
 #define TMP_SAMBA_LOCK  "/tmp/tmp_samba_lock"
 #define SHARE_FILE_INFO "shared_usb_folder"
 #define SHARE_AUTH_INFO "shared_usb_folder_users"
@@ -113,7 +113,7 @@ static void reload_services(void)
 	if (!has_usb_storage) {
 		system("/usr/bin/killall smbd > /dev/null 2>&1");
 		system("/usr/bin/killall nmbd > /dev/null 2>&1");
-		system("/sbin/cmdftp stop");
+		system("cmd_ftp stop");
 		goto outer;
 	}
  
@@ -154,9 +154,11 @@ static void add_smbd_global(FILE *fp)
 		p = "Workgroup";
 	fprintf(fp, "  workgroup = %s\n", p);
 
-	p = config_get("usb_deviceName");
-	if (*p == '\0' || ( strncmp(p, "readyshare", 10) == 0 ) )
-		p = config_get("Readyshare_name");
+	p = config_get("Readyshare_name");
+	if (*p == '\0')
+		p = config_get("usb_deviceName");
+	if (*p == '\0')
+		p = "R7500v2";
 	fprintf(fp, "  netbios name = %s\n", p);
 
 	fprintf(fp, "  bind interfaces only = yes\n"
@@ -284,7 +286,12 @@ static void add_smbd_share_info(FILE *fp, char *displayname, char *reader, char 
 	        if (strcmp(reader, USER_GUEST))
 			fprintf(fp, "  invalid users=%s %s\n", USER_GUEST, invalidlist);
 
-		if (strcmp(writer, USER_GUEST) == 0){
+		if (!strcmp(config_get("usb_passwdNet"), "1")) {
+			fprintf(fp, "  guest ok=no\n");
+			fprintf(fp, "  read only=yes\n");
+			fprintf(fp, "  write list=%s %s\n", USER_ADMIN, writelist);
+		}
+		else if (strcmp(writer, USER_GUEST) == 0){
 			fprintf(fp, "  guest ok=yes\n");
 			fprintf(fp, "  read only=no\n");
 		}
@@ -556,13 +563,8 @@ static void get_device_id(struct disk_partition_info *disk)
 		if ( atoi(disk->name + 3) > 0 ){
 			snprintf(id, sizeof(disk->device_id), "%s*%s", get_usb_serial_num(disk->name), disk->name + 3);
 		} else {
-			//fprintf(stderr, "[get_device_id]: Disk %s without device id, so we'll set it to 0!\n", disk->name + 3);
-			//snprintf(id, sizeof(disk->device_id), "%s*0", get_usb_serial_num(disk->name));
-			/* After use GUI to modify sharefolder information, the partition name set to the last letter,
-                        * So follow net-cgi.
-                        */
-                       printf("[get_device_id]: set the last latter as a partition name!\n");
-                       snprintf(id, sizeof(disk->device_id), "%s*%s", get_usb_serial_num(disk->name), disk->name + 2);
+			fprintf(stderr, "[get_device_id]: Disk %s without device id, so we'll set it to 0!\n", disk->name + 3);
+			snprintf(id, sizeof(disk->device_id), "%s*0", get_usb_serial_num(disk->name));
 		}
 
 }
@@ -1036,7 +1038,6 @@ static void load_share_info(FILE *fp, char *diskname)
 					perror("popen");
 					return;
 				}
-				memset(result, 0, sizeof(result));
 				fgets(result, sizeof(result), fp);
 				pclose(fp);
 				printf("result:%s\n", result);

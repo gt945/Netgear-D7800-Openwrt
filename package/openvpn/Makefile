@@ -127,6 +127,9 @@ define Package/openvpn-$(BUILD_VARIANT)/install
 	$(INSTALL_BIN) \
 		files/openvpn.download \
 		$(1)/etc/openvpn/download
+	$(INSTALL_BIN) \
+		files/vpn-firewall.sh \
+		$(1)/etc/openvpn/vpn-firewall.sh
 endef
 
 $(eval $(call BuildPackage,openvpn-openssl))

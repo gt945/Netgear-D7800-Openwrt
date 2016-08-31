@@ -12,23 +12,19 @@ PKG_NAME:=lltd
 PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
-#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-#PKG_SOURCE_URL:=$(DNI_DL_WEB) http://gentoo.osuosl.org/distfiles @SF/utelnetd
-#PKG_MD5SUM:=45fc2b66b3d2dade396ed122a41d5b23
-#PKG_CAT:=zcat
-
-PKG_GIT_TREEISH:=lltd-v1.2-dni2
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/native-linux
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/lltd
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Base system
-  DEPENDS:=@TARGET_d7800
   TITLE:=Link Layer Topology Discovery Daemon
   URL:=http://lltd.sourceforge.net/
+  MENU:=1
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/lltd.git/* $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/
@@ -37,20 +33,17 @@ endef
 define Build/Compile
 endef
 
-define Build/Configure
-endef
+MAKE_PATH:=native-linux
 
-define Package/lltd/install
+define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/etc/init.d
 	install -m0755 ./files/lltd.init $(1)/etc/init.d/lltd
 	install -m0755 -d $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/lld2d $(1)/usr/sbin/
+	install -m0755 $(PKG_BUILD_DIR)/$(MAKE_PATH)/lld2d $(1)/usr/sbin/
 	install -m0755 -d $(1)/etc
 	install -m0755 $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/files/lld2d.conf  $(1)/etc/
 	install -m0755 ./files/large.ico  $(1)/etc/
 	install -m0755 ./files/icon.ico $(1)/etc/
-	#install -m0755 -d $(1)/etc/init.d
-	#install -m0755 $(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)/files/lltd.init $(1)/etc/init.d/lltd
 endef
 
-$(eval $(call BuildPackage,lltd))
+$(eval $(call BuildPackage,$(PKG_NAME)))

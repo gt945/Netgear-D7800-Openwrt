@@ -82,4 +82,6 @@ void pptp_handle_timer(struct pptp_conn_mngr * conn);
 void pptp_info(char *, ...);
 void pptp_fatal(char *, ...);
 
+extern char *pptp_hostname;
+extern char *pptp_vendor;
 #endif

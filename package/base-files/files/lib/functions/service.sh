@@ -41,7 +41,12 @@ service() {
 	ssd="${SERVICE_DEBUG:+echo }start-stop-daemon${SERVICE_QUIET:+ -q}"
 	case "$1" in
 	  -C)
-		ssd="$ssd -K -t"
+		# current we use start-stop-daemon provided by busybox, and it has no
+		# option "-t", start-stop-daemon in dpkg package could support "-t|--test"
+		# option to run in test mode, to avoid "start-stop-daemon -K -t" run
+		# fail, just remove "-t" option.
+		#ssd="$ssd -K -t"
+		ssd="$ssd -K"
 		;;
 	  -S)
 		ssd="$ssd -S${SERVICE_DAEMONIZE:+ -b}${SERVICE_WRITE_PID:+ -m}"

@@ -64,6 +64,8 @@ detcable, 1, DNI, Yes
 
 disktype, 1, GPL, Yes
 
+dnitoolbox, 0.1, DNI, Yes
+
 dni_enet, 1, DNI, Yes
 
 dni-rip, 1.0, DNI, Yes
@@ -87,6 +89,8 @@ netgear-integration-api, 1, DNI, Yes
 e2fsprogs, 1.42, GPL, No
 
 ebtables, 2.0.10, GPL, No
+
+emule, 2.3.1, GPL, No
 
 expat, 2.0.1, GPL No
 
@@ -228,6 +232,10 @@ cyassl, 1.6.5, GPL, No
 
 ffmpeg, 0.11.2, GPL, No
 
+libcryptoxx, 5.6.0, GPL, No
+
+libcurl, 7.23.1, GPL, No
+
 libexif, 0.6.17, GPL, No
 
 libflac, 1.2.1, GPL, No
@@ -243,6 +251,8 @@ libpcap, 1.1.1, GPL, No
 libtool, 2.4, GPL, No
 
 libvorbis, 1.2.3, GPL, No
+
+libwxwidegets, 2.8.12, GPL, No
 
 linux-atm, 2.5.2, GPL, No
 
@@ -290,3 +300,6 @@ NetUSB, 1, KCodes, No
 
 ufsd, 1, paragon, No
 
+transmission, 2.61, GPL, No
+
+wget, 1.13.4, GPL, No

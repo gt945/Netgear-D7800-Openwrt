@@ -3,7 +3,7 @@ function initPage()
 	if( apmode_flag == "1" && ap_mode == "1")
 	{
 		if(ping_result == "success")
-			this.location.href = "BRS_success.html";
+			this.location.href = "BRS_security.html";
 		else if(ping_result == "failed")
 			this.location.href = "BRS_06_networkIssue.html";
 	}else

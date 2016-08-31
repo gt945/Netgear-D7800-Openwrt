@@ -7,7 +7,7 @@ MODDIR=/lib/modules/2.6.15
 MIN_MTU=1280
 MAX_MTU=1492
 PPP_SCT="/etc/ppp/peers/pppoe-ipv6"
-WAN_IF=brwan
+WAN_IF=`config get wan_ifname`
 PPPOEv6_WAY=`config get ipv6_pppoe_way`
 IPV6_UP="/etc/ppp/ipv6-up"
 IPV6_DOWN="/etc/ppp/ipv6-down"
@@ -15,6 +15,8 @@ PPP_CHAPS="/etc/ppp/chap-secrets"
 PPP_PAPS="/etc/ppp/pap-secrets"
 IPV6_PPPS="/etc/ppp/ipv6-secrets"
 IPV4_PPPS="/etc/ppp/ipv4-secrets"
+
+[ "x${DGC_WAN_IF_NONUSE_BRIDGE}" = "xy" -a "$($CONFIG get wan_proto)" = "pppoe" ] && WAN_IF=ethwan
 
 write_dhcp6c_conf() {
 	printf   'interface ppp%s {\n' $IPV6_PPPOE_UNIT
@@ -39,7 +41,7 @@ fi
 
 write_ipv6_up() {
 	printf   '#!/bin/sh\n\n'
-        printf   '/etc/net6conf/6pppoe autodet\n'
+	printf   '/etc/net6conf/6pppoe autodet\n'
 	#add the default route
 	printf   '%s -6 route add default dev %s\n' $IP $WAN
 	printf   'echo 1 > /tmp/ppp/ppp2-status\n'
@@ -153,6 +155,7 @@ start() {
 		mkdir -p /tmp/ppp
 		mkdir -p /etc/ppp/peers
 	fi
+	
 
 	local ipv4_proto=`$CONFIG get wan_proto`
 	local mtu
@@ -162,8 +165,6 @@ start() {
 		mtu=`$CONFIG get wan_pptp_mtu`
 	elif [ "$ipv4_proto" = "pppoe" ]; then
 		mtu=`$CONFIG get wan_pppoe_mtu`
-	elif [ "$ipv4_proto" = "pppoa" ]; then
-		mtu=`$CONFIG get wan_pppoa_mtu`
 	else
 		# ipv6 ppp2 base on wan port(such as eth0);
 		# ppp packet has 8 byte head more than ethernet packet; 
@@ -217,7 +218,7 @@ stop() {
 		/bin/kill $ipv6_pppd
 	fi
 
-# only kill ppp v4 when currently use the same session
+	# only kill ppp v4 when currently use the same session
 	if [ "x$PPPOEv6_type" = "x1" -a "x$wan6_type" = "xpppoe" ] ;then
 		local ipv4_pppd=`ps | grep "pppd call dial-provider updetach" | grep -v "grep" |awk '{print $1}'`
 		if [ "x$ipv4_pppd" != "x" ]; then
@@ -232,46 +233,45 @@ stop() {
 }
 
 add_ipv6_dns() {
-                if [ "x$wan6_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$wan6_type" = "xautoConfig" ] ; then
-                        write_ra_dns $RA_DNS_FILE  /tmp/resolv.conf
-                fi
-                write_ra_dns $IPV6_DNS  /tmp/resolv.conf
+	if [ "x$wan6_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$wan6_type" = "xautoConfig" ] ; then
+		write_ra_dns $RA_DNS_FILE  /tmp/resolv.conf
+	fi
+	write_ra_dns $IPV6_DNS  /tmp/resolv.conf
 }
+
 pppoe_autodet() {
-        local wait_time="3"
-        while [ "$wait_time" -gt "0" ]; do
-              /usr/bin/killall dhcp6c
-              echo 0 > /proc/sys/net/ipv6/conf/$WAN/forwarding
-              /sbin/rs_send -i $WAN -h $WAN_IF -c 3 -t 1 &
-                sleep 4
-              echo 1 > /proc/sys/net/ipv6/conf/$WAN/forwarding
-              sleep 2
-                ra_ip=`ifconfig $WAN |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
-              /usr/bin/killall -9 dhcp6c
-                if [ "x$ra_ip" != "x" ]; then
-                      PPPOEv6_WAY=1
-                      config set ipv6_pppoe_way=1
-                      break
-              else
-                      PPPOEv6_WAY=0
-                      config set ipv6_pppoe_way=0
-                      write_ipv6_up > $IPV6_UP
-                      /usr/sbin/dhcp6c -3 -h $WAN_IF -c /tmp/dhcp6c.conf $WAN
-                      sleep 6
-                      dhcp_ip=`ifconfig $WAN |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
-                      [ "x$dhcp_ip" != "x" ] && break
-                fi
-                wait_time=$(( $wait_time - 1 ))
-        done
+	local wait_time="3"
+	while [ "$wait_time" -gt "0" ]; do
+		/usr/bin/killall dhcp6c
+		echo 0 > /proc/sys/net/ipv6/conf/$WAN/forwarding
+		/sbin/rs_send -i $WAN -h $WAN_IF -c 3 -t 1 &
+		sleep 4
+		echo 1 > /proc/sys/net/ipv6/conf/$WAN/forwarding
+		sleep 2
+		ra_ip=`ifconfig $WAN |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
+		/usr/bin/killall -9 dhcp6c
+		if [ "x$ra_ip" != "x" ]; then
+			PPPOEv6_WAY=1
+			config set ipv6_pppoe_way=1
+			break
+		else
+			PPPOEv6_WAY=0
+			config set ipv6_pppoe_way=0
+			write_ipv6_up > $IPV6_UP
+			/usr/sbin/dhcp6c -3 -h $WAN_IF -c /tmp/dhcp6c.conf $WAN
+			sleep 6
+			dhcp_ip=`ifconfig $WAN |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
+			[ "x$dhcp_ip" != "x" ] && break
+		fi
+		wait_time=$(( $wait_time - 1 ))
+	done
 
-      if [ "$PPPOEv6_WAY" = "1" ]; then
-              write_ipv6_up > $IPV6_UP
-              /usr/sbin/dhcp6c -3 -h $WAN_IF -c /tmp/dhcp6c.conf $WAN
-      fi
-      return 0
+	if [ "$PPPOEv6_WAY" = "1" ]; then
+		write_ipv6_up > $IPV6_UP
+		/usr/sbin/dhcp6c -3 -h $WAN_IF -c /tmp/dhcp6c.conf $WAN
+	fi
+	return 0
 }
-
-
 
 restart() {
 	stop
@@ -288,11 +288,10 @@ case "$1" in
 	restart)
 	restart
 	;;
-        adddns)
-        add_ipv6_dns
-        ;;
-        autodet)
-        pppoe_autodet
-        ;;
-
+	adddns)
+	add_ipv6_dns
+	;;
+	autodet)
+	pppoe_autodet
+	;;
 esac

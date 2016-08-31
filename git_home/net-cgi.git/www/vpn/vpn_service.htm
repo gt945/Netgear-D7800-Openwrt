@@ -17,6 +17,7 @@ var ipv6_type = "<% cfg_get("ipv6_type") %>";
 var enable_ap_flag="<% cfg_get("ap_mode") %>";
 var old_sysDNSHost="<% cfg_sed_xss("sysDNSHost") %>";
 var old_wan_ip="<% bas_ether_ip() %>";
+var pppoe_get_wan_assign='<% cfg_get("wan_pppoe_wan_assign") %>';
 
 var select_basic="<% cfg_get("internet_type") %>";
 
@@ -38,30 +39,35 @@ var endis_remote="<% cfg_get("remote_endis") %>";
 var remote_port="<% cfg_get("remote_port") %>";
 var info_get_wanproto="<% cfg_get("wan_proto") %>";
 var endis_upnp="<% cfg_get("upnp_enable") %>";
+var internet_ppp_type = "<% cfg_get("internet_ppp_type") %>";
+var wan_pppoe_demand = "<% cfg_get("wan_pppoe_demand") %>";
+var wan_pptp_demand = "<% cfg_get("wan_pptp_demand") %>";
+var wan_l2tp_demand = "<% cfg_get("wan_l2tp_demand") %>";
+var wan_mulpppoe_demand = "<% cfg_get("wan_mulpppoe_demand") %>";
 
 function loadvalue()
 {
 	var cf = document.forms[0];	
 	if(vpn_enable == "1")
-		cf.enable_vpn.checked = true;
+		cf.openvpnActive.checked = true;
 	if(enable_ap_flag == "1"){
-		cf.enable_vpn.checked = false;
-		setDisabled(true, cf.enable_vpn );
+		cf.openvpnActiv.checked = false;
+		setDisabled(true, cf.openvpnActiv );
 		document.getElementById("enable_vpn_text").style.color="grey";
 	}
-	cf.vpn_port.value=port;
+	cf.openvpn_service_port.value=port;
 	
 	if(type == "udp")
-		cf.vpn_type[0].checked = true;
+		cf.openvpn_protocol[0].checked = true;
 	else if(type == "tcp")
-		cf.vpn_type[1].checked = true;
+		cf.openvpn_protocol[1].checked = true;
 	
 	if(access_mode == "auto")
-		cf.vpn_access[0].checked = true;
+		cf.openvpn_redirectGW[0].checked = true;
 	else if(access_mode == "all")
-		cf.vpn_access[1].checked = true;
+		cf.openvpn_redirectGW[1].checked = true;
 	else if(access_mode == "home")
-		 cf.vpn_access[2].checked = true;
+		cf.openvpn_redirectGW[2].checked = true;
 	if(vpn_enable == "1"&&old_endis_ddns == "1" && ip_or_hostname != old_sysDNSHost && ip_or_hostname != "")
 		alert("$warn_config_differ");
 	if(vpn_enable == "1"&&old_endis_ddns != "1"&& old_wan_assign == "1" && ip_or_hostname != old_wan_ip && ip_or_hostname != "" && select_basic == "1")
@@ -80,9 +86,9 @@ function loadvalue()
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-        document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'vpn_service.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return checkvpn(document.forms[0]);"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'vpn_service.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" id="apply" value="$apply_mark" onClick="return checkvpn(document.forms[0]);"></TD></TR>');
 else
-        document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </TABLE>
 </div>
@@ -90,7 +96,7 @@ else
 <TABLE cellspacing=5 cellPadding=0 width=100% border=0>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="checkbox" name="enable_vpn" value="1"><font id="enable_vpn_text">$vpn_enable</font>
+	<input type="checkbox" name="openvpnActive" id="openvpn_active" value="1"><font id="enable_vpn_text">$vpn_enable</font>
 	</TD>
 </TR>
 $bluebar
@@ -107,8 +113,8 @@ $bluebar
         <TD><TABLE><TR>
 	<TD>$vpn_step3</TD></TR>
 	<TR><TD>
-	<input class='window_bt' type='submit' name="window" value='$window_mark' onClick='return checkdownload(document.forms[0], 1)'>&nbsp;&nbsp;
-        <input class="non_window_bt" type="submit" name="non_window" value="$non_window_mark" onClick='return checkdownload(document.forms[0], 2)'>
+	<input class='window_bt' type='button' name='For Windows' id='for_windows' value='$window_mark' onClick='return checkdownload(document.forms[0], 1)'>&nbsp;&nbsp;
+        <input class="non_window_bt" type="button" name="For non Windows" id="for_non_windows" value="$non_window_mark" onClick='return checkdownload(document.forms[0], 2)'>
 	</TD>
 	</TR></TABLE></TD>
 </TR>
@@ -143,21 +149,21 @@ $bluebar
 <TR><TD nowrap><b>$adv_config</b></TD></TR>
 <TR>
 	<TD>$ser_type&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="vpn_type" value="udp">UDP&nbsp;&nbsp;
-	<input type="radio" name="vpn_type" value="tcp">TCP
+	<input type="radio" name="openvpn_protocol" id="protocol_udp" value="udp">UDP&nbsp;&nbsp;
+	<input type="radio" name="openvpn_protocol" id="protocol_tcp" value="tcp">TCP
 	</TD>
 	
 </TR>
 <TR>
 	<TD >$ser_port&nbsp;&nbsp;&nbsp;
-	<input type="text" maxLength=5 size=6 name="vpn_port" onFocus="this.select();" onKeyPress="return getkey('num', event)" style="ime-mode:disabled;" ondrop="return false;" ondragenter="return false;" onpaste="return false;" >
+	<input type="text" maxLength=5 size=6 name="openvpn_service_port" id="openvpn_service_port" onFocus="this.select();" onKeyPress="return getkey('num', event)" style="ime-mode:disabled;" ondrop="return false;" ondragenter="return false;" onpaste="return false;" >
 	</TD>
 </TR>
 <TR>
         <TD nowrap >$vpn_connect&nbsp;&nbsp;&nbsp;
-	<input type="radio" name="vpn_access" value="auto">$auto&nbsp;&nbsp;
-        <input type="radio" name="vpn_access" value="all">$inter_home_network&nbsp;&nbsp;
-        <input type="radio" name="vpn_access" value="home">$home_network&nbsp;&nbsp;
+	<input type="radio" name="openvpn_redirectGW" id="redirectgw_auto" value="auto">$auto&nbsp;&nbsp;
+	<input type="radio" name="openvpn_redirectGW" id="redirectgw_all" value="all">$inter_home_network&nbsp;&nbsp;
+	<input type="radio" name="openvpn_redirectGW" id="redirectgw_only_lan" value="onlylan">$home_network&nbsp;&nbsp;
 	</TD>
 </TR>
 $bluebar

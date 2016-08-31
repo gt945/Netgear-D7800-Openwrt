@@ -156,14 +156,14 @@ function clickSubMenu(current_div, change_id)
 	var current_class = current_div.className;
 	if( current_class == "sub_back" )
 	{
-		if( change_id == "usb_basic" || change_id == "usb_adv" || change_id == "media" || change_id == "userset")
+		if( change_id == "usb_bas" || change_id == "usb_adv" || change_id == "media" || change_id == "userset")
 			current_div.className = "sub_back_purple_usb";
 		else
 			current_div.className = "sub_back_purple";
 	}
 	else if( current_class == "middle_name")
 	{
-		if( change_id == "usb_basic" || change_id == "usb_adv" || change_id == "media" || change_id == "userset")
+		if( change_id == "usb_bas" || change_id == "usb_adv" || change_id == "media" || change_id == "userset")
 			current_div.className = "sub_back_purple_usb_double";
 		else
 			current_div.className = "sub_back_purple_double";
@@ -175,14 +175,11 @@ function clickSubMenu(current_div, change_id)
 var array_name = ["wds_items", "ap_items", "bridge_items", "extender_items", "mapt_items", "devmode_items"];
 var enable_flags = ["enabled_wds", "enable_ap_flag", "enable_bridge_flag", "enable_extender_flag", "enable_mapt", "device_mode"];
 var wds_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wl_bridge", "guest", "email", "schedule", "log"]; 
-var ap_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "remote", "upnp", "traffic", "wl_bridge", "lan", "ipv6", "parental", "access_control", "usb", "led", "devname"];
+var ap_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "remote", "upnp", "traffic", "wl_bridge", "lan", "ipv6", "parental", "access_control", "usb_set", "devname"];
 var extender_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","vpn",  "remote", "upnp", "traffic", "wl_bridge", "lan", "ipv6", "led", "fbwifi"];
-if(top.rae_flag == "2")
-	var bridge_items = ["internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wireless", "guest", "lan", "parental","access_control",  "email", "schedule", "wds", "ipv6", "wlap"];
-else
-	var bridge_items = ["internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wireless", "guest", "lan", "parental","access_control",  "email", "schedule", "wds", "ipv6", "wlap","rae"];
+var bridge_items = ["internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wireless", "guest", "lan", "parental","access_control",  "email", "schedule", "wds", "ipv6", "wlap"];
 var mapt_items= [ "internet" ];
-var devmode_items = [ "internet", "wireless", "guest", "wan", "lan", "qos", "readyshare_stor", "usb_basic", "usb_adv", "media", "print", "vault", "block_site", "block_services", "schedule", "email", "wladv", "rae", "forwarding_triggering", "dns", "vpn", "static", "remote", "upnp", "traffic", "wl_bridge", "ipv6", "parental", "access_control", "usb", "vlan", "led", "devname" ];
+var devmode_items = [ "internet", "wireless", "guest", "wan", "lan", "qos", "readyshare_stor", "usb_bas", "usb_adv", "media", "print", "vault", "block_site", "block_services", "schedule", "email", "wladv", "rae", "forwarding_triggering", "dns", "vpn", "static", "remote", "upnp", "traffic", "wl_bridge", "ipv6", "parental", "access_control", "usb_set", "vlan", "led", "devname" ];
 function enabledItemsClass()
 {
 	var i, j;
@@ -262,30 +259,24 @@ function menu_class_default()
 	var menu_div;
 	var content_length;
 
-	menu_div = top.document.getElementById("home");
+	menu_div = top.document.getElementById("adv_home");
 	settingClass(menu_div, "advanced_black_button");
 
 	if(top.have_lte_flag !=1)
 	{
-		menu_div = top.document.getElementById("setup_wizard");
-	if( top.enabled_wds == 1 || top.enable_ap_flag == 1 || top.enable_bridge_flag == 1 || top.enable_extender_flag == "1" || top.device_mode == 1)
+		menu_div = top.document.getElementById("adv_setup_wizard");
+	if(master != "admin" || top.enabled_wds == 1 || top.enable_ap_flag == 1 || top.enable_bridge_flag == 1 || top.enable_extender_flag == "1" || top.device_mode == "1")
 			settingClass(menu_div, "advanced_grey_button");
 		else
 			settingClass(menu_div, "advanced_black_button");
 	}
-
-	menu_div = top.document.getElementById("wps");
-	if( top.enabled_wps == 1 && top.enabled_wds == 0 && top.enable_bridge_flag == 0 && top.device_mode == 0 )
+    if(typeof(top.have_wifi_flag) != "undefined" && top.have_wifi_flag == 1){
+	menu_div = top.document.getElementById("adv_wps");
+	if( top.enabled_wps == 1 && top.enabled_wds == 0 && top.enable_bridge_flag == 0 && top.device_mode != "1" )
 		settingClass(menu_div, "advanced_black_button");
 	else
 		settingClass(menu_div, "advanced_grey_button");
-
-	menu_div = top.document.getElementById("setup_wizard");
-	if(master == "admin" && top.enable_ap_flag == "0" && top.device_mode == 0)
-		settingClass(menu_div, "advanced_black_button");
-	else
-		settingClass(menu_div, "advanced_grey_button");
-	
+     }
         var extensible_items = ["setup_bt", "usb_bt", "security_bt", "green_bt", "admin_bt", "advanced_bt"];
 	var i;
 	for(i=0; i<extensible_items.length; i++)
@@ -305,7 +296,7 @@ function menu_color_change( change_id )
 
 	var current_div = top.document.getElementById(change_id);
 	
-	if( change_id == "home" ||  change_id == "setup_wizard" || change_id == "wps" )
+	if( change_id == "adv_home" ||  change_id == "adv_setup_wizard" || change_id == "adv_wps" )
 	{
 		settingClass(current_div, "advanced_purple_button");
 		clickSubMenu(0, change_id);
@@ -323,7 +314,7 @@ function menu_color_change( change_id )
 
 function click_adv_action(id)
 {
-	if(id == "setup_wizard")
+	if(id == "adv_setup_wizard")
 		setup_wizard_flag = 1;
 	else
 		setup_wizard_flag = 0;
@@ -349,17 +340,17 @@ function click_adv_action(id)
 		}
 		
 		
-		if( id == "home" )
+		if( id == "adv_home" )
                 {
-			menu_color_change('home');
+			menu_color_change('adv_home');
 			if(enable_bridge_flag == "1")
 				goto_formframe('RST_bridge_status.htm');
 			else
 				goto_formframe('RST_status.htm');	
 		}
-                else if( id == "setup_wizard" && master == "admin" && top.enable_ap_flag == "0" && top.device_mode == "0")
+                else if( id == "adv_setup_wizard" && master == "admin" && top.enable_ap_flag != "1" && top.device_mode != "1")
                 {
-			menu_color_change('setup_wizard');
+			menu_color_change('adv_setup_wizard');
 			if(top.dsl_enable_flag == "1")
 				goto_formframe('DSL_WIZ_sel.htm');
 			else
@@ -369,10 +360,10 @@ function click_adv_action(id)
 				goto_formframe('WIZ_sel.htm');
 		}
                 
-                else if( id == "wps" && top.enabled_wps == 1 && top.device_mode == "0" )
+                else if( id == "adv_wps" && top.enabled_wps == 1 && top.device_mode != "1" )
                 {
 			goto_formframe('Add_WPS_Client.htm');
-			menu_color_change('wps');
+			menu_color_change('adv_wps');
                 }
                 else if( id == "internet")
                 {
@@ -418,10 +409,10 @@ function click_adv_action(id)
 				goto_formframe("QOS_dynamic.htm");
 			menu_color_change('qos');
 		}
-                else if( id == "usb_basic" )
+                else if( id == "usb_bas" )
                 {
 			goto_formframe("USB_basic.htm");
-			menu_color_change('usb_basic');
+			menu_color_change('usb_bas');
                 }
                 else if( id == "usb_adv" )
                 {
@@ -577,10 +568,10 @@ function click_adv_action(id)
 			goto_formframe("FW_remote.htm");
 			menu_color_change('remote');
 		}
-		else if( id == "usb" )
+		else if( id == "usb_set" )
 		{
 			goto_formframe("USB_settings.htm");
-			menu_color_change('usb');
+			menu_color_change('usb_set');
 		}
 		else if( id == "upnp" )
 		{
@@ -613,8 +604,10 @@ function click_adv_action(id)
 				goto_formframe("GREEN_bt_basic.htm");
 			else if( download_type == "emule" )
 				goto_formframe("GREEN_emule_basic.htm");
-			else
+			else if( download_type == "http" )
 				goto_formframe("GREEN_http_basic.htm");
+			else
+				goto_formframe("GREEN_bt_basic.htm");
 			menu_color_change(id);
 		}
 		else if( id == "lte_broadband" && top.have_lte_flag==1)
@@ -651,7 +644,10 @@ function click_adv_action(id)
 		}
 		else if( id == "vpn" )
 		{
-			goto_formframe("vpn_service.htm");
+			if(top.vpn_smartphone_flag == 1)
+				goto_formframe("openvpn_service.htm");
+			else
+				goto_formframe("vpn_service.htm");
 			menu_color_change('vpn');
 		}
 		else if( id == "pptp_vpn" )

@@ -17,6 +17,8 @@ endef
 
 define Build/Prepare
 	$(CP) ./src/* $(PKG_BUILD_DIR)
+
+	$(call DGC/ProductName,$(PKG_BUILD_DIR)/update_afp.c)
 endef
 
 define Package/netatalk-utility/install

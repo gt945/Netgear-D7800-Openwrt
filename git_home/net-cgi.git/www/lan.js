@@ -366,7 +366,7 @@ function checklan(form)
 		form.dhcp_pool_tag.value = 1;
 	if( change_count > 0)
 		alert("$change_ip_manually1");
-
+	cf.submit();//add
 	return true;
 }
 function getNumOfNetwork(netArray)

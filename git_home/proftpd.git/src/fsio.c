@@ -148,10 +148,6 @@ static int sys_open(pr_fh_t *fh, const char *path, int flags) {
   flags |= O_RDWR;			/* get lock info need write permission */
   flags &= ~(O_CREAT | O_TRUNC);	/* remove creat file flags before open it*/
   int fd = open(path, flags); 
-  if(fd < 0){
-	  	pr_log_pri(PR_LOG_NOTICE, "fail to open %s", path);
-	  	return open(path, oldflags, PR_OPEN_MODE); 
-  }
 
   struct flock lock;
   lock.l_type = F_WRLCK;
@@ -169,12 +165,13 @@ static int sys_open(pr_fh_t *fh, const char *path, int flags) {
 	if(flagstmp == O_CREAT){
 		close(fd);
 		fd = open(path, oldflags, PR_OPEN_MODE); 
+ 			pr_log_pri(PR_LOG_NOTICE, "flags = %d", flags);
 		if(fd < 0)
-  			pr_log_pri(PR_LOG_NOTICE, "fail to open %s", path);
+  			pr_log_pri(PR_LOG_NOTICE, "fail open  %s", path);
 	}
   	lock.l_type = F_WRLCK;
 	lock.l_start = 0;
-  	lock.l_whence = SEEK_SET;
+ 	lock.l_whence = SEEK_SET;
   	lock.l_len = 0;
   	if(fcntl(fd, F_SETLK, &lock) < 0){
   		pr_log_pri(PR_LOG_NOTICE, "!!!lock file %s fail after open it", path);
@@ -186,7 +183,7 @@ static int sys_open(pr_fh_t *fh, const char *path, int flags) {
    /* support mutil access to read file*/
   }else if((oldflags & 0x0003) == O_RDONLY){
 	  close(fd);
-	  return open(path, oldflags, PR_OPEN_MODE); 
+	  return open(path, oldflags); 
   }else
 	close(fd);
   	return -1;

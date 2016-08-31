@@ -51,18 +51,12 @@ dd if=/dev/mtd9 of=/tmp/panic_log.txt bs=131072 count=2
 collect_log=`cat /tmp/collect_debug`
 
 if [ "x$collect_log" = "x1" ];then
-	zip debug-log.zip  panic_log.txt Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap connection.pcap detwan.pcap
+	zip debug-log.zip  panic_log.txt Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap
 else
-	zip debug-log.zip NETGEAR_$module_name.cfg  panic_log.txt  Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap connection.pcap detwan.pcap
+	zip debug-log.zip NETGEAR_$module_name.cfg  panic_log.txt  Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap
 fi
 
-tcpdump_pid=`ps | grep "/tmp/connection.pcap" | grep -v "grep" | awk '{print $1}'`
-for connection_pid in $tcpdump_pid
-do
-	kill $connection_pid
-done
-
 cd /tmp
-rm -rf debug-usb debug_cpu debug_flash debug_mem debug_mirror_on debug_session NETGEAR_$module_name.cfg panic_log.txt Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap connection.pcap detwan.pcap
+rm -rf debug-usb debug_cpu debug_flash debug_mem debug_mirror_on debug_session NETGEAR_$module_name.cfg panic_log.txt Console-log1.txt Console-log2.txt basic_debug_log.txt lan.pcap wan.pcap
 
 echo 0 > /tmp/collect_debug

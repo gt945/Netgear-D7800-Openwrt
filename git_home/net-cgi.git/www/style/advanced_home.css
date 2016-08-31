@@ -14,9 +14,9 @@ body{background-color: #e5e5e5; width: 660px;}
 .adv_icon tr td{font:12px arial; color: #404040; line-height: 13px;}
 .adv_icon tr td b{font: bold 12px arial; position:relative; left: 5px; line-height: 13px;}
 .adv_icon img{margin-top:2px; margin-bottom: 2px;}
-.img_status_good{position:relative;float:left;margin: 7px 4px auto 4px;width:22px; height:20px;background:url(../image/advanced_homes.gif) no-repeat -48px -290px}
-.img_status_warning{position:relative;float:left;margin: 7px 4px auto 3px;width:24px; height:19px;background:url(../image/advanced_homes.gif) no-repeat 0 -290px}
-.img_status_error{position:relative;float:left;margin: 7px 4px auto 3px;width:24px; height:23px;background:url(../image/advanced_homes.gif) no-repeat -24px -290px}
+.img_status_good{position:relative;float:left;margin: 7px 4px auto 4px;width:22px; height:20px;background:url(../image/advanced_homes.gif) no-repeat -49px -291px}
+.img_status_warning{position:relative;float:left;margin: 7px 4px auto 3px;width:24px; height:19px;background:url(../image/advanced_homes.gif) no-repeat 0 -291px}
+.img_status_error{position:relative;float:left;margin: 7px 4px auto 3px;width:24px; height:23px;background:url(../image/advanced_homes.gif) no-repeat -25px -291px}
 
 .advanced_icon_line{position:relative;float:left;font-size:0px;overflow:hidden;line-height:1px;margin-top:2px; margin-bottom: 2px;height:1px;width:322px;background:#cdcdcd repeat-x;zoom:1;}
 .advanced_page_line{position:relative;float:left;font-size:0px;overflow:hidden;line-height:1px;margin-top:10px; margin-bottom: 10px;height:1px;width:665px;background:#b2b2b2 repeat-x}

@@ -19,9 +19,9 @@ if(parent.type == "basic")
 	<script>
 		var master="<% cfg_get("http_loginname") %>";
 		if( master == "admin" )
-			document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" onClick=\'location.href="QOS_wait.htm?adv_qos";\'> &nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" type="submit" name="apply" value="$apply_mark" onClick="check_prru_qos_apply(document.forms[0]);return false;">');
+			document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick=\'location.href="QOS_wait.htm?adv_qos";\'> &nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" type="button" name="Apply" id="apply" value="$apply_mark" onClick="check_prru_qos_apply(document.forms[0]);return false;">');
 		else
-			document.write('<input class="new_greycancel_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="submit" name="apply" value="$apply_mark" disabled>');
+			document.write('<input class="new_greycancel_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="button" name="Apply" id="apply" value="$apply_mark" disabled>');
 	</script>
 	</TD>
 </TR>
@@ -74,7 +74,7 @@ else if(parent.type == "basic")
 .DragBox, .SelectDragBox, .grey_DragBox{
 	font-size: 12px;
 	margin-bottom: 5px;
-	width: 500px;
+	width: 160px;
 	cursor: pointer;
 	font-family: verdana, tahoma, arial;
 }
@@ -287,7 +287,7 @@ function loadvalue()
 				cf.tcbw_unit.selectedIndex=1;
 			else if(ookla_result.indexOf("Kbps") >= 0)
 				cf.tcbw_unit.selectedIndex=0;
-			cf.tcbw_value.value=ookla_result.replace(/[a-zA-Z]/g, '');
+			cf.tcbw_value.value=ookla_result.replace(/[a-zA-Z\s]/g, '');
 		}
 	}	
 
@@ -361,10 +361,10 @@ function loadvalue()
 <input type="hidden" name="select_node_name">
 
 <!--<TR>
-	<TD><input type="checkbox" name="wmm_enable" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','wifi')"><b>$qos_enable_wmm <script>if(an_router_flag) document.write("(2.4GHz b/g/n)");</script></b></a></TD>
+	<TD><input type="checkbox" name="wmm_enable" id="wmm_enable" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','wifi')"><b>$qos_enable_wmm <script>if(an_router_flag) document.write("(2.4GHz b/g/n)");</script></b></a></TD>
 </TR>
 <TR id=wmm_an>
-	<TD><input type="checkbox" name="wmm_enable_a" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','wifi')"><b>
+	<TD><input type="checkbox" name="wmm_enable_an" id="wmm_enable_an" value="1"><a tabindex=-1 href="javascript:loadhelp('_qos','wifi')"><b>
 	<script>
 		if( ac_router_flag == "1" )
 			document.write("$qos_enable_wmm (5GHz 802.11a/n/ac)")
@@ -375,21 +375,21 @@ function loadvalue()
 </TR>
 <TR><TD colspan=2 class="spliteline"></TD></TR>-->
 <!--TR>
-	<TD><input type="checkbox" name="qosEnable" value="1" onClick="setGray()"><a tabindex=-1 href="javascript:loadhelp('_qos','qos_on')"><b>$qos_upstream_enable</b></a></TD>
+	<TD><input type="checkbox" name="qosEnable" id="qos_enable" value="1" onClick="setGray()"><a tabindex=-1 href="javascript:loadhelp('_qos','qos_on')"><b>$qos_upstream_enable</b></a></TD>
 </TR-->
 <TR>
 	<TD>$spacebar
 	<b>$qos_uplink_width :</b>&nbsp;&nbsp;&nbsp;&nbsp;<b>$qos_width_maximum</b>&nbsp;&nbsp;
-	<input type="text" name="tcbw_value" size="6" onKeyPress="return getkey('num',event)" >
-	<select name="tcbw_unit" size="1">
+	<input type="text" name="tcbw_value" id="tcbw_value" maxlength="6" size="6" onKeyPress="return getkey('colon_num',event)" onkeyup="clearNoNum(this)" onmouseout="clearNoNum(this)">
+	<select name="tcbw_unit" id="tcbw_unit" size="1">
 		<option value="Kbps">$qos_Kbps</option>
 		<option value="Mbps">$qos_Mbps</option>
 	</select>&nbsp;
         <script>
 		if(master == "admin" )
-			document.write('<input type="submit" name="speedtest_bt" class="new_speed_test  ui-corner-all" id="speedtest_bt" value="Speedtest" onclick="return check_ookla_speedtest(document.forms[0])">&nbsp;');
+			document.write('<input type="button" name="speedtest_bt" class="new_speed_test  ui-corner-all" id="speedtest_bt" value="$speedtest" onclick="return check_ookla_speedtest(document.forms[0])">&nbsp;');
 		else
-			document.write('<input type="submit" name="speedtest_bt" class="new_greyspeed_test  ui-corner-all" id="speedtest_bt" value="Speedtest" disabled >&nbsp;');
+			document.write('<input type="button" name="speedtest_bt" class="new_greyspeed_test  ui-corner-all" id="speedtest_bt" value="$speedtest" disabled >&nbsp;');
 	</script>
         <img src=/image/poweredbyookla.png id="ookla_img">
 	</TD>
@@ -673,6 +673,7 @@ if( p > 0 )
 {
 	for(j=0; j<p; j++)
 	{
+		var priority = "$qos_normal";
 		mac_show_num++;
 		var def_name=attach_mac_array[j].substring(9,11)+attach_mac_array[j].substring(12,14)+attach_mac_array[j].substring(15,17);
 		attach_policy[j]='Pri_MAC_'+def_name;
@@ -686,8 +687,6 @@ if( p > 0 )
 		{
 			var str = eval('qosArray'+i);
 			var each_info = str.split(' ');
-			var priority = "$qos_normal";
-			//alert(each_info[7]);
 			if(each_info[8].toLowerCase() == attach_mac_array[j].toLowerCase())
 			{
 				if(each_info[3] == "0")
@@ -738,7 +737,7 @@ if( p > 0 )
 	<script>
 		var master="<% cfg_get("http_loginname") %>";
 		if( master == "admin" )
-			document.write('<input class="new_apply_bt ui-corner-all" name="Add" type="submit" value="$add_mark" onClick="return add_rules();">&nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" name="Reset" type="button" value="$green_qos_reset" onClick="reset_rules();">');
+			document.write('<input class="new_apply_bt ui-corner-all" name="Add" type="submit" value="$add_mark" onClick="return add_rules();">&nbsp;&nbsp;<input class="new_apply_bt2 ui-corner-all" name="Reset" type="button" value="$green_qos_reset" onClick="reset_rules();">');
 		else
 			document.write('<input class="new_greyapply_bt ui-corner-all" name="Add" type="submit" value="$add_mark" disabled>&nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" name="Reset" type="button" value="$green_qos_reset" disabled>');
 	</script>
@@ -806,7 +805,7 @@ if( p > 0 )
 	<script>
 		var master="<% cfg_get("http_loginname") %>";
 		if( master == "admin" )
-			document.write('<input class="new_apply_bt ui-corner-all" type="submit" name="Edit" value="$edit_mark" onClick="return edit_qos_rules();">&nbsp;&nbsp;<input class="delete_bt" type="submit" name="Deleteone" value="$delete_mark" onClick="return delete_qos_rule();">&nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" type="submit" name="DeleteAll" value="$deleteall_mark" onClick="clear_qos_rules();">');
+			document.write('<input class="new_apply_bt ui-corner-all" type="submit" name="Edit" value="$edit_mark" onClick="return edit_qos_rules();">&nbsp;&nbsp;<input class="delete_bt" type="submit" name="Deleteone" value="$delete_mark" onClick="return delete_qos_rule();">&nbsp;&nbsp;<input class="new_apply_bt2 ui-corner-all" type="submit" name="DeleteAll" value="$deleteall_mark" onClick="clear_qos_rules();">');
 		else
 			document.write('<input class="new_greyapply_bt ui-corner-all" type="submit" name="Edit" value="$edit_mark" disabled>&nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="submit" name="Deleteone" value="$delete_mark" disabled>&nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="submit" name="DeleteAll" value="$deleteall_mark" disabled>');
 	</script>

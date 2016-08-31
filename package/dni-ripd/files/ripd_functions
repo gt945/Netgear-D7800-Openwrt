@@ -1,0 +1,80 @@
+#!/bin/sh
+
+. /dni-gconfig
+
+mkdir -p /etc/ripd
+CONFIG=/bin/config
+START_PROCESS="ripd -l $DGC_LAN_BR_IF -w $DGC_WAN_BR_IF -p $DGC_WAN_PPP_IF"
+
+boot()
+{
+	config
+	$START_PROCESS
+}
+
+start()
+{
+	config
+	r_pid=$(pidof ripd)
+	[ "x$r_pid" != "x" ] && killall ripd
+	$START_PROCESS
+}
+
+stop()
+{
+	# send SIGINT will stop work of ripd function, but the ripd daemon still running
+	killall -SIGINT ripd
+}
+
+restart()
+{
+	stop
+	start
+}
+
+reload()
+{
+	# when start will update config file at the same time
+	start
+}
+
+config()
+{
+	mkdir -p /etc/ripd
+	wan_proto_config=$($CONFIG get wan_proto)
+	rip_version_config=$($CONFIG get rip_version)
+	lan_ip_config=$($CONFIG get lan_ipaddr)
+	lan_mask_config=$($CONFIG get lan_netmask)
+	rip_dir_config=$($CONFIG get rip_direction)
+
+	cat <<EOF >/etc/ripd/ripd.conf
+WAN_PROTO=$wan_proto_config
+RIP_VERSION=$rip_version_config
+LAN_IPADDR=$lan_ip_config
+LAN_NETMASK=$lan_mask_config
+RIP_DIRECTION=$rip_dir_config
+EOF
+}
+
+case "$1" in
+	boot)
+		boot
+	;;
+	start)
+		start
+	;;
+	stop)
+		stop
+	;;
+	restart)
+		restart
+	;;
+	reload)
+		reload
+	;;
+	config)
+		config
+	;;
+	*)
+		echo "Usage: $0 boot|start|stop|restart|reload|config."
+esac

@@ -9,6 +9,7 @@
 <script language="javascript" type="text/javascript" src="script/brs_hijack.js"></script>
 <script language="javascript" type="text/javascript" src="script/funcs.js"></script>
 <% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 </head>
 <script>
@@ -20,6 +21,7 @@ var display_iptv2 = "<% cfg_get("wan2_active") %>";
 var wan2_bridge="<% cfg_get("dsl_wan2_bridge_mode") %>";
 var lan_selecte="<% cfg_get("iptv_mask") %>";
 var lan1_selecte=lan_selecte & 1;
+var lan_ports_num = (typeof(top.lan_ports_num) == "undefined") ? 4 : top.lan_ports_num;
 addLoadEvent(initPage);
 function initPage()
 {
@@ -41,7 +43,7 @@ function initPage()
 	var btns_container_div = document.getElementById("btnsContainer_div");
 	cf.use_vlanid.checked = true;
 	cf.use_vlanid.disabled = true;
-	cf.pppoe_vlanid.value=vlan_id;
+	cf.pppoe_vlanidt.value=vlan_id;
 	if(enable_iptv == "1")
 			cf.use_iptv.checked = true;
 	else
@@ -54,16 +56,12 @@ function initPage()
 		}
 	}
 	if(display_iptv2 == "1"){
-		document.getElementById("iptv").style.display="";
 		if(enable_iptv == "1")
 			cf.use_iptv.checked = true;
 		else
 			cf.use_iptv.checked = false;
-		if(wan2_bridge == "1")
+		if(wan2_bridge == "1" && lan_ports_num != 1 )
 		{
-			document.getElementById("bridge").style.display="";
-			document.getElementById("bridge1").style.display="";
-			document.getElementById("bridge2").style.display="";
 			if((lan_selecte & 2) == 2)
 				cf.lan2.checked = true;
 			if((lan_selecte & 4) == 4)
@@ -76,15 +74,7 @@ function initPage()
 			}
 			enable_bridge();
 		}
-		else
-		{
-			document.getElementById("bridge").style.display="none";
-			document.getElementById("bridge1").style.display="none";
-			document.getElementById("bridge2").style.display="none";
-		}
 	}
-	else
-		document.getElementById("iptv").style.display="none";
 }
 function checkPPPoE()
 {
@@ -106,7 +96,7 @@ function checkPPPoE()
 		cf.hid_use_vlanid.value = "0";
 	if(cf.use_iptv.checked == true){
 		if(wan2_bridge == "1"){
-			if((cf.lan2.checked == false) && (cf.lan3.checked == false) && (cf.lan4.checked == false))
+			if((cf.lan2.checked == false) && (cf.lan3.checked == false) && (cf.lan4.checked == false) && (lan_ports_num != 1))
 			{
 				alert(dsl_bridge_warning);
 				return false;
@@ -134,6 +124,7 @@ function checkPPPoE()
 		alert(bh_login_name_null);
 		return false;
 	}
+	cf.pppoe_vlanid.value = cf.pppoe_vlanidt.value;
 	cf.submit();
 	return true;
 }
@@ -142,11 +133,11 @@ function enable_vlanid()
 	var cf = document.forms[0];
 	if(!cf.use_vlanid.checked)
 	{
-		cf.pppoe_vlanid.disabled = true;
+		cf.pppoe_vlanidt.disabled = true;
 	}
 	else
 	{
-		cf.pppoe_vlanid.disabled = false;
+		cf.pppoe_vlanidt.disabled = false;
 	}
 }
 function enable_bridge()
@@ -175,6 +166,7 @@ function enable_bridge()
 <input type="hidden" name="hid_use_iptv" />
 <input type="hidden" name="hid_username" />
 <input type="hidden" name="hid_lan_num" />
+<input type="hidden" name="pppoe_vlanid" />
 <div class="wizard_gcontent_div">
 
 	<div class="wizard_words_div">
@@ -225,7 +217,7 @@ function enable_bridge()
 				</div>
 				<div class="wanInput_Img_div">
 					<img src="image/ca_text_pic.gif" />
-					<input type="text" id="inputvlanid" maxlength="16" align="right" name="pppoe_vlanid" />
+					<input type="text" id="inputvlanid" maxlength="16" align="right" name="pppoe_vlanidt" />
 				</div>
 				<div id="iptv" class="wanInput_left_divip" align="left">
 					<input type="checkbox" name="use_iptv" value="1" onclick="enable_bridge();">
@@ -263,6 +255,9 @@ function enable_bridge()
 </div>
 
 </form>
+<script>
+	control_display("dsl_pppoe_gr");
+</script>
 </body>
 
 </html>

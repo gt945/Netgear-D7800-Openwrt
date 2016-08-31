@@ -651,7 +651,7 @@ static void shutdown_system(void)
 
     //some progresses block pppd to send the package.But if put kill pppd here,it will send.
 	system("killall pppd");
-    //acld can not run config_commit success when reboot.But if put kill acld here,it can run success.
+	//acld can not run config_commit success when reboot.But if put kill acld here,it can run success.
 	system("killall acld");
 	sleep(1);
 	/* run everything to be run at "shutdown".  This is done _prior_

@@ -10,7 +10,7 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=qca-wifi-fw
-PKG_VERSION:=CNSS.BL.1.0-00453-S-1.25363.2
+PKG_VERSION:=CNSS.BL.1.0-00453-S-2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)$(BUILD_VARIANT)-$(PKG_VERSION).tar.bz2
@@ -20,6 +20,8 @@ include $(INCLUDE_DIR)/package-version-override.mk
 include $(INCLUDE_DIR)/package.mk
 
 PKG_BUILD_DEPENDS:=
+
+BD_DIR=$(if $(CONFIG_DGC_product_name),$(CONFIG_DGC_product_name),"none")
 
 define WifiFirmware
   define Package/$(PKG_NAME)$(1)
@@ -44,14 +46,15 @@ define WifiFirmware
   define Package/$(PKG_NAME)$(1)/install
 	$(INSTALL_DIR) $$(1)/lib/firmware/$(3)
 	$(HOST_TAR) jxvf $(DL_DIR)/$(PKG_SOURCE) -C $$(1)/lib/firmware/$(3) --strip-components=1
-	$(INSTALL_BIN) ./files/boarddata_0.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boarddata_1.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS239_5G_v2_001.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS260_2G_v2_002.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS239_5G_v2_MAX_001.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS260_2G_v2_MAX_002.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS239_5G_v2_CE_001.bin $$(1)/lib/firmware/$(3)
-	$(INSTALL_BIN) ./files/boardData_AR900B_CUS239_5G_v2_NEW_FCC_001.bin $$(1)/lib/firmware/$(3)
+	@echo "==========install fw from $(BD_DIR)"
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boarddata_0.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boarddata_1.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS239_5G_v2_001.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS260_2G_v2_002.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS239_5G_v2_MAX_001.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS260_2G_v2_MAX_002.bin $$(1)/lib/firmware/$(3)
+	$(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS239_5G_v2_CE_001.bin $$(1)/lib/firmware/$(3)
+	[ "x$(BD_DIR)" = "xd7800" ] && $(INSTALL_BIN) ./files/$(BD_DIR)/boardData_AR900B_CUS239_5G_v2_NEW_FCC_001.bin $$(1)/lib/firmware/$(3)
   endef
 
   $$(eval $$(call BuildPackage,$(PKG_NAME)$(1)))

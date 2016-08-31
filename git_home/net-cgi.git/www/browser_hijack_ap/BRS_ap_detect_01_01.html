@@ -11,6 +11,9 @@
 
 <body>
 <form>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+</script>
 <div class="wizard_content_div">
 
 	<div class="wizard_words_div">
@@ -21,25 +24,11 @@
 	
 	<div id="allBtns_div" class="wizard_buttons_div" align="center">
 		<div id="btnsContainer_div1" class="buttons_img_div" align="center">
-		<script>
-			var master="<% cfg_get("http_loginname") %>";
-			if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-			else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-		</script>
-			<div class="buttons_words_div"><!--back_mark--></div>
+			<input type="button" name="Back" id="back" class="purple_short_btn"><!--back_mark-->
 		</div>
 		<div class="buttons_split"></div>
 		<div id="btnsContainer_div2" class="buttons_img_div" align="center">
-		<script>
-			var master="<% cfg_get("http_loginname") %>";
-			if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-			else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-		</script>
-			<div class="buttons_words_div"><!--next_mark--></div>
+			<input type="button" name="Next" id="next" class="purple_short_btn"><!--next_mark-->
 		</div>
 	</div>
 	

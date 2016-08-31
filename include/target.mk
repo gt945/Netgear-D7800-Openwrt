@@ -116,7 +116,7 @@ __config_list = $(firstword $(wildcard $(call __config_name_list,$(1))))
 find_kernel_config=$(if $(__config_list),$(__config_list),$(lastword $(__config_name_list)))
 
 GENERIC_LINUX_CONFIG = $(call find_kernel_config,$(GENERIC_PLATFORM_DIR))
-LINUX_TARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_DIR))
+LINUX_TARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_DIR))$(if $(KERNEL_PATCH_SUFFIX),-$(KERNEL_PATCH_SUFFIX))
 ifneq ($(PLATFORM_DIR),$(PLATFORM_SUBDIR))
   LINUX_SUBTARGET_CONFIG = $(call find_kernel_config,$(PLATFORM_SUBDIR))
 endif

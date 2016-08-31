@@ -12,8 +12,6 @@ PKG_NAME:=minidlna
 PKG_VERSION:=latest
 PKG_RELEASE:=3
 
-PKG_GIT_DIR:=minidlna.git
-
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_BUILD_DEPENDS:=libsqlite3 ffmpeg libexif libflac libid3tag libjpeg libogg libvorbis zlib libiconv
 
@@ -21,23 +19,19 @@ include $(INCLUDE_DIR)/package.mk
 
 config-y					+= --with-model_name=$(CONFIG_MINIDLNA_MODELNAME)
 
-define Package/minidlna
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=minidlna server
   URL:=http://sourceforge.net/projects/minidlna/
-endef
-
-define Package/minidlna/config
-	menu "Configuration"
-		depends on PACKAGE_minidlna
-		source "$(SOURCE)/Config.in"
-	endmenu
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/minidlna.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Configure
 	@test x$(CONFIG_MINIDLNA_MODELNAME) != x \
@@ -69,11 +63,11 @@ define Build/Compile
 		all
 endef
 
-define Package/minidlna/install
+define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/minidlna $(1)/usr/sbin/
 	install -d -m0755 $(1)/sbin
 	install -m0755 $(PKG_BUILD_DIR)/cmddlna  $(1)/sbin/
 endef
 
-$(eval $(call BuildPackage,minidlna))
+$(eval $(call BuildPackage,$(PKG_NAME)))

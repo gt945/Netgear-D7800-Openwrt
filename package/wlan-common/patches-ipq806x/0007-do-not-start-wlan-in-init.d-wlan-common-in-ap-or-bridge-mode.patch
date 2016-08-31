@@ -1,0 +1,15 @@
+diff --git a/etc/init.d/wlan-common b/etc/init.d/wlan-common
+index f3b8c3e..6914da6 100755
+--- a/etc/init.d/wlan-common
++++ b/etc/init.d/wlan-common
+@@ -1,6 +1,10 @@
+ #!/bin/sh /etc/rc.common
+ START=80
+ boot() {
++    if [ "$($CONFIG get ap_mode)" = "1" -o "$($CONFIG get bridge_mode)" = "1" ]; then
++        echo "start wlan in AP/Bridge mode later"
++        exit 0
++    fi 
+        wlan updateconf
+        wlan down
+        wlan up

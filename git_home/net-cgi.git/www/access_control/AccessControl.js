@@ -126,17 +126,17 @@ function check_all_device(this_e, start, id)
 		i++;
 	}
 
-    if(id == "check_device")
+    if(id == "checkbox_index")
         toggle_edit();
-    else if(id == "allow_not_connect")
+    else if(id == "checkbox_index_white")
         toggle_edit_allow();
-    else if(id == "block_not_connect")
+    else if(id == "checkbox_index_black")
         toggle_edit_block();
 }
 
 function set_allow_block(cf, flag)
 {
-	access_control_apply(cf);
+	access_control_apply(cf, '0');
 	if(flag == 1)
 		cf.submit_flag.value = "acc_control_allow";
 	else
@@ -146,9 +146,9 @@ function set_allow_block(cf, flag)
 	var sel_list="";
 	if(access_control_device_num > 0)
 	{
-		for(i=0;i<access_control_device_num;i++)
+		for(i=1;i<=access_control_device_num;i++)
 		{
-			var listName = "check_device"+i;
+			var listName = "checkbox_index"+i;
 			if(document.getElementById(listName).checked == true)
 			{
 				if(flag == 0 && document.getElementById(listName).value.toLowerCase() == wan_remote_mac.toLowerCase())
@@ -186,9 +186,9 @@ function check_edit()
 		return false;
 	}
 
-	for(i=0;i<access_control_device_num;i++)
+	for(i=1;i<=access_control_device_num;i++)
 	{
-		var listName="check_device"+i;
+		var listName="checkbox_index"+i;
 		if(document.getElementById(listName).checked==true)
 		{
 			select_num=i+1;
@@ -202,8 +202,8 @@ function check_edit()
 	}
 	else
 	{
-		access_control_apply(cf);
-		cf.select_edit.value=select_num;
+		access_control_apply(cf, '0');
+		cf.select_edit.value=select_num-1;
 		cf.submit_flag.value="editnum_connect_device";
 		cf.action="/apply.cgi?/edit_connect_device.htm timestamp="+ts;
 		cf.submit();
@@ -215,16 +215,16 @@ function delete_block()
 {
 	var cf = document.forms[0];
 
-	access_control_apply(cf);
+	access_control_apply(cf, '0');
 	cf.submit_flag.value = "delete_acc";
 
 	var sel_list="";
 	var count=0;
 	if( blocked_no_connect_num > 0 )
 	{
-		for( i = 0; i <blocked_no_connect_num; i++)
+		for( i=1; i <=blocked_no_connect_num; i++)
 		{
-			var listName = "block_not_connect"+i;
+			var listName = "checkbox_index_black"+i;
 			if(document.getElementById(listName).checked == true)
 			{
 				sel_list+= document.getElementById(listName).value;
@@ -248,7 +248,7 @@ function delete_allow()
 {
         var cf = document.forms[0];
 
-	access_control_apply(cf);
+	access_control_apply(cf, '0');
 
         cf.submit_flag.value = "delete_acc";
 	
@@ -256,9 +256,9 @@ function delete_allow()
 	var count=0;
         if( allowed_no_connect_num > 0 )
         {
-                for( i = 0; i <allowed_no_connect_num; i++)
+                for( i = 1; i <=allowed_no_connect_num; i++)
                 {
-			var listName = "allow_not_connect"+i;
+			var listName = "checkbox_index_white"+i;
 			if(document.getElementById(listName).checked == true)
 			{
 				sel_list+= document.getElementById(listName).value;
@@ -279,50 +279,52 @@ function delete_allow()
 }
 
 
-function access_control_apply(cf)
+function access_control_apply(cf, flag)
 {
-	if(cf.block_enable.checked == false)
+	if(cf.enable_acl.checked == false)
 		cf.hid_able_block_device.value = 0;
 	else
 		cf.hid_able_block_device.value = 1;
 		
-	if(cf.allow_or_block[0].checked == false)
+	if(cf.access_all[0].checked == false)
 		cf.hid_new_device_status.value = "Block";
 	else
 		cf.hid_new_device_status.value = "Allow";
 
 	cf.submit_flag.value = "apply_acc_control";
+	if(flag == '1')
+		cf.submit();
 }
 
 function check_status()
 {
 	var cf = document.forms[0];
 	var flag;
-	flag = (!(cf.block_enable.checked));
-    setDisabled(flag, cf.allow_or_block[0], cf.allow_or_block[1], cf.Allow, cf.Block, cf.all_checked);
-    setDisabled(flag, cf.delete_allow_btn, cf.delete_block_btn, cf.allow_all, cf.block_all,cf.add_block_btn,cf.add_allow_btn);
-	if(cf.block_enable.checked == false)
+	flag = (!(cf.enable_acl.checked));
+    setDisabled(flag, cf.access_all[0], cf.access_all[1], cf.Allow, cf.Block, cf.checkbox_index);
+    setDisabled(flag, document.getElementById("delete_white"), document.getElementById("delete_black"), cf.checkbox_index_white, cf.checkbox_index_black,document.getElementById("add_black"),document.getElementById("add_white"));
+	if(cf.enable_acl.checked == false)
 	{
-		setDisabled(true, cf.Edit, cf.edit_allow_btn, cf.edit_block_btn);
+		setDisabled(true, cf.edit_attached, cf.edit_white, cf.edit_black);
 
 		enable_block_device = 0;
 		cf.Allow.className = "common_gray_bt";
 		cf.Block.className = "common_gray_bt";
-		cf.Edit.className="common_gray_bt";
-		for(i=0;i<access_control_device_num;i++)
-			eval('document.getElementsByName("check_device'+i+'")[0]').disabled = true;
+		cf.edit_attached.className="common_gray_bt";
+		for(i=1;i<=access_control_device_num;i++)
+			document.getElementById("checkbox_index"+i).disabled = true;
 
-		cf.delete_allow_btn.className= "common_big_gray_bt";
-		cf.add_allow_btn.className = "common_gray_bt";
-		cf.edit_allow_btn.className="common_gray_bt";
-		for(i=0;i<allowed_no_connect_num;i++)
-			eval('document.getElementsByName("allow_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_white").className= "common_big_gray_bt";
+		document.getElementById("add_white").className = "common_gray_bt";
+		cf.edit_white.className="common_gray_bt";
+		for(i=1;i<=allowed_no_connect_num;i++)
+			document.getElementById("checkbox_index_white"+i).disabled = true;
 
-		cf.delete_block_btn.className= "common_big_gray_bt";
-		cf.add_block_btn.className = "common_gray_bt";
-		cf.edit_block_btn.className = "common_gray_bt";
-		for(i=0;i<blocked_no_connect_num;i++)
-			eval('document.getElementsByName("block_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_black").className= "common_big_gray_bt";
+		document.getElementById("add_black").className = "common_gray_bt";
+		cf.edit_black.className = "common_gray_bt";
+		for(i=1;i<=blocked_no_connect_num;i++)
+			document.getElementById("checkbox_index_black"+i).disabled = true;
 	}
 	else
 	{
@@ -333,40 +335,40 @@ function check_status()
 		enable_block_device = 1;
 		cf.Allow.className = "common_bt";
 		cf.Block.className = "common_bt";
-		for(i=0;i<access_control_device_num;i++)
-			eval('document.getElementsByName("check_device'+i+'")[0]').disabled = false;
+		for(i=1;i<=access_control_device_num;i++)
+			document.getElementById("checkbox_index"+i).disabled = false;
 
-		cf.delete_allow_btn.className= "common_big_bt";
-		cf.add_allow_btn.className = "common_bt";
-		for(i=0;i<allowed_no_connect_num;i++)
-			eval('document.getElementsByName("allow_not_connect'+i+'")[0]').disabled = false;
-		cf.delete_block_btn.className= "common_big_bt";
-		cf.add_block_btn.className = "common_bt";
-		for(i=0;i<blocked_no_connect_num;i++)
-			eval('document.getElementsByName("block_not_connect'+i+'")[0]').disabled = false;
+		document.getElementById("delete_white").className= "common_big_bt";
+		document.getElementById("add_white").className = "common_bt";
+		for(i=1;i<=allowed_no_connect_num;i++)
+			document.getElementById("checkbox_index_white"+i).disabled = false;
+		document.getElementById("delete_black").className= "common_big_bt";
+		document.getElementById("add_black").className = "common_bt";
+		for(i=1;i<=blocked_no_connect_num;i++)
+			document.getElementById("checkbox_index_black"+i).disabled = false;
 	}
 }
 
 function check_acc_add(cf,flag)
 {
-	if(cf.acc_mac.value.length==12 && cf.acc_mac.value.indexOf(":")==-1)
+	if(cf.mac_addr.value.length==12 && cf.mac_addr.value.indexOf(":")==-1)
 	{
-		var mac=cf.acc_mac.value;
-		cf.acc_mac.value=mac.substr(0,2)+":"+mac.substr(2,2)+":"+mac.substr(4,2)+":"+mac.substr(6,2)+":"+mac.substr(8,2)+":"+mac.substr(10,2);
+		var mac=cf.mac_addr.value;
+		cf.mac_addr.value=mac.substr(0,2)+":"+mac.substr(2,2)+":"+mac.substr(4,2)+":"+mac.substr(6,2)+":"+mac.substr(8,2)+":"+mac.substr(10,2);
 	}
-	else if ( cf.acc_mac.value.split("-").length == 6 )
+	else if ( cf.mac_addr.value.split("-").length == 6 )
 	{
-		var tmp_mac = cf.acc_mac.value.replace(/-/g,":");
-		cf.acc_mac.value=tmp_mac;
+		var tmp_mac = cf.mac_addr.value.replace(/-/g,":");
+		cf.mac_addr.value=tmp_mac;
 	}
-	if(maccheck(cf.acc_mac.value) == false)
+	if(maccheck(cf.mac_addr.value) == false)
 		return false;
 	if(flag!='edit_allow'&&flag!='edit_block'&&flag!='edit_connect_device')
 	{
 		for(i=0;i<acc_mac_num;i++)
 		{
 			var str = eval ( 'acc_mac' + i );
-			if(str.toLowerCase() == cf.acc_mac.value.toLowerCase())
+			if(str.toLowerCase() == cf.mac_addr.value.toLowerCase())
 			{
 				alert("$mac_dup");
 				return false;
@@ -381,7 +383,7 @@ function check_acc_add(cf,flag)
 			var each_info=str.split(' ');
 			if(select_editnum!=i)
 			{
-				if(each_info[1].toLowerCase() == cf.acc_mac.value.toLowerCase())
+				if(each_info[1].toLowerCase() == cf.mac_addr.value.toLowerCase())
 				{
 					alert("$mac_dup");
 					return false;
@@ -392,7 +394,7 @@ function check_acc_add(cf,flag)
                 {
                         var str=eval('blocked_no_connect'+i);
                         var each_info=str.split(' ');
-                        if(each_info[1].toLowerCase() == cf.acc_mac.value.toLowerCase())
+                        if(each_info[1].toLowerCase() == cf.mac_addr.value.toLowerCase())
                         {
                                         alert("$mac_dup");
                                         return false;
@@ -402,7 +404,7 @@ function check_acc_add(cf,flag)
                 {
                         var str=eval('access_control_device'+i);
                         var each_info=str.split('*');
-                        if(each_info[2].toLowerCase() == cf.acc_mac.value.toLowerCase())
+                        if(each_info[2].toLowerCase() == cf.mac_addr.value.toLowerCase())
                         {
                                 alert("$mac_dup");
                                 return false;
@@ -419,7 +421,7 @@ function check_acc_add(cf,flag)
                         var each_info=str.split(' ');
                         if(select_editnum!=i)
                         {
-                                if(each_info[1].toLowerCase() == cf.acc_mac.value.toLowerCase())                                {
+                                if(each_info[1].toLowerCase() == cf.mac_addr.value.toLowerCase())                                {
                                         alert("$mac_dup");
                                         return false;
                                 }
@@ -429,7 +431,7 @@ function check_acc_add(cf,flag)
                 {
                         var str=eval('allowed_no_connect'+i);
                         var each_info=str.split(' ');
-                        if(each_info[1].toLowerCase() == cf.acc_mac.value.toLowerCase())
+                        if(each_info[1].toLowerCase() == cf.mac_addr.value.toLowerCase())
                         {
                                         alert("$mac_dup");
                                         return false;
@@ -439,7 +441,7 @@ function check_acc_add(cf,flag)
                 {
                         var str=eval('access_control_device'+i);
                         var each_info=str.split('*');
-                        if(each_info[2].toLowerCase() == cf.acc_mac.value.toLowerCase())
+                        if(each_info[2].toLowerCase() == cf.mac_addr.value.toLowerCase())
 			{
 				alert("$mac_dup");
 				return false;
@@ -460,6 +462,7 @@ function check_acc_add(cf,flag)
             }
         }
     }
+    	cf.submit();
 	return true;
 }
 
@@ -473,9 +476,9 @@ function check_allow_edit()
 	}
 	var count=0;
 	var select_num;
-	for(i=0;i<allowed_no_connect_num;i++)
+	for(i=1;i<=allowed_no_connect_num;i++)
 	{
-		var listName="allow_not_connect"+i;
+		var listName="checkbox_index_white"+i;
 		if(document.getElementById(listName).checked==true)
 		{
 			select_num=i+1;
@@ -489,8 +492,8 @@ function check_allow_edit()
 	}
 	else
 	{
-		access_control_apply(cf);
-		cf.select_edit.value=select_num;
+		access_control_apply(cf, '0');
+		cf.select_edit.value=select_num-1;
 		cf.submit_flag.value="editnum_acc_allow";
 		cf.action="/apply.cgi?/edit_allowed.htm timestamp="+ts;
 		cf.submit();
@@ -508,9 +511,9 @@ function check_block_edit()
         }
         var count=0;
 	var select_num;
-        for(i=0;i<blocked_no_connect_num;i++)
+        for(i=1;i<=blocked_no_connect_num;i++)
         {
-		var listName="block_not_connect"+i;
+		var listName="checkbox_index_black"+i;
 		if(document.getElementById(listName).checked==true)
                 {
 			select_num=i+1;
@@ -522,8 +525,8 @@ function check_block_edit()
 		alert("$port_edit");
                 return false;
         }
-	access_control_apply(cf);
-	cf.select_edit.value=select_num;
+	access_control_apply(cf, '0');
+	cf.select_edit.value=select_num-1;
 	cf.submit_flag.value="editnum_acc_block";
 	cf.action="/apply.cgi?/edit_blocked.htm timestamp="+ts;
 	cf.submit();
@@ -535,19 +538,19 @@ function toggle_edit()
     var num = 0;
     var cf = document.forms[0];
     if(access_control_device_num > 0) {
-        for(var i=0;i<access_control_device_num;i++) {
-            var listName = "check_device"+i;
+        for(var i=1;i<=access_control_device_num;i++) {
+            var listName = "checkbox_index"+i;
             if(document.getElementById(listName).checked == true) {
                 num++;
             }
         }
     }
     if(num == 1) {
-        cf.Edit.className = "common_bt";
-        cf.Edit.disabled = false;
+        cf.edit_attached.className = "common_bt";
+        cf.edit_attached.disabled = false;
     } else {
-        cf.Edit.className = "common_gray_bt";
-        cf.Edit.disabled = true;
+        cf.edit_attached.className = "common_gray_bt";
+        cf.edit_attached.disabled = true;
     }
 }
 function toggle_edit_allow()
@@ -555,19 +558,19 @@ function toggle_edit_allow()
     var num = 0;
     var cf = document.forms[0];
     if(allowed_no_connect_num > 0) {
-        for(var i=0; i<allowed_no_connect_num; i++) {
-            var listName = "allow_not_connect"+i;
+        for(var i=1; i<=allowed_no_connect_num; i++) {
+            var listName = "checkbox_index_white"+i;
             if(document.getElementById(listName).checked == true) {
                 num++;
             }
         }
     }
     if(num == 1) {
-        cf.edit_allow_btn.className = "common_bt";
-        cf.edit_allow_btn.disabled = false;
+        cf.edit_white.className = "common_bt";
+        cf.edit_white.disabled = false;
     } else {
-        cf.edit_allow_btn.className = "common_gray_bt";
-        cf.edit_allow_btn.disabled = true;
+        cf.edit_white.className = "common_gray_bt";
+        cf.edit_white.disabled = true;
     }
 }
 
@@ -576,19 +579,19 @@ function toggle_edit_block()
     var num = 0;
     var cf = document.forms[0];
     if(blocked_no_connect_num > 0) {
-        for(var i=0; i<blocked_no_connect_num; i++) {
-            var listName = "block_not_connect"+i;
+        for(var i=1; i<=blocked_no_connect_num; i++) {
+            var listName = "checkbox_index_black"+i;
             if(document.getElementById(listName).checked == true) {
                 num++;
             }
         }
     }
     if(num == 1) {
-        cf.edit_block_btn.className = "common_bt";
-        cf.edit_block_btn.disabled = false;
+        cf.edit_black.className = "common_bt";
+        cf.edit_black.disabled = false;
     } else {
-        cf.edit_block_btn.className = "common_gray_bt";
-        cf.edit_block_btn.disabled = true;
+        cf.edit_black.className = "common_gray_bt";
+        cf.edit_black.disabled = true;
     }
 }
 

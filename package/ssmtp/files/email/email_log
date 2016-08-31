@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. /dni-gconfig
+
 nvram=/bin/config
 smtpc=/usr/sbin/ssmtp
 LOG_FILE=/var/log/messages
@@ -10,22 +12,22 @@ Lock_timeout=10
 # Lock for process LOG_FILE, should be fast
 log_lock()
 {
-	if [ -f $LOCK_FILE ]; then
-		local i=0
-		while [ $i -lt $Lock_timeout ]; do
-			[ -f $LOCK_FILE ] || break
-			i=$((i+1))
-			usleep 300000
-		done
-		[ -f $LOCK_FILE ] && kill -9 `cat $LOCK_FILE`
-	fi
+   if [ -f $LOCK_FILE ]; then
+       local i=0
+       while [ $i -lt $Lock_timeout ]; do
+           [ -f $LOCK_FILE ] || break
+           i=$((i+1))
+           usleep 300000
+       done
+       [ -f $LOCK_FILE ] && kill -9 `cat $LOCK_FILE`
+   fi
 
-	echo $sfx > $LOCK_FILE
+   echo $sfx > $LOCK_FILE
 }
 
 log_unlock()
 {
-	rm -f $LOCK_FILE
+   rm -f $LOCK_FILE
 }
 
 
@@ -77,14 +79,14 @@ print_email_header()
 {
 	local hostname="$(cat /proc/sys/kernel/hostname)"
 	local from
-	local addr="$($nvram get email_addr1)"
+	local addr="$($nvram get email_addr)"
 	local username="$($nvram get email_username)"
 	local smtp_server="$($nvram get email_smtp)"
 
 	if [ "$($nvram get email_from_assign)" = "1" ]; then
 		from="\"root@$hostname\"<$($nvram get email_this_addr)>"
 	else
-		from="\"root@$hostname\"<$($nvram get email_addr1)>"
+		from="\"root@$hostname\"<$($nvram get email_addr)>"
 		# as I know, different smtp servers have different rules about "From addr" :
 		# * dni : drops mails that "From addr" != "account email addr" silently.
 		# * pchome : rejects sending mails that "From addr" != "account email addr".
@@ -108,20 +110,33 @@ EOF
 
 blank_exit()
 {
-	local conf=/tmp/ssmtp.conf$sfx
-	local email_file=/tmp/tmp_email_file$sfx
-	local err_file=/tmp/tmp_email_err_file$sfx
-	rm -f $conf $email_file $err_file
-	exit
+   local conf=/tmp/ssmtp.conf$sfx
+   local email_file=/tmp/tmp_email_file$sfx
+   local err_file=/tmp/tmp_email_err_file$sfx
+   rm -f $conf $email_file $err_file
+   exit
 }
+
 
 print_log()
 {
+	local lang_select="$($nvram get GUI_Region)"
+	local gl_task_name="$(cat /tmp/gl_task_name)"
+	local display_path="$(echo $2 | sed 's/\//\\/g')"
+	
 	print_email_header
-
 	log_lock
-	if [ -s $LOG_FILE ]; then
-		if [ "$1" = "send_email_alert" ]; then
+
+	if [ "x$1" = "xgreendownloader_task" ];then
+		if [ "$lang_select" = "Chinese" ];then
+			echo "任务$gl_task_name已下载完成。文件保存$display_path。- NETGEAR Downloader"
+		elif [ "$lang_select" = "Russian" ];then
+			echo "Загрузка $gl_task_name завершена. Файл сохранен в $display_path. - Загрузчик NETGEAR"
+		else
+			echo "Your downloading task $gl_task_name is successfully finished. The downloaded file is saved at $display_path. - NETGEAR Downloader"
+		fi
+	else
+		if [ "$2" = "send_email_alert" ]; then
 			# Risk here... See race among different Ins of this script
 			# , race between this script and other logger.
 			sed -n '1! G;$p;h' $LOG_FILE | sed -n '1,256 p'|grep "site blocked"
@@ -134,8 +149,6 @@ print_log()
 		else
 			sed -n '1! G;$p;h' $LOG_FILE | sed -n '1,256 p'
 		fi
-	else
-		echo "The system doesn't have any logs yet"
 	fi
 	log_unlock
 }
@@ -145,10 +158,11 @@ sendmail()
         local conf=/tmp/ssmtp.conf$sfx
         local email_file=/tmp/tmp_email_file$sfx
         local err_file=/tmp/tmp_email_err_file$sfx
-        local addr="$($nvram get email_addr1)"
+        local addr="$($nvram get email_addr)"
+		local ssmtp_port=$($nvram get email_port)
         print_smtpc_conf > $conf
-        print_log $1 > $email_file
-        if ! cat $email_file | $smtpc -C$conf $addr >/dev/null 2>$err_file; then
+        print_log "$1" "$2" > $email_file
+        if ! cat $email_file | $smtpc -C$conf -P$ssmtp_port $addr >/dev/null 2>$err_file; then
                 return 1
         else
                 return 0
@@ -160,13 +174,13 @@ sendlog() # $1: clearlog_if_success $2: send_email_alert
 	local conf=/tmp/ssmtp.conf$sfx
 	local email_file=/tmp/tmp_email_file$sfx
 	local err_file=/tmp/tmp_email_err_file$sfx
-	local addr="$($nvram get email_addr1)"
+	local addr="$($nvram get email_addr)"
 
-	if ! sendmail $2
+	if ! sendmail "$1" "$2" 
 	then
 		if [ "x$no_ssl_first" = "x1" ] ; then
 			no_ssl_first=0
-			if ! sendmail $2
+			if ! sendmail "$1" "$2"
 			then
 				logger -- "[email sent to: $addr]"
 				logger -- "[email failed] $(cat $err_file)"
@@ -195,14 +209,14 @@ print_email_header_for_hdd()
 {
 	local hostname="$(cat /proc/sys/kernel/hostname)"
 	local from
-	local addr="$($nvram get email_addr1)"
+	local addr="$($nvram get email_addr)"
 	local username="$($nvram get email_username)"
 	local smtp_server="$($nvram get email_smtp)"
 
 	if [ "$($nvram get email_from_assign)" = "1" ]; then
 		from="\"root@$hostname\"<$($nvram get email_this_addr)>"
 	else
-		from="\"root@$hostname\"<$($nvram get email_addr1)>"
+		from="\"root@$hostname\"<$($nvram get email_addr)>"
 		case "$smtp_server" in
 			 smtp.pchome.com.tw)
 			 [ -n "$username" ] && from="${username}@pchome.com.tw"
@@ -211,7 +225,7 @@ print_email_header_for_hdd()
 	fi
 
 	cat <<EOF
-Subject: Warning!D7800 Internal HDD might have some issues
+Subject: Warning!${DGC_PRODUCT_NAME} Internal HDD might have some issues
 From: $from
 To: $addr
 
@@ -230,12 +244,13 @@ email_HDD_err_log()
 	local conf=/tmp/hdd_err.conf$sfx
 	local email_file=/tmp/tmp_hdd_email.file$sfx
 	local err_file=/tmp/tmp_hdd_err_email.file$sfx
-	local addr="$($nvram get email_addr1)"
+	local addr="$($nvram get email_addr)"
+	local ssmtp_port=$($nvram get email_port)
 
 	echo "email_HDD_err_log in ..." > /dev/console
 	print_smtpc_conf > $conf
 	print_hdd_log > $email_file
-	if ! cat $email_file | $smtpc -C$conf $addr >/dev/null 2>$err_file; then
+	if ! cat $email_file | $smtpc -C$conf -P$ssmtp_port $addr >/dev/null 2>$err_file; then
 		logger -- "[email sent to: $addr]"
 		logger -- "[email failed] $(cat $err_file)"
 		rm -f $conf $email_file $err_file
@@ -261,16 +276,21 @@ email_full_log)
 	# send log only if lines of log file > 256 * 90% = 230.4
 	[ ! -s $LOG_FILE ] && exit
 	[ "$(wc -l $LOG_FILE | sed -n 's/[^0-9]*//gp')" -le "230" ] && exit
-	sendlog "clearlog_if_success" 
+	sendlog "clearlog_if_success"
 	;;
 send_email_alert)
 	[ $($nvram get email_notify) = "0" ] && exit
-	[ "$($nvram get email_send_alert)" = "0" ] && exit
-	sendlog "not_clearlog" "send_email_alert"
+	if [ "x$1" = "xgreendownloader_task" ];then
+		[ "$($nvram get green_download_email_noti)" = "0" ] && exit
+		sendlog "$1" "$2"
+	else
+		[ "$($nvram get email_send_alert)" = "0" ] && exit
+		sendlog "not_clearlog_if_success" "send_email_alert"
+	fi
 	;;
 send_log)
 	[ $($nvram get email_notify) = "0" ] && exit
-	sendlog 
+	sendlog
 	;;
 email_HDD_err_log)
 	[ $($nvram get email_notify) = "0" ] && exit

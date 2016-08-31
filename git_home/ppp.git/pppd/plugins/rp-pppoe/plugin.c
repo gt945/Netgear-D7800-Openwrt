@@ -67,6 +67,7 @@ char *pppd_pppoe_service = NULL;
 static char *acName = NULL;
 static char *existingSession = NULL;
 static int printACNames = 0;
+static bool dni_add_service_name = 0;
 
 static int PPPoEDevnameHook(char *cmd, char **argv, int doit);
 static option_t Options[] = {
@@ -82,6 +83,8 @@ static option_t Options[] = {
       "Attach to existing session (sessid:macaddr)" },
     { "rp_pppoe_verbose", o_int, &printACNames,
       "Be verbose about discovered access concentrators"},
+    { "dni_add_sn", o_bool, &dni_add_service_name,
+      "DNI add service name pppoed", 1 },
     { NULL }
 };
 
@@ -132,11 +135,11 @@ PPPOEConnectDevice(void)
 {
     struct sockaddr_pppox sp;
     
-#ifdef DNI_ADD_SERVICENAME_PPPOED
-    if (conn->serviceName == NULL && pppd_pppoe_service != NULL) {
-	SET_STRING(conn->serviceName, pppd_pppoe_service);
-    }
-#endif
+	if( 1 == dni_add_service_name){
+		if (conn->serviceName == NULL && pppd_pppoe_service != NULL) {
+			SET_STRING(conn->serviceName, pppd_pppoe_service);
+		}
+	}
 
     strlcpy(ppp_devnam, devnam, sizeof(ppp_devnam));
     if (existingSession) {

@@ -3,29 +3,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=forked-daapd
-PKG_VERSION:=23.0-dni1
+PKG_VERSION:=23.0
 PKG_RELEASE:=20140216
-
-#
-# Specify git commit hash in this variable if you want to test a commit which
-# is not pointed by any tag. Otherwise, specify tag in PKG_VERSION and leave
-# blank to PKG_SOURCE_TREEISH.
-#
-#PKG_SOURCE_TREEISH:=
-
-#PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-#PKG_SOURCE_PROTO:=git
-#PKG_SOURCE_URL:=$(GIT_HOME)/$(PKG_NAME).git
-#PKG_SOURCE_VERSION:=$(if $(PKG_SOURCE_TREEISH),$(PKG_SOURCE_TREEISH),$(PKG_VERSION))
-#PKG_SOURCE:=$(PKG_NAME)-$(PKG_SOURCE_VERSION).tar.bz2
 
 PKG_FIXUP:=libtool
 PKG_INSTALL:=1
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/forked-daapd
+define Package/$(PKG_NAME)
 SECTION:=sound
 CATEGORY:=Sound
 TITLE:=Improved iTunes (DAAP) server. Support for Apple Remote and AirPlay.
@@ -34,7 +21,14 @@ URL:=https://github.com/jasonmc/forked-daapd
 DEPENDS:=+libgpg-error +libgcrypt +libgdbm +zlib +libexpat +libunistring \
 	+libevent2 +libdaemon +libantlr3c +confuse +glib2 +alsa-lib +libffmpeg-full \
 	+mxml +libavl +avahi-daemon +libavahi-client +sqlite3-cli +libplist
+MENU:=1
 endef
+
+define Build/Prepare
+	$(CP) $(GIT_HOME)/forked-daapd.git/* $(PKG_BUILD_DIR)/
+endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Package/forked-daapd/conffiles
 /etc/forked-daapd.conf
@@ -47,10 +41,6 @@ TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib/libevent2
 TARGET_CFLAGS += $(FPIC)
 TARGET_LDFLAGS += -Wl,-rpath-link,$(STAGING_DIR)/usr/lib
 
-define Build/Prepare
-	$(CP) $(GIT_HOME)/forked-daapd.git/* $(PKG_BUILD_DIR)/
-endef
-
 define Build/Configure
 	$(call Build/Configure/Default, \
 		--enable-shared \
@@ -58,7 +48,7 @@ define Build/Configure
 		--enable-itunes)
 endef
 
-define Package/forked-daapd/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc
 	ln -sf /tmp/etc/forked-daapd.conf $(1)/etc/forked-daapd.conf
 	$(INSTALL_DIR) $(1)/usr/lib
@@ -71,4 +61,4 @@ define Package/forked-daapd/install
 	$(INSTALL_BIN) ./files/forked-daapd.init $(1)/etc/init.d/forked-daapd
 endef
 
-$(eval $(call BuildPackage,forked-daapd))
+$(eval $(call BuildPackage,$(PKG_NAME)))

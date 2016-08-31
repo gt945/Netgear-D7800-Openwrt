@@ -1007,8 +1007,7 @@ MY_PASS_OBJ = libsmb/smbdes.o lib/md4.o lib/arc4.o lib/snprintf.o
 
 bin/smbpasswd: utils/owrt_smbpasswd.o $(MY_PASS_OBJ)
 	@echo Linking $@
-	@$(CC) $(FLAGS)  -o $@ utils/owrt_smbpasswd.o $(MY_PASS_OBJ) \
-        	-L$(TARGETFS)/lib
+	@$(CC) $(FLAGS)  -o $@ utils/owrt_smbpasswd.o $(MY_PASS_OBJ)
 
 bin/pdbedit: $(PDBEDIT_OBJ) $(POPT_OBJS) bin/.dummy
 	@echo Linking $@

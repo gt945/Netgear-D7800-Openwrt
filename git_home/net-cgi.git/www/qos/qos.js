@@ -308,12 +308,12 @@ function check_qoslist_editnum(cf)
 
 function check_qos_port(cf)
 {
-	if(cf.portstart.value==""||cf.portend.value=="")
+	if(cf.port_start.value==""||cf.port_end.value=="")
 	{
 		alert("$invalid_port");
 		return false;
 	}
-	txt=cf.portstart.value;
+	txt=cf.port_start.value;
 	for(i=0;i<txt.length;i++)
 	{
 		c=txt.charAt(i);
@@ -323,7 +323,7 @@ function check_qos_port(cf)
 			return false;
 		}
 	}
-	txt=cf.portend.value;
+	txt=cf.port_end.value;
 	for(i=0;i<txt.length;i++)
 	{
 		c=txt.charAt(i);
@@ -333,17 +333,17 @@ function check_qos_port(cf)
 			return false;
 		}
 	}
-	if(parseInt(cf.portstart.value)<1||parseInt(cf.portstart.value)>65535)
+	if(parseInt(cf.port_start.value)<1||parseInt(cf.port_start.value)>65535)
 	{
 		alert("$invalid_start_port");
 		return false;
 	}
-	if(parseInt(cf.portend.value)<1||parseInt(cf.portend.value)>65535)
+	if(parseInt(cf.port_end.value)<1||parseInt(cf.port_end.value)>65535)
 	{
 		alert("$invalid_end_port");
 		return false;
 	}
-	if(parseInt(cf.portend.value)<parseInt(cf.portstart.value))
+	if(parseInt(cf.port_end.value)<parseInt(cf.port_start.value))
 	{
 		alert("$end_port_greater");
 		return false;
@@ -367,8 +367,8 @@ function check_qos_adva(cf,flag)
 
  	if(cf.apps.selectedIndex == 24)
 	{
-		var input_start_port=cf.portstart.value;
-    		var input_end_port=cf.portend.value;
+		var input_start_port=cf.port_start.value;
+		var input_end_port=cf.port_end.value;
 	}
 	for(i=1;i<=qos_array_num;)
 	{
@@ -391,7 +391,7 @@ function check_qos_adva(cf,flag)
 			}
             		if(cf.apps.selectedIndex == 24)//each_info[4] : Connection Type
 			{
-	                        if(cf.port_type.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.port_type.value == each_info[4])
+	                        if(cf.protocol.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.protocol.value == each_info[4])
 	                        {
 					if((!(parseInt(endport,10)<parseInt(input_start_port,10)||parseInt(input_end_port,10)<parseInt(startport,10))) && select_editnum!=i && each_info[2]=="Add")
         	    			{
@@ -416,7 +416,7 @@ function check_qos_adva(cf,flag)
 
             		if(cf.apps.selectedIndex == 24)
             		{
-	                        if(cf.port_type.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.port_type.value == each_info[4])
+	                        if(cf.protocol.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.protocol.value == each_info[4])
 	                        {
 					if(!(parseInt(endport,10)<parseInt(input_start_port,10)||parseInt(input_end_port,10)<parseInt(startport,10)) && each_info[2]=="Add")
             				{
@@ -432,13 +432,13 @@ function check_qos_adva(cf,flag)
 //add new info	
 	if (cf.apps.selectedIndex == 24)
 	{
-			var type = cf.port_type.options[cf.port_type.selectedIndex].value;
+			var type = cf.protocol.options[cf.protocol.selectedIndex].value;
 			if( type == "TCP/UDP" )
 			{
 				cf.hidden_port_type.value = "TCP";
 				cf.hidden_port_type2.value = "UDP";
-				cf.hidden_portstart2.value=cf.portstart.value;
-				cf.hidden_portend2.value=cf.portend.value;
+				cf.hidden_portstart2.value=cf.port_start.value;
+				cf.hidden_portend2.value=cf.port_end.value;
 			}
 			else
 			{
@@ -447,8 +447,8 @@ function check_qos_adva(cf,flag)
 				cf.hidden_portend2.value="0";
 			}
 
-		cf.hidden_portstart.value=cf.portstart.value;
-		cf.hidden_portend.value=cf.portend.value;
+		cf.hidden_portstart.value=cf.port_start.value;
+		cf.hidden_portend.value=cf.port_end.value;
 
 	}
 	else
@@ -489,8 +489,8 @@ function check_qos_online(cf,flag)
     	}
 	if (cf.apps.selectedIndex == 7)
 	{
-    	var input_start_port=cf.portstart.value;
-    	var input_end_port=cf.portend.value;
+	var input_start_port=cf.port_start.value;
+	var input_end_port=cf.port_end.value;
 	}
 	for(i=1;i<=qos_array_num;)
 	{
@@ -513,7 +513,7 @@ function check_qos_online(cf,flag)
                 	}
        			if (cf.apps.selectedIndex == 7)//each_info[4] : Connection Type
  			{
-				if(cf.port_type.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.port_type.value == each_info[4])
+				if(cf.protocol.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.protocol.value == each_info[4])
 				{
 					if((!(parseInt(endport)<parseInt(input_start_port)||parseInt(input_end_port)<parseInt(startport))) && select_editnum!=i  && each_info[2]=="Add")
             				{
@@ -538,7 +538,7 @@ function check_qos_online(cf,flag)
 
             		if (cf.apps.selectedIndex == 7)
             		{
-				if(cf.port_type.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.port_type.value == each_info[4])
+				if(cf.protocol.value == "TCP\/UDP" || each_info[4] == "TCP\/UDP" || cf.protocol.value == each_info[4])
 				{
 					if(!(parseInt(endport,10)<parseInt(input_start_port,10)||parseInt(input_end_port,10)<parseInt(startport,10))  && each_info[2]=="Add")
             				{
@@ -553,13 +553,13 @@ function check_qos_online(cf,flag)
 //add new info	
 	if (cf.apps.selectedIndex == 7)
 	{
-			var type=cf.port_type.options[cf.port_type.selectedIndex].value;
+			var type=cf.protocol.options[cf.protocol.selectedIndex].value;
 			if( type == "TCP/UDP" )
 			{
 				cf.hidden_port_type.value = "TCP";
 				cf.hidden_port_type2.value = "UDP";
-				cf.hidden_portstart2.value=cf.portstart.value;
-				cf.hidden_portend2.value=cf.portend.value;
+				cf.hidden_portstart2.value=cf.port_start.value;
+				cf.hidden_portend2.value=cf.port_end.value;
 			}
 			else
 			{
@@ -567,8 +567,8 @@ function check_qos_online(cf,flag)
 				cf.hidden_portstart2.value = "0";
 				cf.hidden_portend2.value = "0";
 			}
-		cf.hidden_portstart.value=cf.portstart.value;
-		cf.hidden_portend.value=cf.portend.value;
+		cf.hidden_portstart.value=cf.port_start.value;
+		cf.hidden_portend.value=cf.port_end.value;
 	}
 	else
 	{
@@ -974,12 +974,12 @@ function check_qos_apply(cf)
 		cf.qos_endis_wmm.value=1;
 	else
 		cf.qos_endis_wmm.value=0;
-	if(cf.wmm_enable_a.checked == true)
+	if(cf.wmm_enable_an.checked == true)
                 cf.qos_endis_wmm_a.value=1;
         else
                 cf.qos_endis_wmm_a.value=0;
 	
-	if((cf.qosEnable.checked == true || cf.turn_qos_bandwidth_on.checked == true) && quick_qos ==1 && fast_lane == 2)
+	if((cf.qosEnable.checked == true || cf.bwEnable.checked == true) && quick_qos ==1 && fast_lane == 2)
 	{
 	 if ( !confirm("To enable this function, Fast Lane will be disabled. Do you want to continue?"))
 		return false;
@@ -989,13 +989,13 @@ function check_qos_apply(cf)
 		cf.qos_endis_on.value=1;
 	else
 		cf.qos_endis_on.value=0;
-	if(cf.turn_qos_bandwidth_on.checked == true)
+	if(cf.bwEnable.checked == true)
 		cf.qos_endis_bandwidth.value=1;
 	else
 		cf.qos_endis_bandwidth.value=0;
 
 	qos_bandwith=parseInt(cf.tcbw_value.value);
-	if ( cf.turn_qos_bandwidth_on.checked == true )
+	if ( cf.bwEnable.checked == true )
 	{
 		var qos_bandwith_alert = ("$qos_bandwith1000M").replace("1000",max_bandwidth);
 		if(cf.tcbw_unit.selectedIndex == 0)

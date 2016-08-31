@@ -7,9 +7,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'WLG_wap.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" value="$apply_mark" onClick="return checkap(document.forms[0]);"></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'WLG_wap.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return checkap(document.forms[0]);"></TD>');
 else
-	document.write(' <TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" value="$apply_mark" disabled></TD>');
+	document.write(' <TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
 </script>       
 </TR>
 </TABLE>
@@ -116,7 +116,7 @@ function ap_display()
 	}
 	else
 	{
-		//cf.dyn_get_ip.checked = false;
+		//cf.enable_fixed_ip_setting.checked = false;
 		document.getElementById("ap_dyn_getip").style.display="none";
 		document.getElementById("ap_text_id1").style.display="none";
 		document.getElementById("ap_text_id1_1").style.display="none";
@@ -165,8 +165,8 @@ function loadvalue()
 	top.enable_ap_flag="<% cfg_get("ap_mode") %>";
 	//menu_color_change('wlap');
 	
-	top.enabled_wps=<% wps_menu() %>;
-	top.enabled_wds=<% wds_enable() %>;
+	top.enabled_wps="<% wps_menu() %>";
+	top.enabled_wds="<% wds_enable() %>";
 		//top.enabled_wds=1;  //ma de zhongyu
 		
 		if( top.location.href.indexOf("adv_index.htm") != -1 )
@@ -188,11 +188,11 @@ function loadvalue()
 	*/
 	if(dyn_get_ip_flag == '0')
 	{
-		form.dyn_get_ip[1].checked = true;
+		form.enable_fixed_ip_setting[1].checked = true;
 		ap_show();
 	}
 	else
-		form.dyn_get_ip[1].checked = false;
+		form.enable_fixed_ip_setting[1].checked = false;
 
 	//setIP(form);
 	var apmode_get_ip="<% ap_mode_ip() %>";
@@ -200,28 +200,28 @@ function loadvalue()
 	if (apmode_get_ip!="")
 	{
 		if(apmode_get_ip=="0.0.0.0")
-			form.APaddr1.value=form.APaddr2.value=form.APaddr3.value=form.APaddr4.value="";
+			form.WPethr1.value=form.WPethr2.value=form.WPethr3.value=form.WPethr4.value="";
 		else
 		{
 			var ip_array=apmode_get_ip.split('.');
-			form.APaddr1.value=ip_array[0];
-			form.APaddr2.value=ip_array[1];
-			form.APaddr3.value=ip_array[2];
-			form.APaddr4.value=ip_array[3];
+			form.WPethr1.value=ip_array[0];
+			form.WPethr2.value=ip_array[1];
+			form.WPethr3.value=ip_array[2];
+			form.WPethr4.value=ip_array[3];
 		}
 	}
 	var apmode_get_subnet="<% ap_mode_netmask() %>";
 	if (apmode_get_subnet!="")
 	{
 		if(apmode_get_subnet=="0.0.0.0")
-			form.APmask1.value=form.APmask2.value=form.APmask3.value=form.APmask4.value=""; 
+			form.WMask1.value=form.WMask2.value=form.WMask3.value=form.WMask4.value=""; 
 		else
 		{
 			var mask_array=apmode_get_subnet.split('.');
-			form.APmask1.value=mask_array[0];
-			form.APmask2.value=mask_array[1];	
-			form.APmask3.value=mask_array[2];
-			form.APmask4.value=mask_array[3]; 
+			form.WMask1.value=mask_array[0];
+			form.WMask2.value=mask_array[1];	
+			form.WMask3.value=mask_array[2];
+			form.WMask4.value=mask_array[3]; 
 		}
 	}
 	var apmode_get_gateway="<% ap_mode_gateway() %>";
@@ -229,15 +229,15 @@ function loadvalue()
 	{
 		if(apmode_get_gateway=="0.0.0.0")
 		{
-			form.APgateway1.value=form.APgateway2.value=form.APgateway3.value=form.APgateway4.value="";
+			form.WGateway1.value=form.WGateway2.value=form.WGateway3.value=form.WGateway4.value="";
 		}
 		else
 		{
 			var gtw_array=apmode_get_gateway.split('.');
-			form.APgateway1.value=gtw_array[0];
-			form.APgateway2.value=gtw_array[1];
-			form.APgateway3.value=gtw_array[2];
-			form.APgateway4.value=gtw_array[3];	
+			form.WGateway1.value=gtw_array[0];
+			form.WGateway2.value=gtw_array[1];
+			form.WGateway3.value=gtw_array[2];
+			form.WGateway4.value=gtw_array[3];	
 		}
 	}
 	//setDNS(form);
@@ -245,28 +245,28 @@ function loadvalue()
 	if (apmode_get_dns1!="" && apmode_get_dns1.indexOf(":")==-1)
 	{
 		if(apmode_get_dns1=="0.0.0.0")
-		form.APDAddr1.value=form.APDAddr2.value=form.APDAddr3.value=form.APDAddr4.value="";
+		form.DAddr1.value=form.DAddr2.value=form.DAddr3.value=form.DAddr4.value="";
 		else
 		{
 			var dns1_array=apmode_get_dns1.split('.');
-			form.APDAddr1.value=dns1_array[0];
-			form.APDAddr2.value=dns1_array[1];
-			form.APDAddr3.value=dns1_array[2];
-			form.APDAddr4.value=dns1_array[3];
+			form.DAddr1.value=dns1_array[0];
+			form.DAddr2.value=dns1_array[1];
+			form.DAddr3.value=dns1_array[2];
+			form.DAddr4.value=dns1_array[3];
 		}
 	}
 	var apmode_get_dns2="<% ap_ether_dns("1") %>";
 	if (apmode_get_dns2!="" && apmode_get_dns2.indexOf(":")==-1)
 	{
 		if(apmode_get_dns2=="0.0.0.0")
-		form.APPDAddr1.value=form.APPDAddr2.value=form.APPDAddr3.value=form.APPDAddr4.value="";
+		form.PDAddr1.value=form.PDAddr2.value=form.PDAddr3.value=form.PDAddr4.value="";
 		else
 		{
 			var dns2_array=apmode_get_dns2.split('.');
-			form.APPDAddr1.value=dns2_array[0];
-			form.APPDAddr2.value=dns2_array[1];
-			form.APPDAddr3.value=dns2_array[2];
-			form.APPDAddr4.value=dns2_array[3];
+			form.PDAddr1.value=dns2_array[0];
+			form.PDAddr2.value=dns2_array[1];
+			form.PDAddr3.value=dns2_array[2];
+			form.PDAddr4.value=dns2_array[3];
 		}
 	}
 }
@@ -285,7 +285,7 @@ function loadvalue()
 
 <TR id=apmode_checkbox>
 	<TD nowrap colspan=4 >
-	<input type="checkbox" name="enable_apmode"  onclick="ap_display()">$enable_ap_mode
+	<input type="checkbox" name="enable_apmode" id="enable_apmode" onclick="ap_display()">$enable_ap_mode
 	</TD><!--$able_ap_mode-->
 </TR>
 <TR>
@@ -340,62 +340,62 @@ function loadvalue()
 </TR>
 <TR id=ap_radio_1 style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD><TD nowrap colspan=2>
-	<input type="radio" name="dyn_get_ip" checked value="1" onclick="ap_notshow()">$dyn_get_dns
+	<input type="radio" name="enable_fixed_ip_setting" id="enable_dynamic_ip_setting" checked value="1" onclick="ap_notshow()">$dyn_get_dns
 	</TD>
 </TR>
 <TR id=ap_radio_2 style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD><TD nowrap colspan=2>
-	<input type="radio" name="dyn_get_ip" value="0" onclick="ap_show()">$fix_dns
+	<input type="radio" name="enable_fixed_ip_setting" id="enable_fixed_ip_setting" value="0" onclick="ap_show()">$fix_dns
 	</TD>
 </TR>
 <TR id=ap_addr style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD>
 	<TD nowrap>$wds_ipaddr</TD>
 	<TD nowrap align=right>
-		<input type="text" name="APaddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-		<input type="text" name="APaddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APaddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APaddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+		<input type="text" name="WPethr1" id="wan_ipaddress1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+		<input type="text" name="WPethr2" id="wan_ipaddress2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WPethr3" id="wan_ipaddress3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WPethr4" id="wan_ipaddress4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR id=ap_mask style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD>
 	<TD nowrap>$lan_mark_subnet</TD>		
 	<TD nowrap align=right>
-		<input type="text" name="APmask1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-		<input type="text" name="APmask2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APmask3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APmask4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+		<input type="text" name="WMask1" id="wan_netmask1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+		<input type="text" name="WMask2" id="wan_netmask2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WMask3" id="wan_netmask3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WMask4" id="wan_netmask4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD> 
 </TR>
 <TR id=ap_gateway style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD>
 	<TD nowrap>$lan_mark_gateway</TD>		
 	<TD nowrap align=right>
-		<input type="text" name="APgateway1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-		<input type="text" name="APgateway2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APgateway3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-		<input type="text" name="APgateway4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+		<input type="text" name="WGateway1" id="wan_gateway1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+		<input type="text" name="WGateway2" id="wan_gateway2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WGateway3" id="wan_gateway3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+		<input type="text" name="WGateway4" id="wan_gateway4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR id=ap_daddr style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD>
 	<TD nowrap>$basic_int_primary_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="APDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="APDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="APDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="APDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="DAddr1" id="primary_dns_address1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="DAddr2" id="primary_dns_address2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr3" id="primary_dns_address3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr4" id="primary_dns_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR id=ap_pdaddr style="display:none">
 	<TD>&nbsp;</TD><TD>&nbsp;</TD>
 	<TD nowrap>$basic_int_second_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="APPDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="APPDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="APPDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="APPDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="PDAddr1" id="second_dns_address1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="PDAddr2" id="second_dns_address2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr3" id="second_dns_address3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr4" id="second_dns_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 

@@ -13,7 +13,6 @@ PKG_NAME:=kmod-ftp-alg
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-ftp-v3.4-dni1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/ftp-alg
   FILES:= \
 	$(PKG_BUILD_DIR)/nf_conntrack_ftp.$(LINUX_KMOD_SUFFIX) $(PKG_BUILD_DIR)/nf_nat_ftp.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,48,nf_conntrack_ftp nf_nat_ftp)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-ftp.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

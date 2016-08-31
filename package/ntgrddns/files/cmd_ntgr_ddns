@@ -1,0 +1,129 @@
+#!/bin/sh
+
+CONFIG=$(which config)
+bin=ntgrddns
+
+DDNS_STATUS="/tmp/ez-ipupd.status"
+NTGRDDNS_CONF="/tmp/ntgrdns.conf"
+ACCOUNT_INFO="/tmp/ntgr-account-info"
+NTGRID="/tmp/ntgrid"
+NTGRKEY="/tmp/ntgrkey"
+
+gen_config()
+{
+	$CONFIG get client_id > $NTGRID
+	$CONFIG get client_key > $NTGRKEY
+
+	cat > $ACCOUNT_INFO <<- EOF
+	host			`$CONFIG get sysDNSHost_tmp`
+	email			`$CONFIG get sysDNSUser_tmp`
+	passwd			`$CONFIG get sysDNSPassword_tmp`
+	n_dns_have_account	`$CONFIG get n_dns_have_account`
+	ntgrcheck		`$CONFIG get hostname_check`
+	ntgr_id			`$CONFIG get client_id`
+	ntgr_key		`$CONFIG get client_key`
+	ddns_provider		`$CONFIG get sysDNSProviderlist`
+	endis_ddns		`$CONFIG get endis_ddns`
+	ddns_cfged		`$CONFIG get nddns_cfged`
+	EOF
+
+
+	local mac=$(ifconfig $($CONFIG get lan_ifname) | sed -rn 's/.*HWaddr (.*)/\1/p')
+	local model=$(cat /module_name)
+	local fw_ver=$(cat /firmware_version)
+	local sn=$(cat /tmp/Seria_Number)
+
+	cat > $NTGRDDNS_CONF <<- EOF
+	provider=NETGEAR
+	mac=$mac
+	model=$model
+	fw_version=$fw_ver
+	serial_num=$sn
+	EOF
+}
+
+start()
+{
+	#we need to format config files once we tries start ntgrddns
+	gen_config
+	if [ ! -f /tmp/ntgrpid ];then
+		$bin -c $NTGRDDNS_CONF
+	fi
+
+}
+
+stop()
+{
+	killall -9 $bin
+	rm -f /tmp/ntgrpid
+
+	printf "0" > $DDNS_STATUS
+}
+
+register()
+{
+	[ -z $(pidof $bin) ] && { echo "process $bin do not running!" >&2; return; }
+
+	gen_config
+
+	# this function was converted from function cmd_ddns_register in net-cgi/src.new/action.c
+	killall -SIGUSR2 $bin
+
+	sleep 15
+
+	local result=$(cat /tmp/ntgr-register.status)
+
+	if [ "x$result" = "x0" -o "x$result" = "x10" ]; then
+		$CONFIG set sysDNSHost=$($CONFIG get sysDNSHost_tmp)
+		$CONFIG set sysDNSHost_5=$($CONFIG get sysDNSHost_tmp)
+		$CONFIG set sysDNSUser=$($CONFIG get sysDNSUser_tmp)
+		$CONFIG set sysDNSUser_5=$($CONFIG get sysDNSUser_tmp)
+		$CONFIG set sysDNSPassword=$($CONFIG get sysDNSPassword_tmp)
+		$CONFIG set sysDNSPassword_5=$($CONFIG get sysDNSPassword_tmp)
+		$CONFIG set nddns_cfged="1"
+	else
+		$CONFIG set nddns_cfged="0"
+	fi
+
+	#if successfully registered, we'll save client_id & key into flash
+	if [ -e $NTGRID -a  -s $NTGRID ]; then
+		$CONFIG set client_id=`cat $NTGRID`
+	fi
+	if [ -e $NTGRKEY -a -s $NTGRKEY ]; then
+		$CONFIG set client_key=`cat $NTGRKEY`
+	fi
+	$CONFIG commit
+}
+
+check_hostname()
+{
+	[ -z $(pidof $bin) ] && { echo "process $bin do not running!" >&2; return; }
+
+	gen_config
+
+	killall -SIGUSR1 $bin
+
+	local check_result
+	for i in 1 2 3 4 5
+	do
+		check_result=$(cat /tmp/host_check)
+		[ "x$check_result" != "x-2" ] && { printf "$check_result"; break; }
+		sleep 1
+	done
+}
+
+case "$1" in
+	start)
+		start ;;
+	stop)
+		stop ;;
+	restart)
+		stop; start ;;
+	register)
+		register ;;
+	check_hostname)
+		check_hostname ;;
+	*)
+		echo "Usgae: $0 {start|stop|restart|register|check_hostname}"
+		exit 1
+esac

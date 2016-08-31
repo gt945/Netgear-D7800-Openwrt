@@ -65,13 +65,20 @@ case "$1" in
 			/usr/bin/killall smbd
 			/usr/sbin/update_smb
 			
-			# restart net-scan when IP changes
-			/etc/init.d/net-scan stop
-			/etc/init.d/net-scan start
+			# restart net-scan if IP changes
+			killall net-scan
+			/usr/sbin/net-scan
+
 		fi
 
-		# restart net-wall to update the br0 address in the rule.
-		/usr/sbin/net-wall restart
+		# restart firewall to update the br0 address in the rule.
+		firewall.sh restart
+
+		# restart miniupnpd to update the br0 address in ap modo, bridge mode and extender mode.
+		local opmode=$($CONFIG get i_opmode)
+		if [ "$opmode" = "apmode" -o "$opmode" = "brmode" -o "$opmode" = "extmode" ]; then
+			/etc/init.d/upnp restart
+		fi
 
 		/sbin/ledcontrol -n wan -c green -s on
 		;;

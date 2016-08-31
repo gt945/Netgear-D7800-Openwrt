@@ -16,7 +16,7 @@ endif
 
 include $(INCLUDE_DIR)/package.mk
 
-ENET_AUTOLOAD:= qca-nss-gmac
+ENET_AUTOLOAD:= qca-nss-gmac dni_enet
 
 define KernelPackage/qca-nss-gmac
   SECTION:=kernel

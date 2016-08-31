@@ -1,3 +1,0 @@
-ip_addr
-pppoe_mark_ip
-used_persent

@@ -1,7 +1,16 @@
 #!/bin/sh
 # Copyright (C) 2006-2012 OpenWrt.org
 
+LAN_IF=ethlan
+BR_IF=br0
+WAN_IF=brwan
 CONFIG=/bin/config
+
+CFGDIR=/tmp/etc/
+
+. /dni-gconfig
+
+DSL_SUPPORT=$($CONFIG get dsl_support)
 
 . $IPKG_INSTROOT/lib/functions.sh
 . $IPKG_INSTROOT/lib/functions/service.sh

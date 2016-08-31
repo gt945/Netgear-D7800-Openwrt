@@ -178,3 +178,78 @@ function isMac()
 {
 	return (detectOS() == "Mac");
 }
+
+function control_display(page)
+{
+	if(page == "dsl_dhcp")
+	{
+		if(lan_ports_num == 1){
+			document.getElementById("bridge_doc").style.display = "none";
+			document.getElementById("bridge_lans").style.display = "none";
+			document.getElementById("content_div").style.width ="100%";
+			document.getElementById("connection_identi").style.height = "60px";	
+		}
+	}
+	else if(page == "dsl_pppoe" || page == "dsl_pppoe_gr")
+	{
+		if(display_iptv2 == "1"){
+			document.getElementById("iptv").style.display="";
+			if(wan2_bridge == "1" && lan_ports_num != 1 )
+			{
+				document.getElementById("bridge").style.display="";
+				document.getElementById("bridge1").style.display="";
+				document.getElementById("bridge2").style.display="";
+			}
+			else
+			{
+				document.getElementById("bridge").style.display="none";
+				document.getElementById("bridge1").style.display="none";
+				document.getElementById("bridge2").style.display="none";
+			}
+		}
+		else
+			document.getElementById("iptv").style.display="none";
+		if(vlan_id == "")
+		{
+			var obj = document.getElementById("vlanid_text");
+			if(obj != null){
+				document.getElementById("vlanid").style.display="none";
+				obj.style.display="none";
+			}
+		}
+		if(page == "dsl_pppoe" && country == "France" && isp == "SFR")
+		{
+			document.getElementById("servername_div").style.display="";
+			document.getElementById("input_servername_div").style.display="";
+		}
+	}
+}
+
+function gotto_link(sub, id)
+{
+	if(sub != "None")
+		top.open_or_close_sub(sub);
+	top.click_adv_action(id);
+}
+
+function manuallyConfig()
+{
+        if(confirm(bh_no_genie_help_confirm) == false)
+                return false;
+	if(top.dsl_enable_flag == 1)
+	  this.location.href="BRS_log12_incorrect_go_to_internet.html";
+	else{
+          var forms = document.getElementsByTagName("form");
+          var cf = forms[0];
+
+          if( hijack_process == "1" )
+          {
+                cf.action = "/apply.cgi?/welcomeok.htm timestamp=" + ts;
+                cf.submit_flag.value = "hijack_toBasic";
+                cf.submit();
+          }
+          else
+                gotto_link("setup", "internet");
+	}
+        return true;
+}

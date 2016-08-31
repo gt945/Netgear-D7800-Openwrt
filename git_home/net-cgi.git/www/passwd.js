@@ -70,6 +70,8 @@ function checkpasswd(cf)
 		cf.hidden_enable_recovery.value="0";
 	}
 
+	cf.submit();
+
 	return true;
 
 }

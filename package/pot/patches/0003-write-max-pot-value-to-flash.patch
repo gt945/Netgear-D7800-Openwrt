@@ -1,0 +1,21 @@
+diff -Nur pot.old//src/pot.c pot/src/pot.c
+--- pot.old//src/pot.c	2016-05-11 03:50:10.940230935 -0400
++++ pot/src/pot.c	2016-05-11 03:54:48.560230900 -0400
+@@ -176,8 +176,16 @@
+ 		}
+ 
+ 		pot_value++;
+-		if (pot_value >= POT_MAX_VALUE)
++		if (pot_value >= POT_MAX_VALUE) {
++
++			if(pot_value == POT_MAX_VALUE) {
++				set_page_data(pot_value, buf);
++				lseek(devfd, offset, SEEK_SET);
++				write(devfd, buf, sizeof(buf));
++			}
++
+ 			goto fin;
++		}
+ 
+ 		update_to_file(pot_value);
+ 		set_page_data(pot_value, buf);

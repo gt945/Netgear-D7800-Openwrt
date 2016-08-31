@@ -49,26 +49,9 @@ while [ $i -le 9 ]; do
 	fi
 	let i=$i+1
 	let id=$id+1
+# Root permission for cloud user
+sed -i "s/$username\:x\:$id/$username\:x\:0/g" $SMB_CONF_DIR/passwd
 done
+# Root permission for admin
+sed -i "s/admin\:x\:500/admin\:x\:0/g" $SMB_CONF_DIR/passwd
 fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

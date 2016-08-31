@@ -1,0 +1,63 @@
+diff --git a/etc/dni-wifi-config b/etc/dni-wifi-config
+index bcbfa80..e262ae6 100644
+--- a/etc/dni-wifi-config
++++ b/etc/dni-wifi-config
+@@ -73,13 +73,12 @@ wds_role_0="repeater"
+ wds_role_1="rootap"
+ 
+ tpscale_100=0
+-tpscale_75=1
+-tpscale_63=2
+-tpscale_50=3
+-tpscale_33=4
+-tpscale_25=5
+-tpscale_12=6
+-tpscale_min=7
++tpscale_75=2
++tpscale_63=3
++tpscale_50=4
++tpscale_33=5
++tpscale_25=7
++tpscale_12=10
+ 
+ dniconfig()
+ {
+diff --git a/sbin/update-wifi b/sbin/update-wifi
+index b942a66..24f524f 100755
+--- a/sbin/update-wifi
++++ b/sbin/update-wifi
+@@ -546,8 +546,16 @@ generate_bf()
+ 
+ # config driver parameters
+ uci set wireless.qcawifi=qcawifi
+-uci set wireless.qcawifi.wl_super_wifi=${wl_super_wifi}
+-uci set wireless.qcawifi.wla_super_wifi=${wla_super_wifi}
++if [ "$wl_super_wifi" == "1" ]; then
++    uci set wireless.qcawifi.wl_tpscale=-1
++else
++    uci set wireless.qcawifi.wl_tpscale=${wlg_tpscale}
++fi
++if [ "$wla_super_wifi" == "1" ]; then
++    uci set wireless.qcawifi.wla_tpscale=-1
++else
++    uci set wireless.qcawifi.wla_tpscale=${wla_tpscale}
++fi
+ 
+ if [ "$wlg_exist" = "on" ]; then
+     uci set wireless.${g_device}=wifi-device
+@@ -560,7 +568,6 @@ if [ "$wlg_exist" = "on" ]; then
+     generate_channel "wlg"
+     generate_hwmode "wlg"
+     generate_htmode "wlg"
+-    generate_tpscale "wlg"
+ fi
+ 
+ if [ "$wla_exist" = "on" ]; then
+@@ -574,7 +581,6 @@ if [ "$wla_exist" = "on" ]; then
+     generate_channel "wla"
+     generate_hwmode "wla"
+     generate_htmode "wla"
+-    generate_tpscale "wla"
+     generate_bf "wla"
+ fi
+ 

@@ -74,16 +74,19 @@ function loadvalue()
 
 	/* load the LAN Setup items' value */
 	ipv6_load_common(cf);
+	login_type_show(cf);
+	cf.login_type.value = "6rd"; 
 }
 </script>
 
 <input type="hidden" name="ipv6_hidden_6rd_pre" value="">
 <input type="hidden" name="ipv6_hidden_6rd_relay" value="">
 <input type="hidden" name="ipv6_hidden_enable_interface" value="">
-<input type="hidden" name="ipv6_hidden_interface_id" value="">
+<input type="hidden" name="ipv6_hidden_interface_id" value="<% cfg_get("ipv6_dhcps_interface_id") %>">
 <input type="hidden" name="ipv6_hidden_filtering" value="">
 <input type="hidden" name="ipv6_hidden_primary_dns" value="<% cfg_get("ipv6_6rd_dns1") %>" />
 <input type="hidden" name="ipv6_hidden_second_dns" value="<% cfg_get("ipv6_6rd_dns2") %>" />
+<input type="hidden" name="ipv6_hidden_ip_assign" value="">
 
 <TABLE cellspacing=5 cellPadding=0 width=100% border=0>
 <TR>
@@ -91,16 +94,7 @@ function loadvalue()
         <A tabindex=-1 href="javascript:loadhelp('_IPv6_tunnel','internet')"><B>$ipv6_internet_con_type</B></A>
         </TD>
         <TD nowrap align=right>
-        <select name="con_type" onChange="change_ipv6(document.forms[0].con_type.value)">
-		<option value="disabled">$pppoe2_disable</option>
-                <option value="autoDetect">$ipv6_auto_detect</option>
-		<option value="autoConfig">$ipv6_auto_config</option>
-		<option value="6to4">$ipv6_6to4_tunnel</option>
-                <option value="6rd" selected>6rd</option>
-                <option value="bridge">$ipv6_pass_through</option>
-                <option value="fixed">$ipv6_fixed</option>
-                <option value="dhcp">$router_status_dhcp</option>
-                <option value="pppoe">$basic_intserv_pppoe</option>
+        <select name="login_type" onChange="change_ipv6(document.forms[0].login_type.value)">
         </select>
         </TD>
 </TR>
@@ -149,24 +143,24 @@ $bluebar
         <TD nowrap><A tabindex=-1 href="javascript:loadhelp('_IPv6_tunnel','lan_ip_assign')">$ipv6_ip_assign</A></TD>
 </TR>
 <TR>
-        <TD nowrap colspan=2><input type="radio" name="ipv6_lan_ip_assign" value="1">$ipv6_dhcp_server</TD>
+	<TD nowrap colspan=2><input type="radio" name="IpAssign" id="ipassign_dhcp" value="dhcp">$ipv6_dhcp_server</TD>
 </TR>
 <TR>
-        <TD nowrap colspan=2><input type="radio" name="ipv6_lan_ip_assign" value="0">$ipv6_auto_config</TD>
+	<TD nowrap colspan=2><input type="radio" name="IpAssign" id="ipassign_auto" value="auto">$ipv6_auto_config</TD>
 </TR>
 <TR>
         <TD nowrap colspan=2>
         <BR>
-        <input type="checkbox" name="enable_interface" value="" onClick="set_interface();">
+        <input type="checkbox" name="useInterfaceId" id="useInterfaceId" value="" onClick="set_interface();">
 	<A tabindex=-1 href="javascript:loadhelp('_IPv6_auto','interface_id')">$ipv6_interface</A>
         </TD>
 </TR>
 <TR>
         <TD nowrap colspan=2><img src=/spacer.gif width=20 height=12 border=0>
-	<input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-        <input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-        <input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
-        <input type="text" name="IP_interface" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">
+	<input type="text" name="IPv6_interface_id1" id="ipv6_interface_id1" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id2" id="ipv6_interface_id2" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id3" id="ipv6_interface_id3" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">:
+	<input type="text" name="IPv6_interface_id4" id="ipv6_interface_id4" size="3" autocomplete="off" maxlength="4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkeya(event);" onkeyup="keyup_n(event,this,4);">
         </TD>
 </TR>
 $bluebar

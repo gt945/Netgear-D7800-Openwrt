@@ -20,6 +20,14 @@ DEVPATH is set, MAJOR is set, MINOR is set {
         makedev /dev/%DEVICENAME% 0644
 }
 
+#ACTION == add, MODALIAS is set, INTERFACE is set {
+#	exec /etc/usb_modem_hotplug on ;
+#}
+
+#ACTION == remove, MODALIAS is set, INTERFACE is set {
+#	exec /etc/usb_modem_hotplug off ;
+#}
+
 # Add and update parallel printer device
 ACTION == add, DEVICENAME ~~ "^lp[0-9]+$", DEVPATH is set, MAJOR is set, MINOR is set {
 	#run "/usr/sbin/update_cups add %DEVICENAME%"

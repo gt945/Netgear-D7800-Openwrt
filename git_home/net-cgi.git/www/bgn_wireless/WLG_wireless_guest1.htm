@@ -7,8 +7,8 @@
 <TABLE cellspacing=2 cellPadding=0 width=100% border=0>
 <TR>
         <TD nowrap colspan=2 align=center>
-	<input class="cancel_bt" type='button' value='$cancel_mark' onClick='location.href="WLG_wireless_guest1.htm";'>&nbsp;&nbsp;
-        <input class="apply_bt" type='submit' value='$apply_mark' onclick='return check_wlan_guest("bgn")'>
+	<input class="cancel_bt" name="Cancel" id="cancel" type='button' value='$cancel_mark' onClick='location.href="WLG_wireless_guest1.htm";'>&nbsp;&nbsp;
+        <input class="apply_bt" name="Apply" id="apply" type='button' value='$apply_mark' onclick='return check_wlan_guest("bgn")'>
         </TD>
 </TR>
 </TABLE>
@@ -93,17 +93,17 @@ var wps_alert="<% cfg_get("wps_alert") %>";
 	</TD>
 </TR>
 <TR>
-	<TD nowrap colspan=2><input type=checkbox name="enable_bssid" value='1'>
+	<TD nowrap colspan=2><input type=checkbox name="enable_bssid" id="enable_bssid" value='1'>
 	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','enable_guest')">$wlan_guest_enable</A>
 	</TD>
 </TR>
 <TR>	
-	<TD nowrap colspan=2><input type=checkbox name="enable_ssid_bc" value='1'>
+	<TD nowrap colspan=2><input type=checkbox name="enable_ssid_bc" id="enable_ssid_bc" value='1'>
 	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','enable_ssid')">$adva_wlan_ssid_broadcast</A>
 	</TD>
 </TR>
 <TR>
-	<TD nowrap colspan=2><input type=checkbox name="allow_see_access" value='1'>
+	<TD nowrap colspan=2><input type=checkbox name="allow_access" id="allow_access" value='1'>
 	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','allow_see_and_access')">$wlan_guest_see_access</A>
 	</TD>
 </TR>
@@ -111,7 +111,7 @@ var wps_alert="<% cfg_get("wps_alert") %>";
 	<TD nowrap>
 	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','guest_ssid')">$wlan_guest_ssidName :</A>
 	</TD>
-	<TD nowrap><input type="text" name="gssid" value="<% cfg_get_ssid_value("wlg1_ssid") %>" size="20" maxlength="32"></TD>
+	<TD nowrap><input type="text" name="ssid" id="ssid" value="<% cfg_get_ssid_value("wlg1_ssid") %>" size="20" maxlength="32"></TD>
 </TR>
 <tr style="display:none">
 	<td><input type="text" name="wlssid" value="<% cfg_get_ssid_value("wl_ssid") %>" size="20" maxlength="32"></td>
@@ -128,32 +128,32 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="Disable" onClick=setSecurity(1)>$sec_off
+	<input type="radio" name="security_type" id="security_disable" value="Disable" onClick=setSecurity(1)>$sec_off
 	<TD>
 </TR>
 <TR id="wep_54">
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WEP" onClick=setSecurity(2)>$sec_wep
+	<input type="radio" name="security_type" id="security_wep" value="WEP" onClick=setSecurity(2)>$sec_wep
 	</TD>
 </TR>
 <TR id="wpa_psk_54">
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA-PSK" onClick=setSecurity(3)>$sec_wpa
+	<input type="radio" name="security_type" id="security_wpa" value="WPA-PSK" onClick=setSecurity(3)>$sec_wpa
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
+	<input type="radio" name="security_type" id="security_wpa2" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
+	<input type="radio" name="security_type" id="security_auto" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA-ENTER" onClick=setSecurity(6)>$sec_wpa_enterprise
+	<input type="radio" name="security_type" id="security_wpa_enter" value="WPA-Enterprise" onClick=setSecurity(6)>$sec_wpa_enterprise
 	</TD>
 </TR>
 </TABLE>
@@ -179,7 +179,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_auth</TD>
 		<TD nowrap>
-			<select NAME="authAlgm" size="1">
+			<select NAME="authAlgm" id="wep_auth_type" size="1">
 				<option value=1 <% select_check("wlg1_auth", "1") %> >$sec_share</option>
 				<option value=2 <% select_check("wlg1_auth", "2") %> >$sec_auto</option>
 			</select>
@@ -188,7 +188,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_enc</TD>
 		<TD nowrap> 
-			<select NAME="wepenc" size="1" onChange="changekeylen(document.forms[0]);">
+			<select NAME="wepenc" id="wep_enc_strength" size="1" onChange="changekeylen(document.forms[0]);">
 				<option value=5  <% select_check("wlg1_key_length", "5") %> >$sec_64</option>
 				<option value=13 <% select_check("wlg1_key_length", "13") %> >$sec_128</option>
 			</select>
@@ -205,33 +205,33 @@ $bluebar
 		<TABLE>
 		<TR>
 			<TD nowrap>$sec_key1
-			<input type=radio NAME="wep_key_no" checked value="1">
+			<input type=radio NAME="wep_key_no" id="wep_key_no1" checked value="1">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY1" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY1" ID="key1" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key2
-			<input type=radio NAME="wep_key_no" value="2">
+			<input type=radio NAME="wep_key_no" id="wep_key_no2" value="2">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY2" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY2" ID="key2" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key3
-			<input type=radio NAME="wep_key_no" value="3">
+			<input type=radio NAME="wep_key_no" id="wep_key_no3" value="3">
 			</TD>
-			<TD nowrap><input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY3" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<TD nowrap><input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY3" ID="key3" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key4
-			<input type=radio NAME="wep_key_no" value="4">
+			<input type=radio NAME="wep_key_no" id="wep_key_no4" value="4">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY4" VALUE=""  OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY4" ID="key4" VALUE=""  OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		</TABLE>
@@ -251,7 +251,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_phr :</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" autocomplete="off" size="20" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpa1_psk") %>" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1">
+		<input type="text" id="passphrase" autocomplete="off" size="20" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpa1_psk") %>" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>
 	</TR>
@@ -271,7 +271,7 @@ $bluebar
 		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
 		</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" autocomplete="off" maxlength="64" size="20" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpa2_psk") %>" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1">
+		<input type="text" id="passphrase" autocomplete="off" maxlength="64" size="20" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpa2_psk") %>" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>
 	</TR>
@@ -291,7 +291,7 @@ $bluebar
 		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
 		</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" autocomplete="off" size="20" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpas_psk") %>" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1">
+		<input type="text" id="passphrase" autocomplete="off" size="20" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpas_psk") %>" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>	  
 	</TR>
@@ -309,7 +309,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_wpa_mode</TD>
 		<TD>
-		<select name="wpae_mode" size='1'>
+		<select name="wpae_mode" id="wpae_mode" size='1'>
 			<option value='WPAE-TKIP'>WPA [TKIP]</option>
 			<option value='WPAE-AES'>WPA2 [AES]</option>
 			<option value='WPAE-TKIPAES'>WPA [TKIP] + WPA2 [AES]</option>
@@ -319,19 +319,19 @@ $bluebar
 	<TR>
 		<TD nowrap>$radius_serverIP</TD>
         <TD nowrap>
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr1" id="radius_ipaddress1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr2" id="radius_ipaddress2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr3" id="radius_ipaddress3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr4" id="radius_ipaddress4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
         </TD>  
 	</TR>
 	<TR>
 		<TD nowrap>$radius_serverPort</TD>	
-		<TD nowrap><input type="text" id="textWpaeRadiusPort" size="20" maxlength="5" name="textWpaeRadiusPort" value="1812" onKeyPress="return getkey('num',event);"></TD>	
+		<TD nowrap><input type="text" id="radius_port" size="20" maxlength="5" name="textWpaeRadiusPort" value="1812" onKeyPress="return getkey('num',event);"></TD>	
 	</TR>	
 	<TR>
 		<TD nowrap>$radius_serverSecret</TD>	
-		<TD nowrap><input type="text" id="textWpaeRadiusSecret" autocomplete="off" size="20" maxlength="128" value="<% cfg_get_ssid_value("wlg1_radiusSecret") %>" name="textWpaeRadiusSecret" onKeyPress="return getkey('ssid', event)"></TD>	
+		<TD nowrap><input type="text" id="radius_secret" autocomplete="off" size="20" maxlength="128" value="<% cfg_get_ssid_value("wlg1_radiusSecret") %>" name="textWpaeRadiusSecret" onKeyPress="return getkey('ssid', event)"></TD>	
 	</TR>	
 	</TABLE>
 </div>
@@ -359,7 +359,7 @@ function setSecurity(num)
 
 function loadvalue()
 {
-	top.enabled_wds=<% wds_enable() %>;
+	top.enabled_wds="<% wds_enable() %>";
         if( top.location.href.indexOf("adv_index.htm") != -1 )
                 top.menu_color_change('guest');
         else
@@ -377,11 +377,11 @@ function loadvalue()
 		form.enable_ssid_bc.checked = false;
 
 	if(get_endis_allow_see_and_access=='1')
-		form.allow_see_access.checked = true;
+		form.allow_access.checked = true;
 	else
-		form.allow_see_access.checked = false;
+		form.allow_access.checked = false;
 	if(enable_ap_flag == 1)
-		setDisabled(true, form.allow_see_access);
+		setDisabled(true, form.allow_access);
 		
 
 	//Bug 38628

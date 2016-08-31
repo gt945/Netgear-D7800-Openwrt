@@ -48,14 +48,6 @@ function finish_download(){
 	if(downloadStatus == 2 && downloadIndex < downloadCount -1){
 		downloadStatus = 1;
 		downloadIndex = downloadIndex + 1;
-		var ifr = document.createElement("IFRAME");
-		ifr.src="http://updates1.netgear.com/readysharevault/ReadySHAREVault-install.exe";
-		ifr.frameBorder = 0;
-
-		ifr.scrolling ="no";
-		ifr.width = 0;
-		ifr.height =0;
-		document.body.appendChild(ifr);
 	}else if(downloadIndex == downloadCount -1){
 		downloadStatus = 0;
 		downloadIndex = 0;
@@ -65,28 +57,20 @@ function finish_download(){
 
 function download()
 {
-	 if( download_desktop == "1" && download_readyshare == "1")
-   {
-		document.write("<img id=\"download_genie\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onerror='download_fail(\"genie\")'>"); 
-		document.getElementById("download_genie").onload=download_app("genie");
-   }
-   else if ( download_desktop == "1")
+   if ( download_desktop == "1")
    {
 		if( is_Mac == "Mac")
 		{
-				document.write("<img id=\"download_mac_genie\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onerror='download_fail(\"mac_genie\")'>");
-				document.getElementById("download_mac_genie").onload=download_app("mac_genie");
+				document.write("<img id=\"download_mac_genie\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" onload=\"download_app('mac_genie')\" style=\"display:none\" onerror='download_fail(\"mac_genie\")'>");
 		}
 		else
 		{
-				document.write("<img id=\"download_genie\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onerror='download_fail(\"genie\")'>");
-				document.getElementById("download_genie").onload=download_app("genie");
+				document.write("<img id=\"download_genie\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onload=\"download_app('genie')\" onerror='download_fail(\"genie\")'>");
 		}
    }
-   else if  ( download_readyshare == "1")
+   if  ( download_readyshare == "1")
    {
-	   document.write("<img id=\"download_readyshare\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onerror='download_fail(\"readshare\")'>");
-	   document.getElementById("download_readyshare").onload=download_app("readshare");
+	   document.write("<img id=\"download_readyshare\" src=\"http://updates1.netgear.com/readysharevault/ReadySHARE_Vault.jpg\" style=\"display:none\" onload=\"download_app('readshare')\" onerror='download_fail(\"readshare\")'>");
    }
 	
 }
@@ -97,11 +81,8 @@ function download_fail(argv)
 		alert(not_download+" "+mac_genie+" "+now+","+install_later);
 	else
 		alert(not_download+" "+argv+" "+now+","+install_later);
-	cf.submit_flag.value="download_confile";
-	cf.action="/func.cgi?/AUTO_search.htm timestamp="+ts;
 	if( is_in_cd_less )
 		top.document.getElementById("content_frame").scrolling="no";
-	cf.submit();
 }
 
 function download_app(argv)

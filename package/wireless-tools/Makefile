@@ -13,19 +13,20 @@ PKG_VERSION:=29
 PKG_MINOR:=.pre21
 PKG_RELEASE:=1
 
-PKG_GIT_TREEISH:=27dee86bcab04be6c3d9ecf15cba3aaa07131bf6
-
-PKG_BUILD_DIR:=$(BUILD_DIR)/wireless-tools
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PLATFORM_PATCH_DIR:=./patches-$(BOARD)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/wireless-tools
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Base system
   TITLE:=Tools for manipulating Linux Wireless Extensions
   URL:=http://hplabs.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html
+  MENU:=1
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/wireless-tools.git/* $(PKG_BUILD_DIR)/
@@ -60,9 +61,9 @@ define Build/UninstallDev
 		$(STAGING_DIR)/usr/lib/libiw.so*
 endef
 
-define Package/wireless-tools/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/iw{config,getid,list,priv,spy} $(1)/usr/sbin/
 endef
 
-$(eval $(call BuildPackage,wireless-tools))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -10,19 +10,24 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/noip2
+define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Network
 	TITLE:=no-ip DDNS utility.
+	MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) -r ./src/* $(PKG_BUILD_DIR)/
+	$(CP) $(GIT_HOME)/noip2.git/* $(PKG_BUILD_DIR)/
 endef
 
-define Package/noip2/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/noip2 $(1)/usr/sbin/
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/noip2 $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_noip_ddns $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
 endef
 
-$(eval $(call BuildPackage,noip2))
+$(eval $(call BuildPackage,$(PKG_NAME)))

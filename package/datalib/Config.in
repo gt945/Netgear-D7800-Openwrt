@@ -1,0 +1,17 @@
+config datalib_WITH_nvram
+	bool "create nvram command"
+	default n
+	help
+	  create nvram command, it's a soft link to /bin/config in generally.
+
+config datalib_WITH_readycloud_nvram
+	bool "create readycloud_nvram command"
+	default n
+	help
+	  create readycloud_nvram command, it's a soft link to /bin/config in generally.
+
+config datalib_SPACE_SIZE
+	string "Space size for datalib memory"
+	default "0x60000"
+	help
+	  specify datalib's memory space size, 

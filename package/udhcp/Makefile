@@ -33,24 +33,19 @@ patches-$(CONFIG_UDHCP_PATCH_DHCPC_TIMEOUT)		+= patches/000-change-dhcp-wait-tim
 patches-$(CONFIG_UDHCP_PATCH_DHCPD_CHECK_WAN)		+= patches/006-dni-dhcpc-check-cable-when-DISCOVER.patch
 patches-$(CONFIG_UDHCP_PATCH_DHCPC_GET_ACSURL)		+= patches/001-save-acsurl-got-from-dhcp-server.patch
 
-define Package/udhcp
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=@TARGET_d7800
   TITLE:=udhcp Server and Client Package
   URL:=http://udhcp.busybox.net/source
+  MENU:=1
 endef
 
-define Package/udhcp/description
+define Package/$(PKG_NAME)/description
  This package contains udhcp Server and Client.
 endef
 
-define Package/udhcp/config
-	menu "Configuration"
-		depends on PACKAGE_udhcp
-		source "$(SOURCE)/Config.in"
-	endmenu
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/udhcp.git/* $(PKG_BUILD_DIR)/
@@ -63,16 +58,16 @@ define Build/Configure
 	);
 endef
 
-define Package/udhcp/install
-	install -d -m0755 $(1)/sbin
-	install -m0755 $(PKG_BUILD_DIR)/udhcpd $(1)/sbin/
-	install -m0755 $(PKG_BUILD_DIR)/udhcpc $(1)/sbin/
-	install -d -m0755 $(1)/usr/share/udhcpc
-	install -m0755 $(PKG_BUILD_DIR)/default.script $(1)/usr/share/udhcpc/
-	install -m0755 $(PKG_BUILD_DIR)/default.script.ap $(1)/usr/share/udhcpc/
-	install -m0755 $(PKG_BUILD_DIR)/default.script.wan2 $(1)/usr/share/udhcpc/
-	install -d -m0755 $(1)/usr/share/zcip
-	install -m0755 ./files/zcip.script $(1)/usr/share/zcip/
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/udhcpd $(1)/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/udhcpc $(1)/sbin/
+	$(INSTALL_DIR) $(1)/usr/share/udhcpc
+	$(INSTALL_BIN) ./files/default.script $(1)/usr/share/udhcpc/
+	$(INSTALL_BIN) ./files/default.script.wan2 $(1)/usr/share/udhcpc/
+	$(INSTALL_BIN) ./files/default.script.ap $(1)/usr/share/udhcpc/
+	$(INSTALL_DIR) $(1)/usr/share/zcip
+	$(INSTALL_BIN) ./files/zcip.script $(1)/usr/share/zcip/
 endef
 
-$(eval $(call BuildPackage,udhcp))
+$(eval $(call BuildPackage,$(PKG_NAME)))

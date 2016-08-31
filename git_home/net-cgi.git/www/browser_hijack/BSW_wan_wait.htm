@@ -24,7 +24,7 @@ function do_submit()
 //	if( browser_lang == "Russian" )
 //	{   
 		if(ping_ok =="success" && "1" == wan_status)
-			location.href="BRS_success.html";
+			location.href="BRS_security.html";
 		else{
 			if(parent.RU_manual_flag == 1)
 				location.href="RU_manual_fail.htm";
@@ -88,21 +88,14 @@ function updateProgress()
 	      	  document.getElementById(tmp).style.background=cor3;  
 	  	
 	  }
-		setTimeout("updateProgress()",delay_time);
+	
+	do_submit();
+	setTimeout("updateProgress()",delay_time);
 		
 		//if(charcount == (maxchars/5) *5 )
 		//	location.href="BSW_wan_wait.htm";
 
 	}
-	else
-	{	
-		  do_submit();
-	}   	
-}
-
-function wait1()
-{
-	do_submit();
 }
 
 </script>
@@ -135,7 +128,7 @@ function wait1()
 </div>
 
 
-<!--<iframe name="panel_query" id="panel_query" src="BSW_wan_query.htm" frameborder="0" border="0"></iframe>-->
+<iframe name="panel_query" id="panel_query" src="BSW_wan_query.htm" frameborder="0" border="0" style="display:none;"></iframe>
 </BODY>
 </html>
 

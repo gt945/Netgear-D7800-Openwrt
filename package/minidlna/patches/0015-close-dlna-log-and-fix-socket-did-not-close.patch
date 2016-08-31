@@ -1,0 +1,22 @@
+diff -ruN minidlna.org/getifaddr.c minidlna/getifaddr.c
+--- minidlna.org/getifaddr.c	2016-04-11 08:02:38.000000000 +0800
++++ minidlna/getifaddr.c	2016-04-11 08:04:27.000000000 +0800
+@@ -282,6 +282,7 @@
+ 				continue;
+ 			}
+ 			memcpy(mac, ifr.ifr_hwaddr.sa_data, 6);
++			close(fd);
+ #else
+ 			struct sockaddr_dl *sdl;
+ 			sdl = (struct sockaddr_dl*)p->ifa_addr;
+diff -ruN minidlna.org/log.c minidlna/log.c
+--- minidlna.org/log.c	2016-04-11 08:02:38.000000000 +0800
++++ minidlna/log.c	2016-04-11 08:14:21.000000000 +0800
+@@ -133,6 +133,7 @@
+ log_err(int level, enum _log_facility facility, char *fname, int lineno, char *fmt, ...)
+ {
+ 	va_list ap;
++	return;
+ 
+ 	if (level && level>log_level[facility] && level>E_FATAL)
+ 		return;

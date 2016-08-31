@@ -54,7 +54,7 @@ static const char daapd_conf[] =
 "	itunes_overrides = false\n"
 "}\n"
 "audio {\n"
-"	nickname = \"D7800\"\n"
+"	nickname = \"R7500v2\"\n"
 "}";
 
 struct disk_partition_info

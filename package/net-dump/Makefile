@@ -25,6 +25,8 @@ endef
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
 	$(CP) ./src/* $(PKG_BUILD_DIR)
+
+	$(call DGC/ProductName,$(PKG_BUILD_DIR)/ethnet.h)
 endef
 
 define Package/net-dump/install

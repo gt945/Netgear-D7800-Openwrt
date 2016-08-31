@@ -27,6 +27,50 @@ extern struct mac_traffic mac_updownload[MAX_DEVICE];
 #include <linux/ip.h>
 #include <linux/igmp.h>
 
+static inline void
+add_mac_cache(struct sk_buff *skb)
+{
+      unsigned char i, num = 0xff;
+      unsigned char *src, check = 1;
+      struct iphdr *iph;
+      struct ethhdr *ethernet=(struct ethhdr *)skb->mac_header;
+
+      iph = (struct iphdr *)skb->network_header;
+      src = ethernet->h_source;
+
+      for (i = 0; i < MCAST_ENTRY_SIZE; i++)
+      {
+              if (mac_cache[i].valid)
+                      if ((++mac_cache[i].count) == MAX_CLEAN_COUNT)
+                              mac_cache[i].valid = 0;
+      }
+
+      for (i = 0; i < MCAST_ENTRY_SIZE; i++)
+      {
+              if (mac_cache[i].valid)
+              {
+                      if (mac_cache[i].sip==iph->saddr)
+                      {
+                              num = i;
+                              break;
+                      }
+              }
+              else if (check)
+              {
+                      num=i;
+                      check = 0;
+              }
+      }
+
+      if (num < MCAST_ENTRY_SIZE)
+      {
+              mac_cache[num].valid = mac_cache[num].count = 1;
+              memcpy(mac_cache[num].mac, src, 6);
+              mac_cache[num].sip = iph->saddr;
+              mac_cache[num].dev = skb->dev;
+      }
+}
+
 #endif
 
 static int check_authorized_mac(unsigned char *dev_mac)
@@ -66,26 +110,26 @@ static int br_pass_frame_up(struct sk_buff *skb)
 	unsigned char *dev_mac;
 	int ret;
 
-//#ifdef CONFIG_DNI_MCAST_TO_UNICAST
-//      unsigned char *dest;
-//      struct iphdr *iph;
-//      unsigned char proto=0;
-//      struct ethhdr *ethernet=(struct ethhdr *)skb->mac_header;
-//
-//      // if skb come from wireless interface, ex. ath0, ath1, ath2...
-//      if (skb->dev->name[0] == 'a')
-//      {
-//              iph = (struct iphdr *)skb->network_header;
-//              proto =  iph->protocol;
-//              dest = ethernet->h_dest;
-//              if ( igmp_snoop_enable && MULTICAST_MAC(dest)
-//                       && (ethernet->h_proto == ETH_P_IP))
-//              {
-//                      if (proto == IPPROTO_IGMP)
-//                              add_mac_cache(skb);
-//              }
-//      }
-//#endif
+#ifdef CONFIG_DNI_MCAST_TO_UNICAST
+      unsigned char *dest;
+      struct iphdr *iph;
+      unsigned char proto=0;
+      struct ethhdr *ethernet=(struct ethhdr *)skb->mac_header;
+
+      // if skb come from wireless interface, ex. ath0, ath1, ath2...
+      if (skb->dev->name[0] == 'a')
+      {
+              iph = (struct iphdr *)skb->network_header;
+              proto =  iph->protocol;
+              dest = ethernet->h_dest;
+              if ( igmp_snoop_enable && MULTICAST_MAC(dest)
+                       && (ethernet->h_proto == ETH_P_IP))
+              {
+                      if (proto == IPPROTO_IGMP)
+                              add_mac_cache(skb);
+              }
+      }
+#endif
 #ifdef CONFIG_BRIDGE_NETGEAR_ACL
       if (!br_acl_should_pass(br, skb, ACL_CHECK_SRC)) {
               br->dev->stats.rx_dropped++;

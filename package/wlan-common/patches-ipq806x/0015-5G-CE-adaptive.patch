@@ -1,0 +1,17 @@
+diff --git a/sbin/update-wifi b/sbin/update-wifi
+index 24f524f..7f09f9b 100755
+--- a/sbin/update-wifi
++++ b/sbin/update-wifi
+@@ -557,6 +557,12 @@ else
+     uci set wireless.qcawifi.wla_tpscale=${wla_tpscale}
+ fi
+ 
++if [ "$country_code" == "276" ]; then
++    uci set wireless.qcawifi.ce_adaptive=1
++else
++    uci set wireless.qcawifi.ce_adaptive=0
++fi
++
+ if [ "$wlg_exist" = "on" ]; then
+     uci set wireless.${g_device}=wifi-device
+     uci set wireless.${g_device}.type=qcawifi

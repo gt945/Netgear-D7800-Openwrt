@@ -20,61 +20,37 @@ function initPage()
 
 	
 	//set event action
-	var name_input = document.getElementById("inputName");
+	var name_input = document.getElementById("pppoe_name");
 	name_input.onkeypress = ssidKeyCode;
 
-	var passwd_input = document.getElementById("inputPasswd");
+	var passwd_input = document.getElementById("pppoe_password");
 	passwd_input.onkeypress = ssidKeyCode;
 	
-	var btns_div1 = document.getElementById("btnsContainer_div1");
+	var btns1 = document.getElementById("self_config");
+	btns1.value = bh_manual_config_connection;
+
 	if( master == "admin" )
 	{
-		btns_div1.onclick = function()
+		btns1.onclick = function()
 		{
 			return manuallyConfig();
 		}
 	}
-	
-	var btn = btns_div1.getElementsByTagName("div");
-	var btn_text = document.createTextNode(bh_manual_config_connection);
-	btn[0].appendChild(btn_text);
+	else
+		btns1.className="grey_long_btn";
 
-	var btns_div2 = document.getElementById("btnsContainer_div2");
+	var btns2 = document.getElementById("again");
+	btns2.value = bh_try_again;
 	if( master == "admin" )
-	 btns_div2.onclick = function()
+	 btns2.onclick = function()
 	  {
 		return checkPPPoE();
 	 }
-	
-	btn = btns_div2.getElementsByTagName("div");
-	btn_text = document.createTextNode(bh_try_again);
-	btn[0].appendChild(btn_text);
-
+	 else
+	 	btns2.className="grey_common_btn";
 
 	//show firmware version
         showFirmVersion("");
-}
-
-function manuallyConfig()
-{
-	if(confirm(bh_no_genie_help_confirm) == false)
-		return false;
-        if(top.dsl_enable_flag == 1)
-		this.location.href="BRS_log12_incorrect_go_to_internet.html";
-	else{
-		var forms = document.getElementsByTagName("form");
-		var cf = forms[0];
-
-		if( hijack_process == "1")
-		{
-        		cf.action = "/apply.cgi?/welcomeok.htm timestamp=" + ts;
-			cf.submit_flag.value = "hijack_toBasic";
-			cf.submit();
-		}
-		else
-			location.href = "BAS_basic.htm";
-	}
-	return true;
 }
 
 function checkPPPoE()
@@ -82,8 +58,8 @@ function checkPPPoE()
 	var forms = document.getElementsByTagName("form");
         var cf = forms[0];
 	
-	var pppoe_name = document.getElementById("inputName");
-	var pppoe_passwd = document.getElementById("inputPasswd");
+	var pppoe_name = document.getElementById("pppoe_name");
+	var pppoe_passwd = document.getElementById("pppoe_password");
 
 	if(pppoe_name.value == "")
 	{

@@ -396,8 +396,10 @@ static int l2tp_xmit(struct ppp_channel *chan, struct sk_buff *skb)
 	iph->tos = 0;
 	iph->tot_len = htons(skb2->len);
 	iph->frag_off = 0;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
 	ip_select_ident(skb, NULL);
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
+	ip_select_ident(iph, &rt->dst, NULL);
 #else
 	ip_select_ident(iph, &rt->u.dst, NULL);
 #endif

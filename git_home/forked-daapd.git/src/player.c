@@ -3233,7 +3233,8 @@ speaker_enumerate(struct player_command *cmd)
   flags.has_password = 0;
   flags.has_video = 0;
 
-  spk_enum->cb(0, laudio_name, laudio_relvol, flags, spk_enum->arg);
+  /*Need not show local audio device */
+  //spk_enum->cb(0, laudio_name, laudio_relvol, flags, spk_enum->arg);
 
 #ifdef DEBUG_RELVOL
   DPRINTF(E_DBG, L_PLAYER, "*** master: %d\n", master_volume);

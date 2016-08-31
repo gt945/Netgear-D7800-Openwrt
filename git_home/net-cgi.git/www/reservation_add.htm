@@ -6,9 +6,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="reset" name="Refresh" value="$refresh_mark" onClick="location.href=\'reservation_add_wait.htm\';">&nbsp;<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';">&nbsp;<input class="apply_bt" type="submit" name="Add" value="$add_mark" onClick="return check_reservation_add(document.forms[0],\'add\')"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Refresh" id="refresh" value="$refresh_mark" onClick="location.href=\'reservation_add_wait.htm\';">&nbsp;<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';">&nbsp;<input class="apply_bt" type="button" name="Add" id="add" value="$add_mark" onClick="return check_reservation_add(document.forms[0],\'add\')"></TD></TR>');
 else
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="reset" name="Refresh" value="$refresh_mark" disabled>&nbsp;<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;<input class="apply1_bt" type="submit" name="Add" value="$add_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Refresh" id="refresh" value="$refresh_mark" disabled>&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;<input class="apply1_bt" type="button" name="Add" id="add" value="$add_mark" disabled></TD></TR>');
 
 </script>
 </TABLE>
@@ -40,7 +40,7 @@ var lanip_array=lanip.split(".");
 </TR>
 <TR>
 	<TD nowrap colspan=2><div align=center>
-	<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
+	<TABLE name="address_reser_table" class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
 	<TR class=table_header>
 		<TD nowrap align=center>&nbsp;</TD>
 		<TD nowrap align=center><span class="subhead">#</span></TD>
@@ -113,7 +113,7 @@ if(show_list != "" )
                   document.write("<TR class=\"odd_line\">");
               else
                   document.write("<TR class=\"even_line\">");	    
-		document.write('<TD nowrap><input type="radio" name="MacSelect" value="'+i+'" onclick="data_select('+i+');"></TD><TD nowrap align=center><span class="subhead">'+eval(i+1)+'</span></TD>');
+		document.write('<TD nowrap><input type="radio" name="MacSelect" id="mac_select'+(i+1)+'" value="'+i+'" onclick="data_select('+i+');"></TD><TD nowrap align=center><span class="subhead">'+eval(i+1)+'</span></TD>');
 		if(show_ip_array[i] == "<unknown>" || show_ip_array[i] == "&lt;unknown&gt;" )
 			document.write('<TD nowrap align=center>&lt;$unknown_mark&gt;</TD>');
 		else
@@ -161,23 +161,23 @@ $bluebar
 	<TD nowrap>$info_mark_ip</TD>
 	<TD nowrap>
 	<script>
-		document.write('<input type="text" name="rsv_ip1" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);"	onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[0]+'">.');
-		document.write('<input type="text" name="rsv_ip2" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[1]+'">.');
-		document.write('<input type="text" name="rsv_ip3" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[2]+'">.');
+		document.write('<input type="text" name="rsv_ip1" id="rsv_ipaddress1" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);"	onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[0]+'">.');
+		document.write('<input type="text" name="rsv_ip2" id="rsv_ipaddress2" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[1]+'">.');
+		document.write('<input type="text" name="rsv_ip3" id="rsv_ipaddress3" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[2]+'">.');
 	</script>
-	<input type="text" name="rsv_ip4" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="rsv_ip4" id="rsv_ipaddress4" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$info_mark_mac</TD>
 	<TD nowrap>
-	<input type="text" value="" name="rsv_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+	<input type="text" value="" name="rsv_mac" id="rsv_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$lan_mark_name</TD>
 	<TD nowrap>
-	<input type="text" name="dv_name" maxLength="20" size="16" onKeyPress="return getkey('ssid', event)">
+	<input type="text" name="dv_name" id="device_name" maxLength="20" size="16" onKeyPress="return getkey('ssid', event)">
 	</TD>
 </TR>
 $bluebar

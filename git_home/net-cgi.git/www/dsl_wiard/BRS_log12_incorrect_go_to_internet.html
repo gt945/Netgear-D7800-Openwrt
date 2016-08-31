@@ -11,17 +11,10 @@
 <body onLoad="loadvalue()">
 <% form_submit("apply", "index.htm", "hijack_toBasic") %>
 <div class="wizard_content_div">
-
 	<div class="wizard_words_div">
-		
-		<h1><script>document.write(bh_apply_connection)</script></h1>
-			
-		<p><script>document.write(bh_plz_waite_apply_connection)</script></p>
-		
 		<div id="applySettings_wait" class="waiting_img_div" align="center">
 			<img src="image/wait30.gif" />
 		</div>
-		
 	</div>
 </div>
 </body>
@@ -38,9 +31,16 @@ function loadvalue()
 		cf.submit();
 	}
 	else
-		this.location.href = "BAS_basic_dsl.htm";
+		gotto_link("setup", "internet");
 
 	return true;
+}
+
+function gotto_link(sub, id)
+{
+	if(sub != "None")
+		top.open_or_close_sub(sub);
+	top.click_adv_action(id);
 }
 </script>
 </html>

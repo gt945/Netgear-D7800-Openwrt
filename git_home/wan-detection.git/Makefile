@@ -1,17 +1,8 @@
-CC = gcc
+export INSTALL_BIN=install -m0755
+export INSTALL_DIR=install -m0755 -d
 
-FILES = main.o detwan.o resolv.o util.o dni_system.o
+export INS_BIN_DIR:=$(PREFIX)/usr/sbin/
+export INS_CONF_DIR:=$(PREFIX)/etc/
 
-all: detwan
-
-CFLAGS += -Wall -Wunused -g -O2
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $<
-
-detwan : $(FILES)
-	$(CC) $(CFLAGS) $(FILES) -o $@ $(EXTRA_LDFLAGS) $(LDFLAGS) -lconfig
-	@echo "make $@ finished on `date`"
-
-clean:
-	rm -f *.o detwan
+all %:
+	$(MAKE) -C src $@

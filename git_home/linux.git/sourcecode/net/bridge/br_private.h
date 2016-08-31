@@ -639,7 +639,6 @@ extern struct __mac_cache mac_cache[MCAST_ENTRY_SIZE];
 extern int igmp_snoop_enable;
 extern struct __mgroup_list *mhead;
 
-void iptv_port_update_mgroup(const struct sk_buff *skb);
 void proc_mcast_entry(char cmd, unsigned long ip ,unsigned long gip);
 int mcast_set_read( char *page, char **start, off_t off,
                                 int count, int *eof, void *data );

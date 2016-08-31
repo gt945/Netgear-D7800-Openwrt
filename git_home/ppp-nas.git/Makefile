@@ -5,14 +5,14 @@
 
 CC = gcc
 
-FILES = main.o nvram.o pppnas.o session.o route.o iprule.o iproute.o
+FILES = main.o pppnas.o session.o route.o iprule.o iproute.o
 
 CFLAGS += -Wall -Wunused -g -O2
 
 all : ppp-nas
 
 ppp-nas : $(FILES)
-	$(CC) $(CFLAGS) $(FILES) -o $@ $(LDFLAGS) -lconfig
+	$(CC) $(CFLAGS) $(FILES) -o $@ $(LDFLAGS)
 	@echo "make $@ finished on `date`"
 
 %.o : %.c

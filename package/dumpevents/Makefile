@@ -13,7 +13,7 @@ define Package/dumpevents
   CATEGORY:=Bigfoot
   SUBMENU:=Flow Detect
   TITLE:=dumpevents
-  DEPENDS:=+redis-cli @BUSYBOX_CONFIG_AWK
+  DEPENDS:=+redis-cli @(BUSYBOX_CONFIG_AWK||DNIBUSYBOX_CONFIG_AWK)
   MAINTAINER:=Mo Chen <moc@qca.qualcomm.com>
 endef
 

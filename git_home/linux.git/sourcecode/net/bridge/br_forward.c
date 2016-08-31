@@ -377,7 +377,7 @@ typedef struct _igmp_report_t {
 #define IGMP_V2_MEMBERSHIP_REPORT   0x16
 #define IGMP_V2_MEMBERSHIP_LEAVE    0x17
 #define IGMP_V3_MEMBERSHIP_REPORT   0x22
-void iptv_port_update_mgroup(const struct sk_buff *skb)
+static void iptv_port_update_mgroup(const struct sk_buff *skb)
 {
        struct ethhdr *ehdr;
        struct iphdr *igmp_iph;
@@ -581,41 +581,6 @@ static int deliver_clone(const struct net_bridge_port *prev,
 {
 	struct net_device *dev = BR_INPUT_SKB_CB(skb)->brdev;
 
-#ifdef CONFIG_DNI_MCAST_TO_UNICAST
-	struct ethhdr *ethernet = (struct ethhdr *)skb->mac_header;
-	struct sk_buff *skb2;
-
-	if (igmp_snoop_enable && prev->dev->name[0] == 'a')
-	{
-		unsigned char *dest = ethernet->h_dest;
-		struct iphdr *iph = (struct iphdr *)skb->network_header;
-		if ( MULTICAST_MAC(dest) && not_ctrl_group(ntohl(iph->daddr)))
-		{
-			struct __mgroup_list *mg = NULL;
-			struct __mgroup_mbr_list *mbr;
-			mg = mgroup_find(iph->daddr);
-			if (mg)
-			{
-				mbr = mg->member;
-				while (mbr)
-				{
-					if ((mbr->dev == prev->dev)) /* &&
-													pass_check(iph->saddr, mbr))*/
-					{
-						if((skb2=modifyMcast2Ucast(skb, mbr->mac)) == NULL)
-						{
-							dev->stats.tx_dropped++;
-							kfree_skb(skb);
-							return -ENOMEM;
-						}
-						__packet_hook(prev, skb2);
-					}
-					mbr = mbr->next;
-				}
-			}
-			return 0;
-		}
-	}
 	skb = skb_clone(skb, GFP_ATOMIC);
 	if (!skb) {
 		dev->stats.tx_dropped++;
@@ -624,16 +589,6 @@ static int deliver_clone(const struct net_bridge_port *prev,
 
 	__packet_hook(prev, skb);
 	return 0;
-#else
-	skb = skb_clone(skb, GFP_ATOMIC);
-	if (!skb) {
-		dev->stats.tx_dropped++;
-		return -ENOMEM;
-	}
-
-	__packet_hook(prev, skb);
-	return 0;
-#endif
 }
 
 static struct net_bridge_port *maybe_deliver(
@@ -749,46 +704,7 @@ static void br_multicast_flood(struct net_bridge_mdb_entry *mdst,
 	if (skb0)
 		deliver_clone(prev, skb, __packet_hook);
 	else
-	{
-#ifdef CONFIG_DNI_MCAST_TO_UNICAST
-	struct ethhdr *ethernet = (struct ethhdr *)skb->mac_header;
-	struct sk_buff *skb2;
-
-	if (igmp_snoop_enable && prev->dev->name[0] == 'a')
-	{
-		unsigned char *dest = ethernet->h_dest;
-		struct iphdr *iph = (struct iphdr *)skb->network_header;
-		if ( MULTICAST_MAC(dest) && not_ctrl_group(ntohl(iph->daddr)))
-		{
-			struct __mgroup_list *mg = NULL;
-			struct __mgroup_mbr_list *mbr;
-			mg = mgroup_find(iph->daddr);
-			if (mg)
-			{
-				mbr = mg->member;
-				while (mbr)
-				{
-					if ((mbr->dev == prev->dev)) /* &&
-													pass_check(iph->saddr, mbr))*/
-					{
-						if((skb2=modifyMcast2Ucast(skb, mbr->mac)) == NULL)
-						{
-							dev->stats.tx_dropped++;
-							kfree_skb(skb);
-							return -ENOMEM;
-						}
-						__packet_hook(prev, skb2);
-					}
-					mbr = mbr->next;
-				}
-			}
-			kfree_skb(skb);
-			return; 
-		}
-	}
-#endif
 		__packet_hook(prev, skb);
-	}
 	return;
 
 out:

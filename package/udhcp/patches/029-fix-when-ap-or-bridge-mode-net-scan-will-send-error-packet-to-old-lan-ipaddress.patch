@@ -1,0 +1,14 @@
+--- udhcp.org/default.script.ap	2016-03-29 13:57:29.000000000 +0800
++++ udhcp/default.script.ap	2016-04-07 13:22:17.000000000 +0800
+@@ -68,6 +68,11 @@
+ 			# restart samba if IP changes
+ 			/usr/bin/killall smbd
+ 			/usr/sbin/update_smb
++			
++			# restart net-scan if IP changes
++			killall net-scan
++			/usr/sbin/net-scan
++
+ 		fi
+ 
+ 		# restart net-wall to update the br0 address in the rule.

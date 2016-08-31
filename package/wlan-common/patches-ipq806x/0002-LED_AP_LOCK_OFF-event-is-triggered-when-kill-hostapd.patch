@@ -1,0 +1,43 @@
+From 091a32b2f807c4114c6f583ea1596153b9629104 Mon Sep 17 00:00:00 2001
+From: Josn Wang <josn.wang@dniserver.dnish.net>
+Date: Sun, 9 Mar 2014 22:06:58 +0800
+Subject: [PATCH] LED_AP_LOCK_OFF event is triggered when kill hostapd, "wpsled wps_lock_down off" will call set_finialwpsled and set_finialwifiled, that will turn on wps and wifiled
+
+execute "wpsled wps_lock_down stop" for envntLED_AP_LOCK_OFF
+
+Signed-off-by: Josn Wang <josn.wang@dniserver.dnish.net>
+---
+ etc/hotplug.d/wps/01-wps-led |    2 +-
+ sbin/wpsled                  |    3 +++
+ 2 files changed, 4 insertions(+), 1 deletions(-)
+
+diff --git a/etc/hotplug.d/wps/01-wps-led b/etc/hotplug.d/wps/01-wps-led
+index b89bb53..1b2f5d2 100755
+--- a/etc/hotplug.d/wps/01-wps-led
++++ b/etc/hotplug.d/wps/01-wps-led
+@@ -123,7 +123,7 @@ case "$LED_STATE" in
+ 		exit
+ 		;;
+ 	LED_AP_LOCK_OFF)
+-		wpsled wps_lock_down off &
++		wpsled wps_lock_down stop &
+ 		exit
+ 		;;
+ 	LED_PIN_INTRUSION)
+diff --git a/sbin/wpsled b/sbin/wpsled
+index eccc251..578b0e2 100755
+--- a/sbin/wpsled
++++ b/sbin/wpsled
+@@ -96,6 +96,9 @@ case $ledcase in
+                     usleep 900000 # 0.9 second
+ 	        fi
+             done
++        else if [ "$action" = "stop" ]; then
++            kill_wpsled $ledcase
++            rm -f $wpsled_run_file
+         else
+             kill_wpsled $ledcase
+             set_finialwpsled
+-- 
+1.5.6
+

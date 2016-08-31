@@ -1,0 +1,95 @@
+#!/bin/sh
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+CONFIG="/bin/config"
+ECHO="/bin/echo"
+DATE="/bin/date"
+IFCONFIG="/sbin/ifconfig"
+WAN2_PROTO=$($CONFIG get wan2_proto)
+WAN6_PROTO=$($CONFIG get ipv6_type)
+WAN_IPUP="/sbin/wan-ipup"
+
+SR33_FILE="/tmp/udhcpc_static_route"
+CSR121_FILE="/tmp/udhcpc_classless_static_route"
+CSR249_FILE="/tmp/udhcpc_microsoft_classless_static_route"
+
+compare_the_same_subnet(){
+	num=0
+	for j in $1 $2 $3; do
+		num=`expr $num + 1`
+		IP1=$(echo $j | cut -f1 -d ".")
+		IP2=$(echo $j | cut -f2 -d ".")
+		IP3=$(echo $j | cut -f3 -d ".")
+		IP4=$(echo $j | cut -f4 -d ".")
+		if [ $num -eq 1 ]; then
+			IPN1=$IP1
+			IPNA=$(((IP2<<16) + (IP3<<8) + IP4))
+		elif [ $num -eq 2 ]; then
+			IPN2=$IP1
+			IPNB=$(((IP2<<16) + (IP3<<8) + IP4))
+		elif [ $num -eq 3 ]; then
+			IPN3=$IP1
+			MASKN=$(((IP2<<16) + (IP3<<8) + IP4))
+		fi
+	done
+
+	NETA=$((IPNA & MASKN))
+	NETB=$((IPNB & MASKN))
+
+	if [ $((IPN1 & IPN3)) -eq $((IPN2 & IPN3)) ] && [ $NETA -eq $NETB ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+DNS_ASSIGN=0
+if [ "$($CONFIG get wan2_ether_dns_assign)" = "1" ]; then
+	DNS_ASSIGN=1
+fi
+if [ "$DNS_ASSIGN" = "1" ]; then
+	touch /tmp/dhcpc_resolv.conf
+	RESOLV_CONF="/tmp/dhcpc_resolv.conf"
+else
+	RESOLV_CONF="/tmp/resolv.conf"
+fi
+
+[ -z "$1" ] && $ECHO "Error: should be called from udhcpc" && exit 1
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+	deconfig)
+
+		$IFCONFIG $interface 0.0.0.0 && $CONFIG set wan2_dhcp_ipaddr=0.0.0.0
+		;;
+
+	renew|bound)
+		old_ip=$($CONFIG get wan2_dhcp_ipaddr)
+		$IFCONFIG $interface $ip $BROADCAST $NETMASK && $CONFIG set wan2_dhcp_ipaddr=$ip && $CONFIG set wan2_dhcp_oldip=$ip && $CONFIG set wan2_dhcp_netmask=$subnet
+
+		if [ "x${vendor_specific}" != "x" ]; then
+			$CONFIG set wan2_dhcp_acs_url="${vendor_specific}"
+		else
+			$CONFIG set wan2_dhcp_acs_url="`$CONFIG get cwmp_acs_url`"
+		fi
+
+		#If $router and lan ip are the same,then we can't add the default route.So we add default route after doing ipconflict
+		$CONFIG set wan2_dhcp_gateway=0.0.0.0
+		if [ -n "$router" ] && [ "$WAN2_PROTO" != "pptp" ] && [ "$WAN2_PROTO" != "l2tp" ] && [ "$WAN2_PROTO" != "pppoe" ] && [ "$WAN2_PROTO" != "pppoa" ] && [ "$WAN2_PROTO" != "ipoa" ]; then
+			$CONFIG set wan2_dhcp_gateway=$router
+		fi
+
+		# Run /sbin/wan-ipup after checking ipconflict
+		if [ "$old_ip" != "$($CONFIG get wan2_dhcp_ipaddr)" -a -x $WAN_IPUP ]; then
+			$WAN_IPUP $ip
+		fi
+
+		[ -n "$lease" ] && $CONFIG set dhcpc_lease_time=$lease
+		[ -n "$serverid" ] && $CONFIG set wan2_dhcp_server=$serverid
+
+		$CONFIG set dhcpc_lease_obtain="$(cat /proc/uptime | awk -F. '{print $1}')"
+
+esac
+
+exit 0

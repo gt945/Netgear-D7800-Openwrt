@@ -12,22 +12,23 @@ PKG_NAME:=samba
 PKG_VERSION:=3.0.24
 PKG_RELEASE:=1
 
-PKG_GIT_TREEISH:=samba-v3.0.24-dni5
-
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 PKG_INSTALL_DIR:=$(PKG_BUILD_DIR)/ipkg-install
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/samba
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=SAMBA
   URL:=http://www.samba.org
+  MENU:=1
 endef
 
 define Build/Configure
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/samba.git/* $(PKG_BUILD_DIR)/
@@ -65,7 +66,7 @@ define Build/Compile
                 install
 endef
 
-define Package/samba/install
+define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/usr/sbin
 	install -d -m0755 $(1)/usr/bin
 	install -m0755 $(PKG_BUILD_DIR)/source/bin/smbpasswd $(1)/usr/bin/smbpasswd
@@ -75,7 +76,6 @@ define Package/samba/install
 	install -d -m0755 $(1)/usr/share/samba
 	#install -m0644 $(PKG_INSTALL_DIR)/usr/share/samba/codepage.{437,850} $(1)/usr/share/samba/
 	#install -m0644 $(PKG_INSTALL_DIR)/usr/share/samba/unicode_map.{437,850} $(1)/usr/share/samba/
-	install -d -m0755 $(1)/etc/modules.d
-	install -m0755 ./files/50-samba-mod $(1)/etc/modules.d/
 endef
-$(eval $(call BuildPackage,samba))
+
+$(eval $(call BuildPackage,$(PKG_NAME)))

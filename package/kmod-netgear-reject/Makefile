@@ -13,7 +13,6 @@ PKG_NAME:=kmod-netgear-reject
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-netgear-reject-v3.4-dni1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/netgear-reject
   FILES:= \
 	$(PKG_BUILD_DIR)/ipt_NETGEAR_REJECT.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,ipt_NETGEAR_REJECT)
+  MENU:=1
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/kmod-netgear-reject.git/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 	$(MAKE) -C "$(LINUX_DIR)" \

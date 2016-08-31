@@ -553,29 +553,6 @@ void server6_init(if_name)
 #endif
 	freeaddrinfo(res);
 
-	/* bind outsock to port 547 */
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET6;
-	hints.ai_socktype = SOCK_DGRAM;
-	hints.ai_protocol = IPPROTO_UDP;
-	error = getaddrinfo("::", DH6PORT_UPSTREAM, &hints, &res);
-	if (error) {
-		dprintf(LOG_ERR, FNAME, "getaddrinfo: %s",
-		    gai_strerror(error));
-		exit(1);
-	}
-	if (setsockopt(outsock, SOL_SOCKET, SO_REUSEPORT, &on,
-		       sizeof(on)) < 0) {
-		dprintf(LOG_ERR, FNAME, "setsockopt(insock, SO_REUSEPORT): %s",
-		    strerror(errno));
-		exit(1);
-	}
-	if (bind(outsock, res->ai_addr, res->ai_addrlen) < 0) {
-		dprintf(LOG_ERR, FNAME, "bind(insock): %s", strerror(errno));
-		exit(1);
-	}
-	freeaddrinfo(res);
-
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET6;
 	hints.ai_socktype = SOCK_DGRAM;
@@ -3189,7 +3166,7 @@ server6_send(type, ifp, origmsg, optinfo, from, fromlen,
 	dst = relayed ? *sa6_any_relay : *sa6_any_downstream;
 	dst.sin6_addr = ((struct sockaddr_in6 *)from)->sin6_addr;
 	dst.sin6_scope_id = ((struct sockaddr_in6 *)from)->sin6_scope_id;
-	if (transmit_sa(outsock, (struct sockaddr *)&dst,
+	if (transmit_sa2(outsock, (struct sockaddr *)&dst,
 	    replybuf, len) != 0) {
 		dprintf(LOG_ERR, FNAME, "transmit %s to %s failed",
 		    dhcp6msgstr(type), addr2str((struct sockaddr *)&dst));

@@ -1,6 +1,6 @@
 function initPage()
 {
-	var head_tag = document.getElementsByTagName("h1");
+	var head_tag = document.getElementsByTagName("h2");
 	var head_text = document.createTextNode(bh_pppoe_connection);
 	head_tag[0].appendChild(head_text);
 	
@@ -20,30 +20,30 @@ function initPage()
 
 	
 	//set event action
-	var name_input = document.getElementById("inputName");
+	var name_input = document.getElementById("pppoe_name");
 	name_input.onkeypress = ssidKeyCode;
 
-	var passwd_input = document.getElementById("inputPasswd");
+	var passwd_input = document.getElementById("pppoe_password");
 	passwd_input.onkeypress = ssidKeyCode;
 	if(top.dsl_enable_flag == 1)
 	{
 		 cf=document.forms[0];
 		 cf.pppoe_name.value="";
 		 cf.pppoe_passwd.value="";
-	}	
-	var btns_container_div = document.getElementById("btnsContainer_div");
+	}
+
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
 	if( master == "admin" )
 	{
-		btns_container_div.onclick = function()
+		btn.onclick = function()
 		{
 			return checkPPPoE();
 		}
 	}
+	else
+		btn.className="grey_short_btn";
 	
-	var btn = document.getElementById("btn_text_div");
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
-
 	//show firmware version
         showFirmVersion("none");
 }
@@ -53,8 +53,8 @@ function checkPPPoE()
 	var forms = document.getElementsByTagName("form");
         var cf = forms[0];
 	
-	var pppoe_name = document.getElementById("inputName");
-	var pppoe_passwd = document.getElementById("inputPasswd");
+	var pppoe_name = document.getElementById("pppoe_name");
+	var pppoe_passwd = document.getElementById("pppoe_password");
 
 	if(pppoe_name.value == "")
 	{

@@ -10,9 +10,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=dnibusybox
 PKG_VERSION:=1.4.2
 PKG_RELEASE:=2
-
-PKG_GIT_TREEISH:=busybox-v1.4.2-dni63
-BUSYBOX_HOME=$(GIT_HOME)/busybox.git
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -25,31 +23,28 @@ init-$(CONFIG_DNIBUSYBOX_CONFIG_HTTPD) += httpd
 init-$(CONFIG_DNIBUSYBOX_CONFIG_CROND) += cron
 init-$(CONFIG_DNIBUSYBOX_CONFIG_TELNETD) += telnet
 
-define Package/dnibusybox
+define Package/$(PKG_NAME)
   SECTION:=base
   CATEGORY:=Base system
-  DEPENDS:=@TARGET_ipq806x
   TITLE:=Core utilities for embedded Linux
   URL:=http://busybox.net/
   MENU:=1
 endef
 
-define Package/dnibusybox/description
+define Package/$(PKG_NAME)/description
  The Swiss Army Knife of embedded Linux.
  It slices, it dices, it makes Julian Fries.
 endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/busybox.git/* $(PKG_BUILD_DIR)/
+ifdef CONFIG_DNI_GREEN_DOWNLOAD
+	sed -i -e 's/select WGET/#select WGET/' $(PKG_BUILD_DIR)/archival/Config.in
+	#sed -i -e '/select DNIBUSYBOX_CONFIG_WGET/d' $(TOPDIR)/$(SOURCE)/config/archival/Config.in
+endif
 endef
 
-define Package/dnibusybox/config
-	menu "Configuration"
-		depends on PACKAGE_dnibusybox
-		source "$(SOURCE)/target-config.in"
-		source "$(SOURCE)/config/Config.in"
-	endmenu
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Configure
 	rm -f $(PKG_BUILD_DIR)/.configured*
@@ -71,7 +66,7 @@ define Build/Compile
 		all
 endef
 
-define Package/dnibusybox/install
+define Package/$(PKG_NAME)/install
 	find $(PKG_BUILD_DIR) -lname "*busybox" -exec rm \{\} \;
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		CC="$(TARGET_CC)" \
@@ -94,9 +89,6 @@ define Package/dnibusybox/install
 	$(INSTALL_DIR) $(1)/etc/bandcheck
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dni-examples/band-check $(1)/etc/bandcheck/band-check
 	-rm -rf $(1)/lib64
-
-	$(INSTALL_DIR) $(1)/local/usr/sbin/
-	$(INSTALL_BIN) ./files/busybox $(1)/local/usr/sbin/
 endef
 
-$(eval $(call BuildPackage,dnibusybox))
+$(eval $(call BuildPackage,$(PKG_NAME)))

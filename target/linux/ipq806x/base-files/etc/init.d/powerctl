@@ -36,8 +36,10 @@ ipq806x_power_auto() {
 	# Change the CPU load threshold above which frequency is up-scaled to
 	# turbo frequency,to 50%
 	echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
-	#echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_any_cpu_load
-	#echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_multi_core
+	if [ "x$DGC_PRODUCT_NAME" != "xD7800" ]; then
+		echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_any_cpu_load
+		echo 50 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold_multi_core
+	fi
 
 	# Change the CPU load threshold below which frequency is down-scaled to
 	# 10% (down_threshold = up_threshold - down_differential)
@@ -45,8 +47,10 @@ ipq806x_power_auto() {
 
 	# Set sync_freq and optimal_freq used for multicore scenarios to max
 	# freq
-	#echo "1000000" > /sys/devices/system/cpu/cpufreq/ondemand/optimal_freq
-	#echo "1000000" > /sys/devices/system/cpu/cpufreq/ondemand/sync_freq
+	if [ "x$DGC_PRODUCT_NAME" != "xD7800" ]; then
+		echo "1000000" > /sys/devices/system/cpu/cpufreq/ondemand/optimal_freq
+		echo "1000000" > /sys/devices/system/cpu/cpufreq/ondemand/sync_freq
+	fi
 }
 
 # ipq806x_power_turbo()

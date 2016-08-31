@@ -33,6 +33,8 @@ var wan_mtu_now='<% wan_mtu() %>';
 var wanproto_type="pptp";
 var pptp_sub_flag=russian_ppp_flag;/* for bug 24830, make pptp_sub_flag=russian_ppp_flag, so it can be control to display or not */
 var pptp_empty=<% cfg_get_length("wan_pptp_password") %>;
+var readycloud_enable = "<% cfg_get("readycloud_enable") %>";
+var upnp_enableMedia = "<% cfg_get("upnp_enableMedia") %>";
 
 if (pptp_get_this_mac == "")
 	pptp_get_this_mac="<% wan_mac() %>";
@@ -83,12 +85,12 @@ function loadvalue()
 		}
 		else 
 		{
-			form.pptp_passwd.outerHTML = '<input type="text" name="pptp_passwd" maxlength="50" size="16" onFocus="this.select();change_pptp_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
+			form.pptp_passwd.outerHTML = '<input type="text" name="pptp_passwd" id="pptp_passwd" maxlength="50" size="16" onFocus="this.select();change_pptp_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
 		}
 	}
 	else if( get_browser() == "IE" )
 	{
-		form.pptp_passwd.outerHTML = '<input type="password" name="pptp_passwd" maxlength="50" size="16" style="width: 131px" onFocus="change_pptp_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
+		form.pptp_passwd.outerHTML = '<input type="password" name="pptp_passwd" id="pptp_passwd" maxlength="50" size="16" style="width: 131px" onFocus="change_pptp_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
 	}
 	init_passwd();
 	form.pptp_dod.value="<% cfg_get("wan_pptp_demand") %>";
@@ -232,9 +234,9 @@ function click_jump()
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="submit" name="Test" value="$test_mark" onClick="return check_pptp(document.forms[0],1)">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'BAS_pptp.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_pptp(document.forms[0],0)"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Test" id="test" value="$test_mark" onClick="return check_pptp(document.forms[0],1)">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'BAS_pptp.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_pptp(document.forms[0],0)"></TD></TR>');
 else
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="submit" name="Test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Test" id="test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </TABLE>
 
@@ -246,12 +248,12 @@ else
 </TD></TR>
 <TR>
         <TD nowrap>
-        <input onclick=''  type="radio" name="loginreq" value="pppoe" checked="true">$yes_mark
+        <input onclick=''  type="radio" name="loginreq" id="loginreq" value="pppoe" checked="true">$yes_mark
         </TD>
 </TR>
 <TR>
         <TD nowrap>
-        <input onclick='click_jump()' type="radio" name="loginreq" value="dhcp">$no_mark
+        <input onclick='click_jump()' type="radio" name="loginreq" id="no_loginreq" value="dhcp">$no_mark
         </TD>
 </TR>
 $bluebar
@@ -264,7 +266,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','isp')"><B>$basic_intserv_provider</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<select name="login_type" onChange="change_serv(document.forms[0])">
+	<select name="login_type" id="login_type" onChange="change_serv(document.forms[0])">
 		<option value="PPTP" selected>$basic_intserv_pptp</option>
 <script>
 	if(parent.parent.l2tp_flag == 1)
@@ -273,7 +275,7 @@ $bluebar
 	if(parent.parent.bigpond_flag == 1)
 		document.write('<option value="Telstra Bigpond">$basic_intserv_bpa</option>');
 </script>
-		<option value="Other">$basic_intserv_pppoe</option>
+		<option value="PPPoE">$basic_intserv_pppoe</option>
 <script>
         if( ((parent.jp_multiPPPoE == 1 || gui_region == "Japanese") && (netgear_region == "" || netgear_region.toUpperCase() == "WW")) || netgear_region.toUpperCase() == "JP")
                 document.write('<option value=\"multiPPPoE\">$basic_intserv_mulpppoe</OPTION>');
@@ -288,7 +290,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','login')"><B>$basic_pppoe_login</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" name="pptp_username" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pptp_username") %>">
+	<input type="text" name="pptp_username" id="pptp_username" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pptp_username") %>">
 	</TD>
 </TR>
 <TR>
@@ -296,13 +298,13 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','password')"><B>$basic_pppoe_passwd</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="password" name="pptp_passwd" maxlength="50" size="16" onFocus="change_pptp_password(this);" onKeyPress="return getkey('ssid', event)">
+	<input type="password" name="pptp_passwd" id="pptp_passwd" maxlength="50" size="16" onFocus="change_pptp_password(this);" onKeyPress="return getkey('ssid', event)">
 	</TD>
 </TR>
 <TR> 
 	<TD><A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','conn_mode')"><B>$basic_int_connection_mode</B></A></TD> 
 	<TD align=right>
-	<select name="pptp_dod" onchange="show_idleout(document.forms[0],this.value)"> 
+	<select name="pptp_dod" id="pptp_dod" onchange="show_idleout(document.forms[0],this.value)"> 
 		<option value="0">$basic_mode_always</option>
 		<option value="1">$basic_mode_dial</option>
 		<option value="2">$basic_mode_manual</option>
@@ -314,7 +316,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','idletime')">$basic_pppoe_idle</A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" name="pptp_idletime" maxLength="5" size="16" value="<% idle_time("wan_pptp_idle_time") %>" onKeyPress="return getkey('num', event)">
+	<input type="text" name="pptp_idletime" id="pptp_idletime" maxLength="5" size="16" value="<% idle_time("wan_pptp_idle_time") %>" onKeyPress="return getkey('num', event)">
 	</TD>
 </TR>
 <TR id=auto_conn_play style="display:none">
@@ -378,10 +380,10 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','myip')"><B>$basic_pptp_myip</B></A>
 	</TD>
 	<TD nowrap align=right><!--bug 22411:when manually input IP,don't click the mouse,the subnet mask can be used -->
-	<input type="text" name="myip_1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
-	<input type="text" name="myip_2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
-	<input type="text" name="myip_3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
-	<input type="text" name="myip_4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >
+	<input type="text" name="myip_1" id="myip1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
+	<input type="text" name="myip_2" id="myip2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
+	<input type="text" name="myip_3" id="myip3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >.
+	<input type="text" name="myip_4" id="myip4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onChange="myip_update('bas');" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);myip_update('bas');" >
 	<input type="hidden" name="WANAssign" value="1">
 	</TD>
 </TR>
@@ -400,7 +402,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','serverip')"><B>$basic_pptp_servip</B></A>
 	</TD>
 	<TD nowrap align=right><!--bug 20279-->
-	<input type="text" size="33" name="pptp_serv_ip" maxlength="255" onFocus="this.select();"  onKeyPress="return getkey('ddns_hostname', event)" value="<% cfg_sed_xss("wan_pptp_server_ip") %>" onkeyup="pptp_servip_update();" onblur="pptp_servip_update();">
+	<input type="text" size="33" name="pptp_serv_ip" id="pptp_serv_ip" maxlength="255" onFocus="this.select();"  onKeyPress="return getkey('ddns_hostname', event)" value="<% cfg_sed_xss("wan_pptp_server_ip") %>" onkeyup="pptp_servip_update();" onblur="pptp_servip_update();">
 	</TD>
 </TR>
 <TR>
@@ -408,10 +410,10 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','gateway')"><B>$basic_int_gateway</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" name="mygw_1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="mygw_2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="mygw_3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="mygw_4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="mygw_1" id="mygw1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="mygw_2" id="mygw2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="mygw_3" id="mygw3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="mygw_4" id="mygw4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	<input type="hidden" name="Gateway" value="">
 	</TD>
 </TR>
@@ -420,7 +422,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pptp','id')"><B>$basic_pptp_connection_id</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" size="20" maxlength="63" name="pptp_conn_id" onFocus="this.select();" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pptp_connection_id") %>">
+	<input type="text" size="20" maxlength="63" name="pptp_conn_id" id="pptp_conn_id" onFocus="this.select();" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pptp_connection_id") %>">
 	</TD>
 </TR>
 $bluebar
@@ -431,30 +433,30 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
+	<input type="radio" name="DNSAssign" id="dns_assign_auto" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
+	<input type="radio" name="DNSAssign" id="dns_assign_static" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_primary_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="DAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="DAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="DAddr1" id="primary_dns_address1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="DAddr2" id="primary_dns_address2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr3" id="primary_dns_address3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr4" id="primary_dns_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_second_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="PDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="PDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="PDAddr1" id="second_dns_address1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="PDAddr2" id="second_dns_address2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr3" id="second_dns_address3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr4" id="second_dns_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 $bluebar
@@ -465,20 +467,20 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="MACAssign" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
+	<input type="radio" name="MACAssign" id="mac_assign_default" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="MACAssign" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
+	<input type="radio" name="MACAssign" id="mac_assign_computer" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>
-	<input type="radio" name="MACAssign" value="2" onClick="setMAC(document.forms[0], pptp_get_this_mac)">$basic_int_this_mac
+	<input type="radio" name="MACAssign" id="mac_assign_define" value="2" onClick="setMAC(document.forms[0], pptp_get_this_mac)">$basic_int_this_mac
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" value="" name="Spoofmac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+	<input type="text" value="" name="Spoofmac" id="spoof_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
 	</TD>
 </TR>
 $bluebar

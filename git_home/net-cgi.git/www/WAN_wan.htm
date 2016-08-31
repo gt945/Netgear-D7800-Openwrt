@@ -7,9 +7,9 @@
 var dsl_wan_preference='<% cfg_get("dsl_wan_preference") %>';	
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'WAN_wan.htm\';"> &nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return checkwan(document.forms[0]);"></td></tr>');
+	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'WAN_wan.htm\';"> &nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return checkwan(document.forms[0]);"></td></tr>');
 else
-	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="reset" name=="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></td></tr>');
+	document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name=="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></td></tr>');
 </script>
 </table>
 </div>
@@ -38,6 +38,8 @@ var lan_mask="<% cfg_get("lan_netmask") %>";
 var endis_sipalg="<% cfg_get("wan_endis_sipalg") %>";
 var have_igmp= (top.igmp_flag == 1)?1:0;
 var endis_igmp="<% cfg_get("wan_endis_igmp") %>";
+var have_bt_igmp= (top.bt_igmp_flag == 1)?1:0;
+var endis_bt_igmp="<% cfg_get("enable_bt_igmp") %>";
 var bri_lan_tag1="<% cfg_get("wan_bri_lan1") %>";//bug 24622:add a new function "IPTV Port Support"
 var bri_lan_tag2="<% cfg_get("wan_bri_lan2") %>";
 var bri_lan_tag3="<% cfg_get("wan_bri_lan3") %>";
@@ -55,6 +57,7 @@ var get_endis_guestNet="<% cfg_get("wlg1_endis_guestNet") %>";
 var get_endis_guestNet_a="<% cfg_get("wla1_endis_guestNet") %>";
 var wps_alert="<% cfg_get("wps_alert") %>";
 <% cfg_set("wps_alert", "0") %>
+var have_ethernet_wan_flag = "<% get_ethernet_wan_flag() %>";
 
 function loadvalue()
 {
@@ -75,12 +78,15 @@ function loadvalue()
 	change_web_format();
     
 	if(top.dsl_enable_flag == 1){
+	    if(have_ethernet_wan_flag != "0"){
 		document.getElementById("wan_select").style.display="";
 		document.getElementById("wan_line").style.display="";
+	    }
 		if (dsl_wan_preference == '')
 			dsl_wan_preference = '1';
 		cf.wan_preference.value = dsl_wan_preference;
 	}
+
 	if (bri_lan_tag1 == '1')
 		cf.bri_lan1.checked = true;
 	else
@@ -162,12 +168,22 @@ function loadvalue()
 
 	if( have_igmp == 1 )
 	{
-		if(endis_igmp == '0')
+		if(endis_igmp == '0'){
 			cf.disable_igmp.checked = true;
-		else
+			cf.bt_igmp.disabled = true;
+		}
+		else{
 			cf.disable_igmp.checked = false;
-	}
-
+			cf.bt_igmp.disabled = false;
+		}
+		if(have_bt_igmp == 1)
+		{
+			if(endis_bt_igmp == '1')
+				cf.bt_igmp.checked = true;
+			else
+				cf.bt_igmp.checked = false;
+		}
+	}	
 	if( show_vpn == 1 )
 	{
 		if(enable_ipsec == '1')
@@ -199,7 +215,11 @@ function change_web_format()
         if( have_igmp == 1 )
         {
                 document.getElementById("show_igmp").style.display="";
-                document.getElementById("igmp_bluebar").style.display="";
+		document.getElementById("igmp_bluebar").style.display="";
+		if(gui_region == "English" && netgear_region.toUpperCase() == "WW" && have_bt_igmp == 1)
+		{ 	
+			document.getElementById("show_bt_igmp").style.display="";
+		}
         }
 	if( have_bridge_iptv == 1 )
 	{
@@ -236,10 +256,10 @@ function change_web_format()
 <input type="hidden" name="hid_iptv_show_tag">
 <input type="hidden" name="hid_brig_guest_ssid1">
 <input type="hidden" name="hid_brig_guest_ssid2">
-
+<input type="hidden" name="bt_igmp_value" value="0">
 <tr id="wan_select" style="display:none"><td nowrap width="50%">$dsl_wan_preference</TD>
  <td width="50%">
- <SELECT name="wan_preference" size="1">
+ <SELECT name="wan_preference" id="wan_preference" size="1">
 	 <option value="1">$dsl_wan_dsl</option>
 	 <option value="2">$dsl_wan_ther</option>
  </SELECT></TD>
@@ -247,36 +267,47 @@ function change_web_format()
 <TR id="wan_line" style="display:none"><TD colspan=2><img src=/liteblue.gif width=100% height=12></TD></TR>
 <tr>
 	<td nowrap colspan=2>
-	<input type="checkbox" name="disable_spi" value="disable_spi">
+	<input type="checkbox" name="disable_spi" id="disable_spi" value="disable_spi">
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','spi')"><b>$adva_wansetup_spi</b></a>
 	</td>
 </tr>
 $bluebar
 <tr>
 	<td nowrap>
-	<input type="checkbox" name="dmz_enable" value="dmz_enable" onclick="checkdmzip();">
+	<input type="checkbox" name="dmz_enable" id="dmz_enable" value="dmz_enable" onclick="checkdmzip();">
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','dmz')"><b>$adva_wansetup_dmz</b></a>
 	</td>
 	<td nowrap>
-	<input type="text" name="dmzip1" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
-	<input type="text" name="dmzip2" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
-	<input type="text" name="dmzip3" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
-	<input type="text" name="dmzip4" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">	
+	<input type="text" name="dmzip1" id="dmz_ipaddress1" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
+	<input type="text" name="dmzip2" id="dmz_ipaddress2" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
+	<input type="text" name="dmzip3" id="dmz_ipaddress3" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">.
+	<input type="text" name="dmzip4" id="dmz_ipaddress4" size="4" maxlength="3" autocomplete="off" onFocus="this.select();" onKeyPress="return getkey('num',event)" onkeydown="keydown(event,this);" onkeyup="keyup(event,this);">	
 	</td>
 </tr>
 $bluebar
 <tr>
 	<td nowrap colspan=2 id="rspToPingString">
-	<input type="checkbox" name="rspToPing" value="rspToPing">
+	<input type="checkbox" name="rspToPing" id="response_ping" value="rspToPing">
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','ping')"><b>$adva_wansetup_rspToPing</b></a>
 	</td>
 </tr>
 $bluebar
 <tr id=show_igmp style="display:none;">
         <td nowrap colspan=2>
-        <input type="checkbox" name="disable_igmp">
+<script>
+	if(have_bt_igmp == 1)
+		document.write('<input type="checkbox" name="disable_igmp" id="disable_igmp" onClick="change_bt_igmp_status();">');
+	else
+		document.write('<input type="checkbox" name="disable_igmp" id="disable_igmp">');
+</script>
         <a tabindex=-1 href="javascript:loadhelp('_WAN_wan','igmp')"><b>$disable_igmp_proxying</b></a>
         </td>
+</tr>
+<tr id="show_bt_igmp" style="display:none;">
+	<td nowrap colspan=2>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="bt_igmp">
+	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','igmp')"><b>$enable_bt_igmp_proxying</b></a>
+	</td>
 </tr>
 <tr id=igmp_bluebar style="display:none;"><td colspan=2><img src=/liteblue.gif width=100% height=12></td></tr>
 <tr>
@@ -284,7 +315,7 @@ $bluebar
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','mtu')"><b>$adva_wansetup_mtu</b></a>$adva_wansetup_byte
 	</td>
 	<td nowrap>
-	<input type="text" name="wan_mtu" size="8" maxlength="4" onKeyPress="return getkey('num',event)">
+	<input type="text" name="wan_mtu" id="wan_mtu" size="8" maxlength="4" onKeyPress="return getkey('num',event)">
 	</td>
 </tr>
 $bluebar
@@ -293,13 +324,13 @@ $bluebar
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','nat')"><b>$adva_wansetup_nat</b></a>
 	</td>
 	<td nowrap>
-	<input type="radio" name="NatInboundFiltering" value="Secured">$adva_wansetup_nat_secured&nbsp;
-	<input type="radio" name="NatInboundFiltering" value="Open">$adva_wansetup_nat_open
+	<input type="radio" name="NatInboundFiltering" id="nat_filtering_secured" value="Secured">$adva_wansetup_nat_secured&nbsp;
+	<input type="radio" name="NatInboundFiltering" id="nat_filtering_open" value="Open">$adva_wansetup_nat_open
 	</td>
 </tr>
 <tr>
 	<td nowrap>
-	<input type="checkbox" name="disable_sipalg" value="isable_sipalg">
+	<input type="checkbox" name="disable_sipalg" id="disable_sip" value="disable_sipalg">
 	<a tabindex=-1 href="javascript:loadhelp('_WAN_wan','alg')"><b>$adva_wansetup_sipalg</b></a>
 	</td>
 </tr>

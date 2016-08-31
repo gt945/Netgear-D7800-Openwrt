@@ -5,13 +5,7 @@ PKG_NAME:=kmod-dni-qos
 PKG_VERSION:=
 PKG_RELEASE:=
 
-PKG_SOURCE:=
-PKG_SOURCE_URL:=
-PKG_MD5SUM:=
-PKG_CAT:=zcat
-
-PKG_GIT_TREEISH=qos-3400-dni1
-PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/kmod-dni-qos
+PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -22,11 +16,14 @@ define KernelPackage/dni-qos
   FILES:= \
 	$(PKG_BUILD_DIR)/dni-qos.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,39,dni-qos)
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/kmod-dni-qos.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 endef

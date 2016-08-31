@@ -128,10 +128,12 @@ extern int reconfig_phase;
 /* search option for dhcp6_find_listval() */
 #define MATCHLIST_PREFIXLEN 0x1
 
+#ifdef KERNEL_NO_IN6_PKTINFO
 struct in6_pktinfo {
         struct in6_addr ipi6_addr;
         int             ipi6_ifindex;
 };
+#endif
 
 /* common.c */
 typedef enum { IFADDRCONF_ADD, IFADDRCONF_REMOVE } ifaddrconf_cmd_t;

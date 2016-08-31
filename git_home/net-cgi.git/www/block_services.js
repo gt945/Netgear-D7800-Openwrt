@@ -314,7 +314,7 @@ function check_block_services_add(cf,flag)
 			}
 		}
 	}
-
+	cf.submit();
 	return true;
 }
 

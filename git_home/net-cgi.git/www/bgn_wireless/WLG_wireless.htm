@@ -6,8 +6,8 @@
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
         <TD nowrap colspan=2 align=center>
-	<input class="cancel_bt" type='button' name="Cancel" value='$cancel_mark' onClick='location.href="WLG_wireless.htm";'>&nbsp;&nbsp;
-        <input class="apply_bt" type='submit' name="Apply" value='$apply_mark' onclick='return check_wlan();'>
+	<input class="cancel_bt" type='button' name="Cancel" id="cancel" value='$cancel_mark' onClick='location.href="WLG_wireless.htm";'>&nbsp;&nbsp;
+        <input class="apply_bt" type='button' name="Apply" id="apply" value='$apply_mark' onclick='return check_wlan();'>
         </TD>
 </TR>
 </TABLE>
@@ -85,12 +85,12 @@ var FinishChannel = new Array(11,13,13,13,13,13,13,13,11,11,13,13,13); //middle 
 </TR>
 <TR id=ssid_bc_bgn>
 	<TD nowrap>
-	<input type="checkbox" name="ssid_bc" value="1">$adva_wlan_ssid_broadcast
+	<input type="checkbox" name="ssid_bc" id="enable_ssid_bc" value="1">$adva_wlan_ssid_broadcast
 	</TD>
 </TR>
 <TR> 
 	<TD nowrap width=35%>$wlan_mark_ssid:</TD>
-	<TD nowrap><input type="text" id="ESSID" name="ssid" value="<% cfg_get_ssid_value("wl_ssid") %>" size="20" maxlength="32"></TD>
+	<TD nowrap><input type="text" name="ssid" id="ssid" value="<% cfg_get_ssid_value("wl_ssid") %>" size="20" maxlength="32"></TD>
 </TR>
 <tr style="display:none">
 	<td><input type="text" name="wla1ssid" value="<% cfg_get_ssid_value("wla1_ssid") %>" size="20" maxlength="32"></td>
@@ -99,9 +99,9 @@ var FinishChannel = new Array(11,13,13,13,13,13,13,13,11,11,13,13,13); //middle 
 <script>
 	document.write('<TR> <TD nowrap width=35%>$wlan_mark_reg:</TD><TD nowrap>');
 	if(netgear_region.toUpperCase() == "NA" || netgear_region.toUpperCase() == "JP")
-		document.write('<select name="WRegion" size="1" onchange="setChannel();" disabled="disabled">');
+		document.write('<select name="WRegion" id="wireless_region" size="1" onchange="setChannel();" disabled="disabled">');
 	else
-		document.write('<select name="WRegion" size="1" onchange="setChannel();">');
+		document.write('<select name="WRegion" id="wireless_region" size="1" onchange="setChannel();">');
 		document.write('<option value=0>$coun_af</option>');
 		document.write('<option value=1>$coun_as</option>');
 		document.write('<option value=2>$coun_au</option>');
@@ -121,7 +121,7 @@ var FinishChannel = new Array(11,13,13,13,13,13,13,13,11,11,13,13,13); //middle 
 <TR> 
 	<TD nowrap width=35%>$wlan_mark_chan:</TD>
 	<TD nowrap>
-	<select name="w_channel" size="1">
+	<select name="w_channel" id="wireless_channel" size="1">
 		<option id="auto" selected>$auto_mark</option>
 		<option>01</option>
 		<option>02</option>
@@ -149,7 +149,7 @@ var FinishChannel = new Array(11,13,13,13,13,13,13,13,11,11,13,13,13); //middle 
 <TR> 
 	<TD nowrap width=35%>$wlan_mark_mode:</TD>
 	<TD nowrap id="opmode_all">
-	<select name="opmode" size="1" onchange="wl_sectype_change()">
+	<select name="opmode" id="opmode" size="1" onchange="wl_sectype_change()">
 		<option value="1"><script>document.write(wlan_mode_1);</script></option>
 		<option value="2"><script>document.write(wlan_mode_2);</script></option>
 		<option value="3"><script>document.write(wlan_mode_3);</script></option>
@@ -170,32 +170,32 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="Disable" onClick=setSecurity(1) AccessKey="N">$sec_off
+	<input type="radio" name="security_type" id="security_disable" value="Disable" onClick=setSecurity(1) AccessKey="N">$sec_off
 	<TD>
 </TR>
 <TR id="wep_54">
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WEP" onClick=setSecurity(2)>$sec_wep
+	<input type="radio" name="security_type" id="security_wep" value="WEP" onClick=setSecurity(2)>$sec_wep
 	</TD>
 </TR>
 <TR id="wpa_psk_54">
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA-PSK" onClick=setSecurity(3)>$sec_wpa
+	<input type="radio" name="security_type" id="security_wpa" value="WPA-PSK" onClick=setSecurity(3)>$sec_wpa
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
+	<input type="radio" name="security_type" id="security_wpa2" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
+	<input type="radio" name="security_type" id="security_auto" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="security_type" value="WPA-ENTER" onClick=setSecurity(6)>$sec_wpa_enterprise
+	<input type="radio" name="security_type" id="security_wpa_enter" value="WPA-Enterprise" onClick=setSecurity(6)>$sec_wpa_enterprise
 	</TD>
 </TR>
 </TABLE>
@@ -221,7 +221,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_auth</TD>
 		<TD nowrap>
-			<select NAME="authAlgm" size="1">
+			<select NAME="authAlgm" id="wep_auth_type" size="1">
 				<option value=1 <% select_check("wl_auth", "1") %> >$sec_share</option>
 				<option value=2 <% select_check("wl_auth", "2") %> >$sec_auto</option>
 			</select>
@@ -230,7 +230,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_enc</TD>
 		<TD nowrap> 
-			<select NAME="wepenc" size="1" onChange="changekeylen(document.forms[0]);">
+			<select NAME="wepenc" id="wep_enc_strength" size="1" onChange="changekeylen(document.forms[0]);">
 				<option value=5  <% select_check("wl_key_length", "5") %> >$sec_64</option>
 				<option value=13 <% select_check("wl_key_length", "13") %> >$sec_128</option>
 			</select>
@@ -247,33 +247,33 @@ $bluebar
 		<TABLE>
 		<TR>
 			<TD nowrap>$sec_key1
-			<input type=radio NAME="wep_key_no" checked value="1">
+			<input type=radio NAME="wep_key_no" id="wep_key_no1" checked value="1">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY1" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY1" ID="key1" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key2
-			<input type=radio NAME="wep_key_no" value="2">
+			<input type=radio NAME="wep_key_no" id="wep_key_no2" value="2">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY2" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY2" ID="key2" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key3
-			<input type=radio NAME="wep_key_no" value="3">
+			<input type=radio NAME="wep_key_no" id="wep_key_no3" value="3">
 			</TD>
-			<TD nowrap><input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY3" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<TD nowrap><input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY3" ID="key3" VALUE="" OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		<TR>
 			<TD nowrap>$sec_key4
-			<input type=radio NAME="wep_key_no" value="4">
+			<input type=radio NAME="wep_key_no" id="wep_key_no4" value="4">
 			</TD>
 			<TD nowrap>
-			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY4" VALUE=""  OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
+			<input TYPE="TEXT" SIZE="document.forms[0].wepenc.value*2+8" autocomplete="off" MAXLENGTH="34" NAME="KEY4" ID="key4" VALUE=""  OnFocus="this.maxLength=document.forms[0].wepenc.value*2;this.size=document.forms[0].wepenc.value*2+8;">
 			</TD>
 		</TR>
 		</TABLE>
@@ -293,7 +293,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_phr :</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" size="20" autocomplete="off" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wl_wpa1_psk") %>" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1">
+		<input type="text" size="20" autocomplete="off" maxlength="64" name="passphrase" id="passphrase" value="<% cfg_sed_passphrase("wl_wpa1_psk") %>" onFocus="document.forms[0].wpa1_press_flag.value=1" onKeyPress="document.forms[0].wpa1_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>
 	</TR>
@@ -313,7 +313,7 @@ $bluebar
 		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
 		</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" autocomplete="off" maxlength="64" size="20" name="passphrase" value="<% cfg_sed_passphrase("wl_wpa2_psk") %>" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1">
+		<input type="text" autocomplete="off" maxlength="64" size="20" name="passphrase" id="passphrase" value="<% cfg_sed_passphrase("wl_wpa2_psk") %>" onFocus="document.forms[0].wpa2_press_flag.value=1" onKeyPress="document.forms[0].wpa2_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>
 	</TR>
@@ -333,7 +333,7 @@ $bluebar
 		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
 		</TD>
 		<TD nowrap>
-		<input type="text" id="textWpaPwdPhrase" autocomplete="off" size="20" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wl_wpas_psk") %>" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1">
+		<input type="text" autocomplete="off" size="20" maxlength="64" name="passphrase" id="passphrase" value="<% cfg_sed_passphrase("wl_wpas_psk") %>" onFocus="document.forms[0].wpas_press_flag.value=1" onKeyPress="document.forms[0].wpas_press_flag.value=1">
 		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
 		</TD>	  
 	</TR>
@@ -351,7 +351,7 @@ $bluebar
 	<TR>
 		<TD nowrap>$sec_wpa_mode</TD>
 		<TD>
-		<select name="wpae_mode" size='1' onchange="wpaemode()">
+		<select name="wpae_mode" id="wpae_mode" size='1' onchange="wpaemode()">
 			<option value='WPAE-TKIP'>WPA [TKIP]</option>
 			<option value='WPAE-AES'>WPA2 [AES]</option>
 			<option value='WPAE-TKIPAES'>WPA [TKIP] + WPA2 [AES]</option>
@@ -361,19 +361,19 @@ $bluebar
 	<TR>
 		<TD nowrap>$radius_serverIP</TD>
         <TD nowrap>
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr1" id="radius_ipaddress1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr2" id="radius_ipaddress2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr3" id="radius_ipaddress3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" size="3" autocomplete="off" maxlength="3" name="radiusIPAddr4" id="radius_ipaddress4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
         </TD>  
 	</TR>
 	<TR>
 		<TD nowrap>$radius_serverPort</TD>	
-		<TD nowrap><input type="text" id="textWpaeRadiusPort" size="20" maxlength="5" name="textWpaeRadiusPort" value="1812" onKeyPress="return getkey('num',event);"></TD>	
+		<TD nowrap><input type="text" id="radius_port" size="20" maxlength="5" name="textWpaeRadiusPort" value="1812" onKeyPress="return getkey('num',event);"></TD>	
 	</TR>	
 	<TR>
 		<TD nowrap>$radius_serverSecret</TD>	
-		<TD nowrap><input type="text" id="textWpaeRadiusSecret" autocomplete="off" size="20" maxlength="128" value="<% cfg_get_ssid_value("wl_radiusSecret") %>" name="textWpaeRadiusSecret" onKeyPress="return getkey('ssid', event)"></TD>	
+		<TD nowrap><input type="text" id="radius_secret" autocomplete="off" size="20" maxlength="128" value="<% cfg_get_ssid_value("wl_radiusSecret") %>" name="textWpaeRadiusSecret" onKeyPress="return getkey('ssid', event)"></TD>	
 	</TR>	
 	</TABLE>
 </div>
@@ -407,8 +407,8 @@ function setSecurity(num)
 
 function loadvalue()
 {
-	top.enabled_wds=<% wds_enable() %>;
-	top.enabled_wps=<% wps_menu() %>;
+	top.enabled_wds="<% wds_enable() %>";
+	top.enabled_wps="<% wps_menu() %>";
 	/* bug23114: after set wireless, the wps button in menu maybe need change to grey, so , refresh the menu color */
 	if( top.location.href.indexOf("adv_index.htm") != -1 )
 		top.menu_color_change('wireless');

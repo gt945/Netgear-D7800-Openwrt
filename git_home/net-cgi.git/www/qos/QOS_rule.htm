@@ -1,14 +1,14 @@
 <% http_header("style/form.css", "/funcs.js", "/qos.js") %>
 <% noload_header("_qos", "QOS_main.htm","qos_editnum") %>
-<div class="page_title">$qos_head</div>
+<div class="page_title" id="qos_priority_table">$qos_head</div>
 <div class="fix_button">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="qosMain();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="apply" value="$apply_mark" onClick="qosMain();return false;"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="qosMain();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" id="apply" value="$apply_mark" onClick="qosMain();return false;"></TD></TR>');
 else
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="apply" value="$apply_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 
 </script>
 </TABLE>
@@ -51,7 +51,7 @@ if( qos_array_num > 0 )
 			document.write("<TR class=\"odd_line\">");
 		else
 			document.write("<TR class=\"even_line\">");
-		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" value="'+j+'"></TD><TD nowrap align=center>'+(j+1)+'</TD><TD nowrap align=center>'+change_name_online(each_info[0])+'</TD>');
+		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="qos_select'+(j+1)+'" value="'+j+'"></TD><TD nowrap align=center>'+(j+1)+'</TD><TD nowrap align=center>'+change_name_online(each_info[0])+'</TD>');
 		
 		if(each_info[3]=='0')
 			document.write('<TD nowrap align=center>$qos_highest</TD>');
@@ -92,15 +92,15 @@ if( qos_array_num > 0 )
 $bluebar
 <TR>
 	<TD  align=center nowrap>
-	<input class="edit_bt" type="button" name="edit_qos" value="$edit_mark" onClick="check_qoslist_editnum(document.forms[0]);">&nbsp;
+	<input class="edit_bt" type="button" name="edit_qos" id="edit_qos" value="$edit_mark" onClick="check_qoslist_editnum(document.forms[0]);">&nbsp;
 	<script>
 	if(master == "admin")
-		document.write('<input class="delete_bt" type="button" name="delete_qos" value="$delete_mark" onClick="check_qoslist_delnum(document.forms[0]);">&nbsp;&nbsp;<input class="delete_bt" type="button" name="delete_all_qos" value="$deleteall_mark" onClick="check_qoslist_delall(document.forms[0]);"><br><br>');
+		document.write('<input class="delete_bt" type="button" name="delete_qos" id="delete_qos" value="$delete_mark" onClick="check_qoslist_delnum(document.forms[0]);">&nbsp;&nbsp;<input class="delete_bt" type="button" name="delete_all_qos" id="delete_all_qos" value="$deleteall_mark" onClick="check_qoslist_delall(document.forms[0]);"><br><br>');
 	else
-		document.write('<input class="delete1_bt" type="button" name="delete_qos" value="$delete_mark" disabled>&nbsp;&nbsp;<input class="delete1_bt" type="button" name="delete_all_qos" value="$deleteall_mark" disabled><br><br>');
+		document.write('<input class="delete1_bt" type="button" name="delete_qos" id="delete_qos" value="$delete_mark" disabled>&nbsp;&nbsp;<input class="delete1_bt" type="button" name="delete_all_qos" id="delete_all_qos" value="$deleteall_mark" disabled><br><br>');
 		
 	</script>
-	<input class="long_add_bt" type="button" name="add_qos" value="$qos_add_prioritye" onClick="location.href='QOS_adva_add.htm';">
+	<input class="long_add_bt" type="button" name="add_qos" id="add_qos" value="$qos_add_prioritye" onClick="location.href='QOS_adva_add.htm';">
 	</TD>
 </TR>
 $bluebar

@@ -5,8 +5,7 @@ ECHO="echo"
 ERR_SUCCESS=0
 ERR_NO_FILE=2
 ERR_IFCONFIG=3
-LocalIf="eth1"
-LanIf="br0"
+LanIf=`$CONFIG get lan_ifname`
 
 TunnelName="6rd"
 # make ipv6 address to uppercase && rm :

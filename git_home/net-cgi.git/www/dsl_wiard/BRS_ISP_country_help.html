@@ -13,6 +13,34 @@
 <body onLoad="initPage()">
 <% form_submit("apply", "BRS_log03_genieHelp_yes.html", "wizard_isp")  %>
 <% save_timestamp("wizard_isp", "hijack_toBasic")%>
+<script>
+function initPage()
+{
+	var dsl_wan_preference = "<% cfg_get("dsl_wan_preference") %>"
+	if( dsl_wan_preference == "2"){
+		var hr_list = document.getElementsByTagName("hr");
+		for(var i = 0; i < hr_list.length; i++)
+			hr_list[i].style.display = "none";
+		document.getElementById("dsl_table").style.display="none";
+	}
+	else{
+		cf=document.forms[0];
+		cf.country.value = curr_country;
+		setisp();
+	}
+	var btns_container_div = document.getElementById("btnsContainer_div");
+	if( master == "admin" )
+	{
+		btns_container_div.onclick = function() 
+		{
+			return click_next();
+		}
+	}
+
+	//show firmware version
+    showFirmVersion("none");
+}
+</script>
 <input type="hidden" name="hidden_wiard_select_country" value="">
 <input type="hidden" name="hidden_wiard_select_isp" value="">
 
@@ -20,7 +48,7 @@
 <div id="choices_div" class="wizard_words_div">
 <h1><script>document.write(bh_config_net_connection)</script></h1>
 <p><script>document.write(bh_connection_further_action)</script></p>
-<p><hr><table style="width:100%">
+<p><hr ><table id="dsl_table" style="width:100%">
 <tr><td colspan=2><b><script>document.write(bh_country_select)</script></b></td></tr>
 <tr><td  style="width:50%" ><script>document.write(bh_country)</script></td>
 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -31,7 +59,7 @@
 <option  value="Brazil"><script>document.write(bh_Brazil)</script></option>
 <option  value="Canada"><script>document.write(bh_Canada)</script></option>
 <option  value="China"><script>document.write(bh_China)</script></option>
-<option  value="Czech Republic"><script>document.write(bh_Czech)</script></option>
+<option  value="Czech_Republic"><script>document.write(bh_Czech)</script></option>
 <option  value="Denmark"><script>document.write(bh_Denmark)</script></option>
 <option  value="Finland"><script>document.write(bh_Finland)</script></option>
 <option  value="France"><script>document.write(bh_France)</script></option>
@@ -44,12 +72,12 @@
 <option  value="Italy"><script>document.write(bh_Italy)</script></option>
 <option  value="Malaysia"><script>document.write(bh_Malaysia)</script></option>
 <option  value="Netherlands"><script>document.write(bh_Netherlands)</script></option>
-<option  value="New Zealand"><script>document.write(bh_New_Zealand)</script></option>
+<option  value="New_Zealand"><script>document.write(bh_New_Zealand)</script></option>
 <option  value="Philippine"><script>document.write(bh_Philippine)</script></option>
 <option  value="Poland"><script>document.write(bh_Poland)</script></option>
 <option  value="Portugal"><script>document.write(bh_Portugal)</script></option>
 <option  value="Russia"><script>document.write(bh_Russia)</script></option>
-<option  value="Saudi Arabia"><script>document.write(bh_Saudi_Arabia)</script></option>
+<option  value="Saudi_Arabia"><script>document.write(bh_Saudi_Arabia)</script></option>
 <option  value="Singapore"><script>document.write(bh_Singapore)</script></option>
 <option  value="Spain"><script>document.write(bh_Spain)</script></option>
 <option  value="Sweden"><script>document.write(bh_Sweden)</script></option>
@@ -154,7 +182,7 @@ var ISP_ALL =
 	new Array ("Monzoon Networks","Monzoon Networks","Sunrise","Sunrise","Swisscom","Swisscom","Telfort","Telfort","Swisscom All IP(with phone)","Swisscom All IP(with phone)","Other","$dsl_other"),
 	new Array ("3BB","3BB","CAT-Telecom","CAT-Telecom","CS-Loxinfo","CS-Loxinfo","Samart","Samart","TOT","TOT","TRUE Internet","TRUE Internet","TT&T","TT&T","Other","$dsl_other"),
 	new Array ("Other","$dsl_other"),
-	new Array ("BT","BT","Media","Media","EE(Orange)","EE(Orange)","PlusNet","PlusNet","Sky","Sky","TalkTalk","TalkTalk","Virgin","Virgin","ZEN Internet","ZEN Internet","Other","$dsl_other"),
+	new Array ("BT","BT","Media","Media","EE(Orange)","EE(Orange)","PlusNet","PlusNet","Sky","Sky","TalkTalk","TalkTalk","Virgin","Virgin","Other","$dsl_other"),
 	new Array ("AT&T","AT&T","Bigriver.net DSL","Bigriver.net DSL","CenturyLink","CenturyLink","Earthlink","Earthlink","Frontier Communications","Frontier Communications","Qwest","Qwest","Rivercity Internet Group","Rivercity Internet Group","Verizon","Verizon","Windstream","Windstream","BEVCOMM","BEVCOMM","cox communications","cox communications","Other","$dsl_other"),
 	new Array ("FPT","FPT","NATNAM","NATNAM","SPT","SPT","VNN(in Hanoi)","VNN(in Hanoi)","VNN(in HAM)","VNN(in HAM)","Viettel","Viettel","Other","$dsl_other"),
 	new Array ("Other","$dsl_other")
@@ -216,25 +244,6 @@ function click_next()
 		}
          
 		return true;
-}
-
-function initPage()
-{
-
-	var btns_container_div = document.getElementById("btnsContainer_div");
-	cf=document.forms[0];
-	cf.country.value = curr_country;
-	setisp();
-	if( master == "admin" )
-	{
-		btns_container_div.onclick = function() 
-		{
-			return click_next();
-		}
-	}
-
-	//show firmware version
-    showFirmVersion("none");
 }
 </script>
 </html>

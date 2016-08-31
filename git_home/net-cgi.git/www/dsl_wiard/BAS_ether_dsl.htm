@@ -38,6 +38,8 @@ var fermode = "<% cfg_get("dsl_wan_type") %>";
 var bridge_mode_select = "<% cfg_get("dsl_wan2_bridge_mode") %>";
 var lan_selecte="<% cfg_get("iptv_mask") %>";
 var lan1_selecte=lan_selecte & 1;
+var lan_ports_num = (typeof(top.lan_ports_num) == "undefined") ? 4 : top.lan_ports_num;
+var consolidate_device_name = parent.consolidate_device_name;
 var ISP_ALL = 
     new Array (
 	new Array ("Adam","Adam","Clubtelco","Clubtelco","Dodo","Dodo","Exetel","Exetel","iiNet","iiNet","Internode","Internode","Optus","Optus","People Telcom","People Telcom","Primus","Primus","Soul","Soul","Telstra","Telstra","Telstra Bigpond","Telstra Bigpond","TPG","TPG","TransACT","TransACT","Westnet","Westnet","Internode","Internode","Engin","Engin","Other","$dsl_other"),
@@ -71,7 +73,7 @@ var ISP_ALL =
 	new Array ("Monzoon Networks","Monzoon Networks","Sunrise","Sunrise","Swisscom","Swisscom","Telfort","Telfort","Swisscom All IP(with phone)","Swisscom All IP(with phone)","Other","$dsl_other"),
 	new Array ("3BB","3BB","CAT-Telecom","CAT-Telecom","CS-Loxinfo","CS-Loxinfo","Samart","Samart","TOT","TOT","TRUE Internet","TRUE Internet","TT&T","TT&T","Other","$dsl_other"),
 	new Array ("Other","$dsl_other"),
-	new Array ("BT","BT","Media","Media","EE(Orange)","EE(Orange)","PlusNet","PlusNet","Sky","Sky","TalkTalk","TalkTalk","Virgin","Virgin","ZEN Internet","ZEN Internet","Other","$dsl_other"),
+	new Array ("BT","BT","Media","Media","EE(Orange)","EE(Orange)","PlusNet","PlusNet","Sky","Sky","TalkTalk","TalkTalk","Virgin","Virgin","Other","$dsl_other"),
 	new Array ("AT&T","AT&T","Bigriver.net DSL","Bigriver.net DSL","CenturyLink","CenturyLink","Earthlink","Earthlink","Frontier Communications","Frontier Communications","Qwest","Qwest","Rivercity Internet Group","Rivercity Internet Group","Verizon","Verizon","Windstream","Windstream","BEVCOMM","BEVCOMM","cox communications","cox communications","Other","$dsl_other"),
 	new Array ("FPT","FPT","NATNAM","NATNAM","SPT","SPT","VNN(in Hanoi)","VNN(in Hanoi)","VNN(in HAM)","VNN(in HAM)","Viettel","Viettel","Other","$dsl_other"),
 	new Array ("Other","$dsl_other")
@@ -1071,6 +1073,7 @@ function change_true_value()
 								{
 									cf.vlan_id.value = s["vlanid2"];
 								}
+								vlanidEnable_by_default(cf, cf.vlan_id.value);
 							}
 						cf.hid_wan_num.value = "2";
 						if(wan_pvc_num == "1")
@@ -1133,6 +1136,7 @@ function change_value()
 					}
 					//cf.dsl_vpi.value = vpi;
 				}
+				vlanidEnable_by_default(cf, cf.vlan_id.value);
 			}else  //isp unexit
 			{
 				cf.adslChoice.value = "0";
@@ -1329,6 +1333,7 @@ function change_value()
 					}
 					//cf.dsl_vpi.value = vpi;
 				}
+				vlanidEnable_by_default(cf, cf.vlan_id.value);
 			}else  //isp unexit
 			{
 				cf.adslChoice.value = "0";
@@ -1421,9 +1426,11 @@ function lan_select()
 {
 	var cf = document.forms[0];
 	if(cf.bridge_mode.checked == true)
-	{
+	{	
+       	     if(lan_ports_num != 1){
 		document.getElementById("bridge_content").style.display="";
 		document.getElementById("bridge").style.display="";
+	     }
 		document.getElementById("dhcpp").style.display="none"; 
 		document.getElementById("ip_mask").style.display="none";
 		
@@ -1433,6 +1440,14 @@ function lan_select()
 		document.getElementById("bridge").style.display="none";
 		document.getElementById("dhcpp").style.display=""; 
 		document.getElementById("ip_mask").style.display="";
+	}
+}
+
+function vlanidEnable_by_default(form, vlanid_value)
+{
+	if(vlanid_value != ""){
+		form.vlanidActive.checked = true;
+		checkvid();
 	}
 }
 </script>
@@ -1502,7 +1517,7 @@ document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" 
 <option  value="Brazil">$dsl_brazil</option>
 <option  value="Canada">$dsl_canada</option>
 <option  value="China">$dsl_china</option>
-<option  value="Czech Republic">$dsl_czech</option>
+<option  value="Czech_Republic">$dsl_czech</option>
 <option  value="Denmark">$dsl_demark</option>
 <option  value="Finland">$dsl_finland</option>
 <option  value="France">$dsl_france</option>
@@ -1515,12 +1530,12 @@ document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" 
 <option  value="Italy">$dsl_italy</option>
 <option  value="Malaysia">$dsl_malaysia</option>
 <option  value="Netherlands">$dsl_netherlands</option>
-<option  value="New Zealand">$dsl_new_zealand</option>
+<option  value="New_Zealand">$dsl_new_zealand</option>
 <option  value="Philippine">$dsl_philip</option>
 <option  value="Poland">$dsl_poland</option>
 <option  value="Portugal">$dsl_portugal</option>
 <option  value="Russia">$dsl_russia</option>
-<option  value="Saudi Arabia">$dsl_saudi_arabia</option>
+<option  value="Saudi_Arabia">$dsl_saudi_arabia</option>
 <option  value="Singapore">$dsl_singpore</option>
 <option  value="Spain">$dsl_spain</option>
 <option  value="Sweden">$dsl_sweden</option>
@@ -1651,9 +1666,18 @@ $bluebar
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_BAS_ether','acname')">$basic_int_acname</A></TD>
 	<TD nowrap align=right>
-	<input type="text" name="system_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_hostname"); %>" onKeyPress="return getkey('apname',event)">
-	
-	<!--bug 22330:XSS Protection,the character should be converted that same to spec 2.0  -->
+	<script>
+	var old_name="<% cfg_sed_xss("wan_hostname") %>";
+	var dev_name="<% cfg_sed_xss("Device_name") %>";
+	if(old_name != "")
+		dev_name = old_name;
+	if(consolidate_device_name == "1"){
+		document.write(dev_name);
+		document.write("&nbsp;&nbsp;&nbsp;");
+		document.write('<input class="short_edit_bt" id="edit_devname_bt" type="button" name="edit" value="$edit_mark" onClick="edit_devicename(dev_name)">');
+	}else
+		document.write('<input type="text" name="system_name" id="system_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_hostname"); %>" onKeyPress="return getkey(\'apname\',event)">');
+	</script>
 	</TD>
 </TR>
 <TR>

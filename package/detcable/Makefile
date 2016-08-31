@@ -18,7 +18,6 @@ include $(INCLUDE_DIR)/package.mk
 define Package/detcable
   SECTION:=utils
   CATEGORY:=Base system
-  DEPENDS:=@TARGET_ipq806x
   TITLE:=Update utility for wan cable link detect
 endef
 

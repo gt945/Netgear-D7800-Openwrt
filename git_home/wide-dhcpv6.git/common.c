@@ -836,6 +836,73 @@ in6_addrscopebyif(addr, ifnam)
 }
 
 int
+transmit_sa2(s, sa, buf, len)
+	int s;
+	struct sockaddr *sa;
+	char *buf;
+	size_t len;
+{
+	int error;
+	int sock;
+	int on = 1;
+	struct addrinfo hints;
+	struct addrinfo *res;
+
+	/* initialize socket */
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET6;
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        hints.ai_flags = AI_PASSIVE;
+
+	error = getaddrinfo(NULL, DH6PORT_DOWNSTREAM, &hints, &res);
+        if (error) {
+                dprintf(LOG_ERR, FNAME, "getaddrinfo: %s",
+                    gai_strerror(error));
+                return -1;
+        }
+
+	sock = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+        if (sock < 0) {
+                dprintf(LOG_ERR, FNAME, "socket(sock): %s",
+                    strerror(errno));
+                exit(1);
+        }
+
+	freeaddrinfo(res);
+
+        /* bind sock to port 547 */
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET6;
+        hints.ai_socktype = SOCK_DGRAM;
+        hints.ai_protocol = IPPROTO_UDP;
+        error = getaddrinfo("::", DH6PORT_UPSTREAM, &hints, &res);
+        if (error) {
+                dprintf(LOG_ERR, FNAME, "getaddrinfo: %s",
+                    gai_strerror(error));
+                exit(1);
+        }
+        if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &on,
+                       sizeof(on)) < 0) {
+                dprintf(LOG_ERR, FNAME, "setsockopt(insock, SO_REUSEPORT): %s",
+                    strerror(errno));
+                exit(1);
+        }
+        if (bind(sock, res->ai_addr, res->ai_addrlen) < 0) {
+                dprintf(LOG_ERR, FNAME, "bind(insock): %s", strerror(errno));
+                exit(1);
+        }
+        freeaddrinfo(res);
+	dprintf(LOG_DEBUG, FNAME, "******use sock to sent");
+
+	error = sendto(sock, buf, len, 0, sa, sysdep_sa_len(sa));
+
+	close(sock);
+
+	return (error != len) ? -1 : 0;
+}
+
+int
 transmit_sa(s, sa, buf, len)
 	int s;
 	struct sockaddr *sa;

@@ -1,11 +1,17 @@
 <% http_header("style/basic_home.css", "funcs.js", "basic.js", "jquery-1.7.2.min.js") %>
 
 <% func_header("_Wizard_setup", "BRS_03A_detcInetType.html", "wizard_detwan") %>
+<style>
+#pwd_div {width:176px; margin:0 auto; white-space: nowrap; overflow:hidden;}
+#passwd {width:auto; margin:0 auto; white-space: nowrap; overflow:hidden;}
+#pwd_div #pwd_begin, #pwd_div #pwd_end {display: inline;}
+#pwd_label {float:left; padding-right:3px;}
+</style>
 <script language="javascript" type="text/javascript">
 var portstatus = "<% cat_file("/tmp/port_status")  %>";
 var enable_action=1;
-var enabled_wds=<% wds_enable() %>;
-var enabled_wps=<% wps_menu() %>;
+var enabled_wds="<% wds_enable() %>";
+var enabled_wps="<% wps_menu() %>";
 var enable_ap_flag="<% cfg_get("ap_mode") %>";
 var enable_bridge_flag="<% cfg_get("bridge_mode") %>";
 var gui_region="<% cfg_get("GUI_Region") %>";
@@ -91,6 +97,7 @@ var isSynchronous=0;
 
 $$(document).ready(function(){
 	please_wait(false);
+	scrollPassword();
 	setIconClass("internet_stat","wlan_stat","attached_stat","parant_control_stat","readyshare_stat","guestNetwork_stat");
 
 	//$$(".scroll").css("font-family", "Courier, MonoSpace");
@@ -190,6 +197,35 @@ function scroll()
 	setTimeout("scroll();", interval);
 }
 
+function scrollPassword() {
+	var speed = 40;
+	var scroll_begin = document.getElementById("pwd_begin");
+	var scroll_end = document.getElementById("pwd_end");
+	var scroll_div = document.getElementById("passwd");
+	var content_div = document.getElementById("pwd_div");
+	var label = document.getElementById("pwd_label");
+
+	var len = label.offsetWidth + scroll_begin.offsetWidth;
+	if(len < 176)
+	{
+		label.style.marginLeft = (175-len)/2 + "px";
+		scroll_div.style.float = "left";
+		return;
+	}
+	scroll_begin.style.marginRight = "15px";
+	scroll_end.style.marginRight = "15px";
+	scroll_end.innerHTML = scroll_begin.innerHTML;
+
+	function marquee(){
+		if(scroll_end.offsetWidth - scroll_div.scrollLeft <= -13)
+			scroll_div.scrollLeft = scroll_div.scrollLeft - scroll_begin.offsetWidth -13;
+		else
+			scroll_div.scrollLeft++;
+	}
+	var myScroll = setInterval(marquee, speed);
+	scroll_div.onmouseover = function(){ clearInterval(myScroll); };
+	scroll_div.onmouseout = function(){ myScroll = setInterval(marquee, speed); }
+}
 </script>
 
 <div id="form">

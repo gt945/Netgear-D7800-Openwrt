@@ -97,9 +97,9 @@ function check_blocksites()
 	if(is_jp_version == 1)
 	{
 		if( cf.session[0].checked == true)
-			cf.session.value=session1;
+			cf.session.value="session1";
 		else
-			cf.session.value=session2;
+			cf.session.value="session2";
 	}
 
 	cf.submit();

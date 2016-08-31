@@ -8,8 +8,4 @@ start() {
 		for i in /etc/sysctl.d/*.conf; do
 			sysctl -p $i >&-
 		done
-	if [ "$($CONFIG get ap_mode)" = "1" ]; then
-		echo "0" > /proc/sys/net/bridge/bridge-nf-call-iptables
-                echo "0" > /proc/sys/quantenna/nss/enable
-	fi
 }

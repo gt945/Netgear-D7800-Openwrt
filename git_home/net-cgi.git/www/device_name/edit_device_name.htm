@@ -14,7 +14,7 @@
 		if( master=="admin" )
 			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'edit_device_name.htm\';"><input id="new_apply_bt" class="new_apply_bt ui-corner-all" type="button" name="Apply" value="$apply_mark" onClick="return check_dev();">');
 		else
-			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_apply_bt ui-corner-all" type="submiti" name="Apply" value="$apply_mark" disabled>');
+			document.write('<input class="new_greycancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_greyapply_bt ui-corner-all" type="submit" name="Apply" value="$apply_mark" disabled>');
 	</script>
 	</TD>
 </TR>
@@ -34,7 +34,6 @@ function check_dev()
 {
 	var num;
 	var cf = document.forms[0];
-	var space_flag=0;
 	var user_dev_name=cf.new_devname.value;
 	warning=document.getElementById("devn_error");
 	warning.style.display="none";
@@ -51,9 +50,7 @@ function check_dev()
 		return false;
 	}
 	for(i=0;i<user_dev_name.length;i++){
-		if(user_dev_name.charCodeAt(i)!=32)
-			space_flag++;
-		if(isValidDevName(user_dev_name.charCodeAt(i))==false)
+		if(isValidLetter(user_dev_name.charCodeAt(0))==false || isValidDevName(user_dev_name.charCodeAt(i))==false)
 		{
 			warning.innerHTML="$device_name_error";
 			warning.style.display="";
@@ -65,18 +62,25 @@ function check_dev()
 		warning.style.display="";
 		return false;
 	}
-	if(space_flag == 0){
-		warning.innerHTML="$devname_long";
-		warning.style.display="";
-		return false;
-	}
 
-		
+	var message='<table cellpadding=0 cellspacing=2  border=0>'+
+		'<tr><td colspan=3><h3>$readyshare_devname \\\\'+ show_deviceName+'?</h3></td></tr>'+
+		'<tr><td colspan=3><input type=radio name="device_name_change" checked>$change_readyshare_path \\\\'+ show_deviceName +' $to_mark2 \\\\'+ user_dev_name +'</td></tr>'+
+		'<tr><td colspan=3><input type=radio name="device_name_change">$keep_readyshare_path \\\\'+ show_deviceName +'</td></tr>'+
+		'<tr><td colspan=3 height="20px"></td></tr>'+
+	'</table>';
 	if(show_deviceName != user_dev_name || user_dev_name != dev_name )
-		sAlert('<table cellpadding=0 cellspacing=2  border=0><tr><td colspan=3><h3>$readyshare_devname'+ show_deviceName+'$as_well</h3></td></tr><tr><td colspan=3 >$yes_readyshare_devname</td></tr><tr><td colspan=3 >$no_readyshare_devname</td></tr><tr><td  colspan=3 height="20px"></td></tr></table>',function(){cf.device_name_change_flag.value = "1";cf.submit();}, function(){cf.device_name_change_flag.value = "0";cf.submit();}, 475, 1, "yes/no");
-		//sAlert('<table cellpadding=0 cellspacing=2  border=0><tr><td colspan=3 nowrap><b>Do you want to apply the Device Name change to the readyshare storage access path '+ show_deviceName+' as well? </b></td></tr><tr><td colspan=3 >If you choose yes, your readyshare storage access path would be<br> updated to be your device name.</td></tr><tr><td>If you choose no, readyshare storage access path will not be<br> updated.</td></tr></table>',function(){cf.device_name_change_flag.value = "1";} , function(){cf.device_name_change_flag.value = "0";}, 600, 1);
+		sAlert(message, function(){location.href='edit_device_name.htm';}, function(){submit_devname();}, 475, 1, "cancel/apply");
 	
 
+}
+function submit_devname(){
+	var cf=document.forms[0];
+	if(cf.device_name_change[0].checked == true)
+		cf.device_name_change_flag.value = "1";
+	else
+		cf.device_name_change_flag.value = "0";
+	cf.submit();
 }
 </script>
 <input type="hidden" name="device_name_change_flag">
@@ -87,7 +91,7 @@ function check_dev()
 <tr><td colspan=3></td></tr>
 <tr><td>$edit_devname :</td>
 <td><div id="devn_error" style="color: red"></div></td>
-<td><input type="text" name="new_devname" value="" size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey('ssid', event)" ></td></tr>
+<td><input type="text" name="new_devname" value="" size="20" autocomplete="off" maxlength="16" onFocus="this.select();" onKeyPress="return getkey('deviceName', event)" ></td></tr>
 <tr><td colspan=2>$devname_warning</td><td></td></tr>
 
 </table>

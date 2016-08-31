@@ -7,6 +7,7 @@ start ()
 	local logo_test=`$CONFIG get endis_ipv6_logo_test`
 
 	echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+	echo 0 > /proc/sys/net/ipv6/conf/${WAN}/autoconf
 	echo 1 > /proc/sys/dni_netfilter/ipv6_ip6frag_not_check_icmp
 
 	if [ "x$logo_test" = "x1" -a "x$wan6_type" = "xfixed" ]; then
@@ -22,7 +23,7 @@ start ()
 		# make WAN interface send NS packets
 		echo 0 > /proc/sys/net/ipv6/neigh/${WAN}/not_send_neighbor_solicitation
 		# make LAN interface send NS packets
-		echo 0 > /proc/sys/net/ipv6/neigh/br0/not_send_neighbor_solicitation
+		echo 0 > /proc/sys/net/ipv6/neigh/${LAN}/not_send_neighbor_solicitation
 	fi
 }
 

@@ -11,17 +11,17 @@ PKG_NAME:=net6conf
 PKG_VERSION:=0.2
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH=net6conf-dni91
 PKG_BUILD_DEPENDS:=wide-dhcpv6-client wide-dhcpv6-server radvd
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/net6conf
+define Package/$(PKG_NAME)
   SECTION:=ipv6
   CATEGORY:=IPv6
   DEPENDS:=+kmod-ipv6
   TITLE:=IPv6 scripts
   PKGARCH:=all
+  MENU:=1
 endef
 
 define Build/Prepare
@@ -34,10 +34,9 @@ endef
 define Build/Compile
 endef
 
-define Package/net6conf/config
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
-define Package/net6conf/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_DIR) $(1)/etc/net6conf
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/6data.conf $(1)/etc/net6conf/6data.conf
@@ -57,4 +56,4 @@ define Package/net6conf/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/6rd $(1)/etc/net6conf/6rd
 endef
 
-$(eval $(call BuildPackage,net6conf))
+$(eval $(call BuildPackage,$(PKG_NAME)))

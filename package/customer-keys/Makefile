@@ -3,7 +3,7 @@ include $(TOPDIR)/rules.mk
 PKG_TARGETS:=ipkg-prebuilt
 PKG_NAME:=customer-keys
 PKG_RELEASE:=1
-PKG_VERSION:=1-netgear-d7800
+PKG_VERSION:=$(shell echo 1-netgear-$(CONFIG_DGC_PRODUCT_NAME))
 
 include $(INCLUDE_DIR)/package.mk
 

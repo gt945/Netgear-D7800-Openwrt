@@ -1,0 +1,12 @@
+diff -Nur wlan-common-old//sbin/wpsled wlan-common/sbin/wpsled
+--- wlan-common-old//sbin/wpsled	2014-03-16 06:51:44.979617043 +0800
++++ wlan-common/sbin/wpsled	2014-03-16 22:29:07.199596075 +0800
+@@ -96,7 +96,7 @@
+                     usleep 900000 # 0.9 second
+ 	        fi
+             done
+-        else if [ "$action" = "stop" ]; then
++        elif [ "$action" = "stop" ]; then
+             kill_wpsled $ledcase
+             rm -f $wpsled_run_file
+         else

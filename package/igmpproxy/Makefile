@@ -24,15 +24,12 @@ define Build/Prepare
 endef
 
 define Package/igmpproxy/install
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ./files/igmpproxy.config $(1)/etc/config/igmpproxy
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/igmpproxy.init $(1)/etc/init.d/igmpproxy
-	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
-	$(INSTALL_DATA) ./files/igmpproxy.hotplug $(1)/etc/hotplug.d/iface/50-igmpproxy
 	$(INSTALL_DIR) $(1)/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/igmpproxy $(1)/sbin/
-	$(INSTALL_BIN) ./files/cmdigmp $(1)/sbin/
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/igmpproxy.init $(1)/etc/init.d/
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_igmp $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
 endef
 
 $(eval $(call BuildPackage,igmpproxy))

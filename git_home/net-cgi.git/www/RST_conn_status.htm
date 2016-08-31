@@ -81,7 +81,17 @@ function change_time_type(time)
 }
 </script>
 </TABLE>
-<TABLE border=1 cellpadding=2 cellspacing=0 width=100%>
+<script>
+	if(info_get_wanproto == "dhcp")
+		document.write('<TABLE border=1 name="dhcp_statusTable" id="dhcp_connect" cellpadding=2 cellspacing=0 width=100%>');
+	else if(info_get_wanproto == "pppoe" || info_get_wanproto == "pppoa")
+		document.write('<TABLE border=1 name="pppoe_statusTable" id="ppp_connect" cellpadding=2 cellspacing=0 width=100%>');
+	else if(info_get_wanproto == "pptp" || info_get_wanproto == "l2tp")
+		document.write('<TABLE border=1 name="pptp_statusTable" id="pptp_connect" cellpadding=2 cellspacing=0 width=100%>');
+	else
+		document.write('<TABLE border=1 cellpadding=2 cellspacing=0 width=100%>');
+
+</script>
 <script>
 var info_get_wanip="<% wan_ip() %>";
 var info_get_wanmask="<% wan_netmask() %>";
@@ -353,29 +363,29 @@ var master="<% cfg_get("http_loginname") %>";
 if (master=="admin")
 {
 	if ( ap_mode_on == 1 && ap_ip_mode == 1 )
-		document.write('<input class="common_bt" type="button" name="connect" value=$release_mark onclick="connect_stop(0);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="connect" value=$renew_mark onclick="connect_start(3);" >');
+		document.write('<input class="common_bt" type="button" name="Release" id="disconnect" value=$release_mark onclick="connect_stop(0);" >&nbsp;&nbsp;<input class="common_bt" type="button" name="Renew" id="connect" value=$renew_mark onclick="connect_start(3);" >');
 	else if ( info_get_wanproto == "static" )
         {}
 	else if( info_get_wanproto == "dhcp" )
-		document.write('<input class="common_bt" type="button" name="connect" value=$release_mark onclick="connect_stop(0);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="connect" value=$renew_mark onclick="connect_start(3);" >');
+		document.write('<input class="common_bt" type="button" name="Release" id="disconnect" value=$release_mark onclick="connect_stop(0);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="Renew" id="connect" value=$renew_mark onclick="connect_start(3);" >');
 	else{
 		if (monthly_limit_reached == "1" && (info_get_wanproto == "pptp" || info_get_wanproto == "pppoe" || info_get_wanproto == "pppoa" || info_get_wanproto == "lte" || info_get_wanproto == "l2tp" || info_get_wanproto == "3g"))
-			document.write('<input class="common_gray_bt" type="button" name="connect" disabled value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="connect" value=$disconnect_mark onclick="connect_stop(0);" >');
+			document.write('<input class="common_gray_bt" type="button" name="Connect" id="connect" disabled value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="Disconnect" id="disconnect" value=$disconnect_mark onclick="connect_stop(0);" >');
 		
 		else
-			document.write('<input class="common_bt" type="button" name="connect" value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="connect" value=$disconnect_mark onclick="connect_stop(0);" >');
+			document.write('<input class="common_bt" type="button" name="Connect" id="connect" value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="Disconnect" id="disconnect" value=$disconnect_mark onclick="connect_stop(0);" >');
 		}
 }else
 {
 	if ( ap_mode_on == 1 && ap_ip_mode == 1 )
-		document.write('<input class="common1_bt" type="button" name="connect" value=$release_mark disabled >&nbsp;&nbsp;<input class="common1_bt"  type="button" name="connect" value=$renew_mark disabled >');
+		document.write('<input class="common1_bt" type="button" name="Release" id="disconnect" value=$release_mark disabled >&nbsp;&nbsp;<input class="common1_bt"  type="button" name="Renew" id="connect" value=$renew_mark disabled >');
 	else if ( info_get_wanproto == "static" )
         {}
 	else if( info_get_wanproto == "dhcp" )
-		document.write('<input class="common1_bt" type="button" name="connect" value=$release_mark disabled >&nbsp;&nbsp;<input class="common1_bt"  type="button" name="connect" value=$renew_mark disabled >');
+		document.write('<input class="common1_bt" type="button" name="Release" id="disconnect" value=$release_mark disabled >&nbsp;&nbsp;<input class="common1_bt"  type="button" name="Renew" id="connect" value=$renew_mark disabled >');
 	else{
 		if (monthly_limit_reached == "1" && (info_get_wanproto == "pptp" || info_get_wanproto == "pppoe" || info_get_wanproto == "lte" || info_get_wanproto == "l2tp" || info_get_wanproto == "3g"))
-			document.write('<input class="common_gray_bt" type="button" name="connect" disabled value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="connect" value=$disconnect_mark onclick="connect_stop(0);" >');
+			document.write('<input class="common_gray_bt" type="button" name="Connect" id="connect" disabled value=$connect_mark onclick="connect_start(3);" >&nbsp;&nbsp;<input class="common_bt"  type="button" name="Disconnect" id="disconnect" value=$disconnect_mark onclick="connect_stop(0);" >');
 		}
 }
 </script>
@@ -386,7 +396,14 @@ $bluebar
 <TABLE cellspacing=5 cellPadding=0 width=100% border=0>
 <TR>
 	<TD nowrap align=center>
-	<input  class="delete_bt" type=button name="close" value="$close_win_mark" onclick="self.close();">
+	<script>
+	if(info_get_wanproto == "dhcp" || info_get_wanproto == "pppoe" || info_get_wanproto == "pppoa")
+		document.write('<input  class="delete_bt" type=button name="close_window" id="close" value="$close_win_mark" onclick="self.close();">');
+	else if(info_get_wanproto == "pptp" || info_get_wanproto == "l2tp")
+		document.write('<input  class="delete_bt" type=button name="Close_Window" id="close" value="$close_win_mark" onclick="self.close();">');
+	else
+		document.write('<input  class="delete_bt" type=button name="Close Window" id="close" value="$close_win_mark" onclick="self.close();">');
+	</script>
 	</TD>
 </TR>
 </TABLE>

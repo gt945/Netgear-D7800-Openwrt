@@ -152,9 +152,7 @@ char *strchr(),*strrchr();
 # include <netinet/in.h>
 #endif
 
-#ifdef HAVE_NET_IF_H
 # include <net/if.h>
-#endif
 
 #ifdef HAVE_NETINET_IN_SYSTM_H
 # include <netinet/in_systm.h>
@@ -467,7 +465,5 @@ typedef struct {
 #ifdef WITH_DMALLOC
 # include <dmalloc.h>
 #endif /* WITH_DMALLOC */
-
-#define LAN_IFNAME "br0"
 
 #endif /* PR_CONF_H */

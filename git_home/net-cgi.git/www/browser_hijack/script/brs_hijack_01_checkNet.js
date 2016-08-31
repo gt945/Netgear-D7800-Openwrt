@@ -15,7 +15,7 @@ function loadValue()
 		  this.location.href="BRS_log02_connection_fail.html";
 		  finish=1;
 	  }else{
-		if( top.apmode_flag == "1" && ap_mode == "1" && ap_mode_detection_flag == "1" )
+		if( top.apmode_flag == "1" && ap_mode == "1" && top.ap_mode_detection_flag == "1" )
 			this.location.href="BRS_05_networkIssue.html";
 		else if((top.have_broadband == "1" && (top.is_ru_version == 1 || top.is_pr_version == 1)) || top.have_lte_flag == "1")
 			this.location.href = "BRS_021_genieHelp.html";
@@ -37,13 +37,13 @@ function loadValue()
 			if(hijack_process == 2 && parent.first_hdd_nofind == 0)
 				cf.submit();
 			else
-				this.location.href = "BRS_success.html";
+				this.location.href = "BRS_security.html";
 		}
 		else{
 			if(hijack_process == 2)
 				cf.submit();
 			else
-				this.location.href = "BRS_success.html";		
+				this.location.href = "BRS_security.html";		
 		}
 		finish=1;
 	  }

@@ -623,7 +623,7 @@ function check_ether(cf,check)
 		{
 			if(cf.bridge_mode.checked == true)
 			{
-				if((cf.bridge_lan2.checked == false) && (cf.bridge_lan3.checked == false) && (cf.bridge_lan4.checked == false))
+				if((cf.bridge_lan2.checked == false) && (cf.bridge_lan3.checked == false) && (cf.bridge_lan4.checked == false) && lan_ports_num != 1)
 				{
 					alert("$dsl_bridge_warning");
 					return false;

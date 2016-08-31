@@ -4,18 +4,6 @@
 
 start()
 {
-	# update smb.conf and start samba if needed
-	/usr/sbin/update_smb
-	/etc/init.d/dbus start
-	/etc/init.d/avahi-daemon start
-	/etc/init.d/run_afpd start
-}
-
-stop() {
-    killall -9 smbd
-}
-
-boot() {
     DEFAULT=/etc/default/samba
     RUN_D=/var/run/samba
     SMB_CONF_DIR=/tmp/samba
@@ -36,12 +24,30 @@ boot() {
     mkdir -p $PRIVATE_DIR
     mkdir -p $RUN_D
 
-	# create users, groups
-	update_user
+    # create users, groups
+    update_user
 
-	# detect SATA disk
-	/usr/sbin/detectSATA start
+    # detect SATA disk
+    /usr/sbin/detectSATA start
 
-	start &
+    # update smb.conf and start samba if needed
+    /usr/sbin/update_smb
+    /etc/init.d/dbus start
+    /etc/init.d/avahi-daemon start
+    /etc/init.d/run_afpd start
 }
 
+stop() {
+    killall -9 smbd
+    /etc/init.d/run_afpd stop
+    /etc/init.d/avahi-daemon stop
+    /etc/init.d/dbus stop
+}
+
+boot() {
+    start &
+    /etc/init.d/kcode boot
+}
+
+[ "$1" = "start" ] && start
+[ "$1" = "stop" ] && stop

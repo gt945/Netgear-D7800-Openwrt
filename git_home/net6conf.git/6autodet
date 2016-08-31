@@ -33,12 +33,12 @@ start()
 }
 
 detwanv6_is_running()
-{	
+{
 	if ps | grep detwanv6 | grep -v grep >&- 2>&- ; then
 		return 0
 	else
 		return 1
-	fi	
+	fi
 }
 
 stop()

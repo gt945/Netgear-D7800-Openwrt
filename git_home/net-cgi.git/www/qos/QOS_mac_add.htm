@@ -1,6 +1,6 @@
 <% http_header("style/form.css", "/funcs.js", "/qos.js") %>
 <% body_header("_qos","QOS_rule.htm","add_qos_mac") %>
-<div class="page_title">$qos_add_head</div>
+<div class="page_title" id="client_mac_table">$qos_add_head</div>
 <div class="fix_button">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
         <TR>
@@ -8,9 +8,9 @@
 		<script>
 			var master="<% cfg_get("http_loginname") %>";
 			if( master=="admin" )
-				document.write('<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="qosRule();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="apply" value="$apply_mark" onClick="return check_qos_mac(document.forms[0],\'add\');">');
+				document.write('<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="qosRule();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" id="apply" value="$apply_mark" onClick="return check_qos_mac(document.forms[0],\'add\');">');
 			else
-				document.write('<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="apply" value="$apply_mark" disabled>');	
+				document.write('<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" id="apply" value="$apply_mark" disabled>');
 		</script>
 		</TD>
         </TR>
@@ -54,12 +54,12 @@ var mac_show_num=0;// bug 31143table item color show wrong, this number remember
 	<TR><TD nowrap colspan=2><b>$qos_priority</b> </TD></TR>
 	<TR>
 		<TD nowrap>$qos_policy_for</TD>
-		<TD nowrap> <INPUT type="text" name="name" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
+		<TD nowrap> <INPUT type="text" name="name" id="name" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
 	</TR>
 	<TR>
 		<TD nowrap>$qos_priority_category</TD>
 		<TD nowrap> 
-			<SELECT name="category" onChange="change_priority()">
+			<SELECT name="category" id="category" onChange="change_priority()">
 				<OPTION value="0" >$qos_application</OPTION>
 				<OPTION value="1" >$qos_online</OPTION>
 				<OPTION value="2" >$qos_ether</OPTION>
@@ -170,7 +170,7 @@ if( p > 0 )
 				document.write("<TR class=\"even_line\">");
 			else
 				document.write("<TR class=\"odd_line\">");
-                        document.write('<TD nowrap align=center><input type="radio" name="MacSelect" value="'+i+'"  onclick="attached_qosmac_data_select('+i+','+j+')"></TD><TD nowrap align=center><span class="subhead">'+attach_policy[j]+'</span></TD>');
+                        document.write('<TD nowrap align=center><input type="radio" name="MacSelect" id="'+(i+1)+'" value="'+i+'"  onclick="attached_qosmac_data_select('+i+','+j+')"></TD><TD nowrap align=center><span class="subhead">'+attach_policy[j]+'</span></TD>');
                         document.write('<TD nowrap align=center> $qos_normal</TD>');
                         document.write('<TD nowrap align=center> '+attach_name_array[j]+'</TD><TD nowrap align=center> '+attach_mac_array[j]+'</TD></TR>');
         }
@@ -188,7 +188,7 @@ if( qosmac_array_num > 0 )
 			document.write("<TR class=\"even_line\">");
 		else
 			document.write("<TR class=\"odd_line\">");
-		document.write('<TD nowrap align=center><input type="radio" name="MacSelect" value="'+i+'"  onclick="qosmac_data_select('+i+')"></TD><TD nowrap align=center><span class="subhead">'+each_info[0]+'</span></TD>');
+		document.write('<TD nowrap align=center><input type="radio" name="MacSelect" id="'+(i+1)+'" value="'+i+'"  onclick="qosmac_data_select('+i+')"></TD><TD nowrap align=center><span class="subhead">'+each_info[0]+'</span></TD>');
 		if(each_info[1]=='0')
 			document.write('<TD nowrap align=center> $qos_highest</TD>');
 		else if(each_info[1]=='1')
@@ -214,17 +214,17 @@ $bluebar
 			<input type="text" value="" name="mac_addr4" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
 			<input type="text" value="" name="mac_addr5" maxlength="2" size=1 onKeyPress="return getkeya(event)">:
 			<input type="text" value="" name="mac_addr6" maxlength="2" size=1 onKeyPress="return getkeya(event)">   -->	
-			<input type="text" value="" name="mac" maxlength="60" size="16" onKekPress="return getkeya(event)">
+			<input type="text" value="" name="mac" id="mac" maxlength="60" size="16" onKekPress="return getkeya(event)">
 		</TD>
 	</TR>
 	<TR>
 		<TD nowrap>$lan_mark_name</TD>
-		<TD nowrap> <INPUT type="text" name="dev_name" maxLength="60" size="16" onKeyPress="return getkey('hostname', event)" value=""></TD>
+		<TD nowrap> <INPUT type="text" name="dev_name" id="dev_name" maxLength="60" size="16" onKeyPress="return getkey('hostname', event)" value=""></TD>
 	</TR>
 	<TR>
 		<TD nowrap>$qos_priority</TD>
 		<TD nowrap> 
-			<SELECT name="priority">
+			<SELECT name="priority" id="priority">
 				<OPTION value="0" >$qos_highest</OPTION>
 				<OPTION value="1" >$qos_high</OPTION>			
 				<OPTION value="2" selected>$qos_normal</OPTION>
@@ -235,12 +235,12 @@ $bluebar
 $bluebar
 	<TR align=center>
 	    <TD nowrap colspan=2>
-		<input class="common_bt" type='submit' name='refresh' value='$refresh_mark' onClick='location.href="QOS_mac_add.htm";return false;'>
+		<input class="common_bt" type='submit' name='Refresh' id='refresh' value='$refresh_mark' onClick='location.href="QOS_mac_add.htm";return false;'>
 		<script>
 		if( master=="admin" )
-			document.write('<input class="add_bt"  type="submit" name="add_mac" value="$add_mark" onClick="return valid_add_qosmac(document.forms[0],\'add\',\'add_page\');"><input class="edit_bt" type="submit" name="edit_mac" value="$edit_mark" onClick="return valid_add_qosmac(document.forms[0],\'edit\',\'add_page\');"><input class="delete_bt" type="submit" name="delete_mac" value="$delete_mark" onClick="return valid_delete_qosmac(document.forms[0]);">');
+			document.write('<input class="add_bt"  type="submit" name="add_mac" id="add" value="$add_mark" onClick="return valid_add_qosmac(document.forms[0],\'add\',\'add_page\');"><input class="edit_bt" type="submit" name="edit_mac" id="edit" value="$edit_mark" onClick="return valid_add_qosmac(document.forms[0],\'edit\',\'add_page\');"><input class="delete_bt" type="submit" name="del_mac" id="delete" value="$delete_mark" onClick="return valid_delete_qosmac(document.forms[0]);">');
 		else
-			document.write('<input class="add1_bt"  type="submit" name="add_mac" value="$add_mark" disabled><input class="edit1_bt" type="submit" name="edit_mac" value="$edit_mark" disabled><input class="delete1_bt" type="submit" name="delete_mac" value="$delete_mark" disabled>');
+			document.write('<input class="add1_bt"  type="submit" name="add_mac" id="add" value="$add_mark" disabled><input class="edit1_bt" type="submit" name="edit_mac" id="edit" value="$edit_mark" disabled><input class="delete1_bt" type="submit" name="del_mac" id="delete" value="$delete_mark" disabled>');
 		</script>
 		</TD>
 	</TR>

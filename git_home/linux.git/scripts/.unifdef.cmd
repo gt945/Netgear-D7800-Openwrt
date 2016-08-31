@@ -1,4 +1,4 @@
-cmd_scripts/unifdef := gcc -Wp,-MD,scripts/.unifdef.d -Iscripts -O2   -I/home/roger.luo/d7800-buildroot/staging_dir/host/include -Wall -Wmissing-prototypes -Wstrict-prototypes   -I/home/roger.luo/d7800-buildroot/staging_dir/host/include   -I/home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/tools/include -o scripts/unifdef /home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/scripts/unifdef.c  
+cmd_scripts/unifdef := gcc -Wp,-MD,scripts/.unifdef.d -Iscripts -O2   -I/home/roger.luo/d7800-stage2.git/staging_dir/host/include -Wall -Wmissing-prototypes -Wstrict-prototypes   -I/home/roger.luo/d7800-stage2.git/staging_dir/host/include   -I/home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/tools/include -o scripts/unifdef /home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/scripts/unifdef.c  
 
 source_scripts/unifdef := /home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/scripts/unifdef.c
 
@@ -14,8 +14,8 @@ deps_scripts/unifdef := \
   /usr/include/bits/typesizes.h \
   /usr/include/time.h \
   /usr/lib/x86_64-linux-gnu/gcc/x86_64-linux-gnu/4.5.2/include/stddef.h \
-  /home/roger.luo/d7800-buildroot/staging_dir/host/include/endian.h \
-  /home/roger.luo/d7800-buildroot/staging_dir/host/include/byteswap.h \
+  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/endian.h \
+  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/byteswap.h \
   /usr/include/byteswap.h \
   /usr/include/bits/byteswap.h \
   /usr/include/endian.h \
@@ -24,7 +24,7 @@ deps_scripts/unifdef := \
   /usr/include/bits/select.h \
   /usr/include/bits/sigset.h \
   /usr/include/bits/time.h \
-  /home/roger.luo/d7800-buildroot/staging_dir/host/include/sys/sysmacros.h \
+  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/sys/sysmacros.h \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/sys/stat.h \
   /usr/include/bits/stat.h \

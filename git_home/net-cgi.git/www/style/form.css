@@ -86,34 +86,37 @@ word-wrap:keep-all;
 .button{ float: left; width: 600px; height: 42px; }
 .fix_button{width: 100%; height: 30px; position: absolute; top: 20px; left: 0px; background: url(../image/oneline.gif)0 -40px repeat-x;}
 
-
-.apply_bt,.middle_apply_bt, .apply_media, .cancel_bt, .long_add_bt,.middle_add_bt, .add_bt, .middle_edit_bt,.edit_bt,.short_edit_bt, .middle_delete_bt,.delete_bt, .common_bt, .common_big_bt, .long_common_bt, .short_common_bt, .short_refresh_bt, .common_key_bt, .speedtest_bt, .window_bt, .non_window_bt{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.apply_bt, .middle_apply_bt, .apply_media, .cancel_bt, .long_add_bt, .middle_add_bt, .add_bt, .middle_edit_bt, .edit_bt,.long_edit_bt, .short_edit_bt, .long_delete_bt, .middle_delete_bt, .delete_bt, .common_bt, .common_big_bt, .long_common_bt, .short_common_bt, .short_refresh_bt, .common_key_bt, .speedtest_bt, .window_bt, .non_window_bt{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
 .middle_common_bt, .common_show_stat_bt{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 12px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
-.common_el_bt, .middle_common_el_bt{height: 22px; color: #f2f2f2; font-family: Arial;font-size: 9px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px}
-.common_hu_bt, .middle_common_hu_bt{height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 11px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px}
+.common_el_bt, .middle_common_el_bt, .long_common_el_bt{height: 22px; color: #f2f2f2; font-family: Arial;font-size: 9px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px}
+.common_hu_bt, .middle_common_hu_bt, .long_common_hu_bt{height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 11px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px}
 .edit_bt_little, .delete_bt_little , .long_add_bt_little{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 12px; background-color: transparent; border: none; cursor: pointer; padding-bottom:2px; padding-left:17px;}
 .apply_bt{width: 128px; background: url(../image/buttons.gif) no-repeat top left}
 .middle_apply_bt{width: 219px; background: url(../image/buttons.gif) no-repeat -230px -264px}
-.apply_media{width: 360px; background: url(../image/buttons.gif) no-repeat 0 -286px}
+.apply_media{width: 360px; background: url(../image/buttons.gif) no-repeat 0 -287px}
 .cancel_bt{width: 128px; background: url(../image/buttons.gif) no-repeat 0 -22px }
 .speedtest_bt{width: 128px; background: url(../image/buttons.gif) no-repeat 0 -44px}
 .add_bt{ width:135px; background: url(../image/buttons.gif) no-repeat 0 -110px}
 .long_add_bt{ width: 280px; background: url(../image/buttons.gif) no-repeat 0 -154px}
 .middle_add_bt{ width: 206px; background: url(../image/buttons.gif) no-repeat 0 -308px}
 .long_add_bt_little{ width: 280px; background: url(../image/buttons.gif) no-repeat 0 -154px}
-.edit_bt{width:200px; background: url(../image/buttons.gif) no-repeat 0 -66px}
-.short_edit_bt{width:150px; background: url(../image/buttons.gif) no-repeat -300px -66px}
+.edit_bt{width:200px; background: url(../image/buttons.gif) no-repeat 0 -67px}
+.short_edit_bt{width:150px; background: url(../image/buttons.gif) no-repeat -300px -67px}
 .middle_edit_bt{width:220px; background: url(../image/buttons.gif) no-repeat -230px -242px}
+.long_edit_bt{width:320px; background: url(../image/buttons.gif) no-repeat 0 -375px}
 .edit_bt_little{width:200px; background: url(../image/buttons.gif) no-repeat 0 -66px}
-.delete_bt{width:180px; background: url(../image/buttons.gif) no-repeat -128px 0}
+.delete_bt{width:180px; background: url(../image/buttons.gif) no-repeat -129px 0}
 .middle_delete_bt{width:209px; background: url(../image/buttons.gif) no-repeat -206px -308px}
+.long_delete_bt{width:258px; background: url(../image/buttons.gif) no-repeat -192px -352px}
 .delete_bt_little{width:180px; background: url(../image/buttons.gif) no-repeat -128px 0}
 .common_bt, .common_show_stat_bt, .common_el_bt, .common_hu_bt, .window_bt{width:147px; background: url(../image/buttons.gif) no-repeat -135px -110px}
+.long_common_hu_bt{width:188px; background: url(../image/buttons.gif) no-repeat 0 -418px}
+.long_common_el_bt{width:188px; background: url(../image/buttons.gif) no-repeat 0 -418px}
 .non_window_bt{width:180px; background: url(../image/buttons.gif) no-repeat -128px -44px}
 .common_big_bt{width:230px; background: url(../image/buttons.gif) no-repeat 0 -242px}
-.long_common_bt{width:320px; background: url(../image/buttons.gif) no-repeat 0 -198px}
-.short_common_bt{width:100px; background: url(../image/buttons.gif) no-repeat -200px -66px}
-.middle_common_bt, .middle_common_el_bt, .short_refresh_bt, .middle_common_hu_bt{width:128px; background: url(../image/buttons.gif) no-repeat 0 -44px}
+.long_common_bt{width:320px; background: url(../image/buttons.gif) no-repeat 0 -199px}
+.short_common_bt{width:100px; background: url(../image/buttons.gif) no-repeat -200px -67px}
+.middle_common_bt, .middle_common_el_bt, .short_refresh_bt, .middle_common_hu_bt{width:128px; background: url(../image/buttons.gif) no-repeat 0 -45px}
 .common_key_bt{width:192px; background: url(../image/buttons.gif) no-repeat 0 -330px}
 
 .remind_font, .success_font, .choice_font, .success_font_normal, .app_header_font{color:#000000; font-family:Verdana; }
@@ -134,7 +137,7 @@ word-wrap:keep-all;
 .st_header_font { color:#000000; font-family:Verdana; font-size:14px; font-weight: bold;}
 
 
-.edit1_bt, .add1_bt, .middle_delete1_bt, .common1_key_bt, .apply1_media, .delete1_bt, .short_common1_bt, .reboot1, .apply1_bt, .cancel1_bt, .common1_bt, .long_add_gray_bt, .add_gray_bt, .edit_gray_bt, .delete_gray_bt, .long_common_gray_bt, .common_gray_bt, .common_big_gray_bt, .short_common_gr_bt, .common_key_gray_bt{ height: 22px; color:#808080; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
+.edit1_bt, .add1_bt, .middle_delete1_bt, .common1_key_bt, .apply1_media, .delete1_bt, .short_common1_bt, .reboot1, .apply1_bt, .cancel1_bt, .common1_bt, .long_add_gray_bt, .add_gray_bt, .edit_gray_bt, .long_edit_gray_bt, .delete_gray_bt ,.long_delete_gray_bt, .long_common_gray_bt, .common_gray_bt, .common_big_gray_bt, .short_common_gr_bt, .common_key_gray_bt{ height: 22px; color:#808080; font-family: Arial; font-weight: Bold; font-size: 14px; background-color: transparent; border: none; cursor: pointer; padding-bottom: 2px;}
 .add1_bt{ width:135px; background: url(../image/buttons.gif) no-repeat 0 -132px}
 .edit1_bt{width:200px; background: url(../image/buttons.gif) no-repeat 0 -88px}
 .common1_key_bt{width:192px; background: url(../image/buttons.gif) no-repeat 0 -352px}
@@ -146,13 +149,15 @@ word-wrap:keep-all;
 .apply1_bt{width: 128px; background: url(../image/buttons1.gif) no-repeat -192px -330px}
 .cancel1_bt{width: 128px; background: url(../image/buttons1.gif) no-repeat -320px -330px}
 .common1_bt{width:147px; background: url(../image/buttons.gif) no-repeat -135px -132px}
-.long_add_gray_bt{ width: 280px; background: url(../image/buttons.gif) no-repeat 0 -176px}
+.long_add_gray_bt{ width: 280px; background: url(../image/buttons.gif) no-repeat 0 -177px}
 .add_gray_bt{ width:135px; background: url(../image/buttons.gif) no-repeat 0 -132px}
-.edit_gray_bt{width:200px; background: url(../image/buttons.gif) no-repeat 0 -88px}
-.delete_gray_bt{width:180px; background: url(../image/buttons.gif) no-repeat -128px -22px}
+.edit_gray_bt{width:200px; background: url(../image/buttons.gif) no-repeat 0 -89px}
+.long_edit_gray_bt{width:320px; background: url(../image/buttons.gif) no-repeat 0 -397px}
+.delete_gray_bt{width:180px; background: url(../image/buttons.gif) no-repeat -129px -22px}
+.long_delete_gray_bt{width:258px; background: url(../image/buttons.gif) no-repeat -193px -330px}
 .long_common_gray_bt{width:320px; background: url(../image/buttons.gif) no-repeat 0 -220px}
 .common_gray_bt{width:147px; background: url(../image/buttons.gif) no-repeat -135px -132px}
-.common_big_gray_bt{width:230px; background: url(../image/buttons.gif) no-repeat 0 -264px}
+.common_big_gray_bt{width:230px; background: url(../image/buttons.gif) no-repeat 0 -265px}
 .short_common_gr_bt{width:100px; background: url(../image/buttons.gif) no-repeat -200px -88px}
 .common_key_gray_bt{width:192px; background: url(../image/buttons.gif) no-repeat 0 -352px}
 
@@ -252,3 +257,8 @@ cursor:pointer;
 .vlan_an_wlan{background: url() no-repeat -440px 0}
 .vlan_an_guest{background: url() no-repeat -510px 0}
 .pop_box{-webkit-box-shadow: 0px 0 0px #ffffff,10px 0 10px #77787A,0 0px 0px #ffffff,0 10px 10px #77787A; -moz-box-shadow: 0px 0 0px #ffffff,10px 0 10px #77787A,0 0px 0px #ffffff,0 10px 10px #77787A; box-shadow: 0px 0 0px #ffffff,10px 0 10px #77787A,0 0px 0px #ffffff,0 10px 10px #77787A;;margin-left:30px;padding-top:20px; overflow:auto;  border-top:12px solid #5bb6e5; border-left:1px solid #c9c9ca; border-right:1px solid #c9c9ca; border-bottom:1px solid #c9c9ca; background-color: #ffffff; }
+
+.type-file-file{position:absolute; left:-150px; opacity:0; filter:alpha(opacity=0); z-index: 2; font-size:100px; width:450px; height:20px; padding-top:4px}
+
+.msg_nousb{ float:left; height:22px; line-height:22px; margin-left: 5px; color:#FF0000;}
+.download_bts{float:right; text-align:left; width:65%}

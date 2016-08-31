@@ -143,10 +143,10 @@ function showWirelessAN()		//wireless a/n
 	document.write(strA);
 	document.write("<br>");
 }
-if( an_router_flag == 1 )
+if( (typeof(have_wifi_flag) == "undefined" ||  have_wifi_flag == 1) && an_router_flag == 1 )
 	showWirelessAN();
-
-showWirelessN();
+if(typeof(have_wifi_flag) == "undefined" ||  have_wifi_flag == 1)
+	showWirelessN();
 </script>
 </body>
 </html>

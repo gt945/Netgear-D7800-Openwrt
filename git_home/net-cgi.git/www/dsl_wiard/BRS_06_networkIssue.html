@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="style/hijack_05_networkIssue.css" />
 <script language="javascript" type="text/javascript" src="script/brs_hijack.js"></script>
 <% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 </head>
 

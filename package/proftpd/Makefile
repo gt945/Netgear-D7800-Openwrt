@@ -9,18 +9,19 @@ PKG_NAME:=proftpd
 PKG_VERSION:=1.3.3
 PKG_RELEASE:=1
 
-PKG_GIT_TREEISH:=proftpd-1.3.3-dni-09
-
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/proftpd
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=FTP Daemon
   URL:=http://www.proftpd.org/
+  MENU:=1
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/proftpd.git/* $(PKG_BUILD_DIR)/
@@ -49,8 +50,6 @@ define Build/Configure
 		echo "#undef HAVE_SYS_ACL_H" >> config.h ; \
 		echo "#undef HAVE_EXECINFO_H" >> config.h ; \
 		echo "#undef HAVE_FUTIMES" >> config.h ; \
-		echo "#define HAVE_NET_IF_H" >> config.h ; \
-		echo "#define LAN_IFNAME \"br0\"" >> config.h ; \
 		echo "#define USB_NET_ACCESS_LOG" >> config.h ; \
 		echo "#define NETGEAR_GUEST_ACCESS" >> config.h ; \
 	);
@@ -65,13 +64,13 @@ define Build/Compile
 		all
 endef
 
-define Package/proftpd/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/proftpd $(1)/usr/sbin/
-	install -m0755 $(PKG_BUILD_DIR)/ftptop $(1)/usr/sbin/
-	install -d -m0755 $(1)/sbin
-	install -m0755 ./files/cmdftp $(1)/sbin/
-	ln -sf /usr/sbin/ftptop $(1)/usr/sbin/ftpload
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/proftpd $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ftptop $(1)/usr/sbin/
+	$(LN) /usr/sbin/ftptop $(1)/usr/sbin/ftpload
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_ftp $(1)/$(CONFIG_DGC_DNI_CMD_DIR)/
 endef
 
-$(eval $(call BuildPackage,proftpd))
+$(eval $(call BuildPackage,$(PKG_NAME)))

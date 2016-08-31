@@ -1,13 +1,6 @@
 #!/bin/sh /etc/rc.common
 START=80
 boot() {
-	if [ "$($CONFIG get wl_sectype)" = "6" -o "$($CONFIG get wlg1_sectype)" = "6" ]; then
-		echo "2.4G wifi security is enterprise..." > /dev/console
-		[ "$($CONFIG get wl_sectype)" = "6" ] && $CONFIG set wl_sectype=1
-		[ "$($CONFIG get wlg1_sectype)" = "6" ] && $CONFIG set wlg1_sectype=1
-		$CONFIG commit
-	fi
-       sleep 5
        wlan updateconf
        wlan down
        wlan up
@@ -15,19 +8,20 @@ boot() {
 
 start()    # don't use this command unless you know what it means
 {
-	wlan updateconf
-	wlan up
+        wlan updateconf
+        wlan up
 }
 
 stop()    # don't use this command unless you know what it means
 {
-	wlan updateconf
-	wlan down
+        wlan updateconf
+        wlan down
 }
 
 restart()
 {
-	wlan updateconf
-	wlan down
-	wlan up
+        wlan updateconf
+        wlan down
+        wlan up
 }
+

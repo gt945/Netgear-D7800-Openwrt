@@ -1,10 +1,6 @@
 #!/bin/sh /etc/rc.common
-#START=90
+START=90
 
-start() {
-	/sbin/cmdigmp start &
-}
-
-stop() {
-	/sbin/cmdigmp stop
+boot() {
+	cmd_igmp start
 }

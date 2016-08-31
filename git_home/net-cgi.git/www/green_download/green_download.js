@@ -29,12 +29,12 @@ function show_Graypage()
 		cf.edit.disabled = true;
 		cf.Cancel.className ="common_gray_bt";
 		cf.Apply.className ="common_gray_bt";
-		cf.edit.className ="edit_gray_bt";
+		cf.edit.className ="long_edit_gray_bt";
 		cf.green_download_max_downrate.disabled = true;
 		cf.green_download_max_uprate.disabled = true;
 		cf.enable_autorefresh_status.disabled = true;
 		cf.edit.disabled = true;
-		cf.edit.className = "edit_gray_bt";
+		cf.edit.className = "long_edit_gray_bt";
 
 		if(enable_autorefresh_status == "1")
 			cf.refresh_time.disabled = true;
@@ -63,7 +63,7 @@ function show_Graypage()
 		cf.green_download_max_uprate.disabled = false;
 		cf.enable_autorefresh_status.disabled = false;
 		cf.edit.disabled = false;
-		cf.edit.className = "edit_bt";
+		cf.edit.className = "long_edit_bt";
 	}
 }
 

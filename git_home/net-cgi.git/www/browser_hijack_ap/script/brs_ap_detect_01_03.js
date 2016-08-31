@@ -39,7 +39,7 @@ function goto_next()
 		this.location.href = "BRS_ap_detect_01_ap_01.html";
 	else
 	{
-		alert("You must select the Yes or No radio button.");
+		alert(bh_select_yes_or_no);
 		return false;
 	}
 		

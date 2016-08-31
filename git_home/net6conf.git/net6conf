@@ -45,6 +45,7 @@ stop_connection() {
 	${BASEDIR}/6rd stop
 	${BASEDIR}/6fixed stop
 	${BASEDIR}/6pppoe stop
+	${BASEDIR}/6autodet stop
 	${BASEDIR}/6autoconf stop
 }
 
@@ -92,7 +93,7 @@ set_interface_id()
 		return 0;
 	fi
 
-	if [ "$wan6_type" = "autoDetect" -o "$wan6_type" = "autoConfig" -o "$wan6_type" = "6to4" -o "$wan6_type" = "dhcp" -o "$wan6_type" = "pppoe" -o "$wan6_type" = "6rd" ]; then  
+	if [ "$wan6_type" = "autoDetect" -o "$wan6_type" = "autoConfig" -o "$wan6_type" = "6to4" -o "$wan6_type" = "dhcp" -o "$wan6_type" = "pppoe" -o "$wan6_type" = "6rd" ]; then
 		$IP -6 addr del ${ip6} dev $bridge
 		$IP -6 addr add fe80::$ipv6_interface_id/64 dev $bridge
 	fi
@@ -127,6 +128,8 @@ add_dns() {
 start() {
 	local wan6_type=`$CONFIG get ipv6_type`
 
+	echo $wan6_type > /tmp/ipv6_type
+
 	#set ipv6 proc file
 	${BASEDIR}/6proc start
 
@@ -143,7 +146,7 @@ start() {
 #	[ "x$logo_test" != "x1" -o "x$wan6_type" != "xfixed" ] && start_service
 	sleep 4
 	start_service
-	/usr/sbin/net-wall -6 start
+	firewall.sh start ipv6
 	#under ppoev6 we check if there is lan v6 ip,if no ,we reload the server.
 	local lan6_ip=`ifconfig $bridge |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
 	[ "x$wan6_type" = "xpppoe" ] && [ "x$lan6_ip" = "x" ] && /etc/net6conf/6service reload 
@@ -172,8 +175,8 @@ stop () {
 	reset_iface_ip6 $bridge
 	del_dns6
 	del_gw
-	/usr/sbin/net-wall -6 stop
-        killall 6pppoe #kill pppoev6 autodet
+	firewall.sh stop ipv6
+	killall 6pppoe #kill pppoev6 autode
 }
 
 restart() {

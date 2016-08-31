@@ -639,8 +639,10 @@ int __pptp_xmit(struct sock *sk, struct sk_buff *skb)
 	iph->tot_len = htons(skb2->len);
 	iph->frag_off = __constant_htons(IP_DF); /* C/S are in the same subnet. */
 	iph->ttl = 64;
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,4,0)
 	ip_select_ident(skb, sk);
+#elif LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
+	ip_select_ident(iph, &rt->dst, sk);
 #else
 	ip_select_ident(iph, &rt->u.dst, sk);
 #endif

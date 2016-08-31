@@ -1,4 +1,4 @@
-#mainContent_div { width:70%; margin:0 auto; }
+#mainContent_div { width:600px; margin:0 auto; }
 
 #allBtns_div { width:40%; margin:20px auto;}
 
@@ -6,4 +6,4 @@
 
 .wizard_words_div .input_left_div { height:30px; width:46%; margin:0 0 5px 0; line-height:30px; float:left;}
 
-.wizard_words_div .input_img_div { height:30px; width:50%; line-height:30px; margin:0 0 5px 4%; float:right; position:relative; }
+.wizard_words_div .input_img_div, .wizard_words_div .input_ip_div { height:30px; width:50%; line-height:30px; margin:0 0 5px 4%; float:right; position:relative; }

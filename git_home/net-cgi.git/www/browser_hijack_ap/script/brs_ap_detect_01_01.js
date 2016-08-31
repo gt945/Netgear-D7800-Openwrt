@@ -1,29 +1,26 @@
 function initPage()
 {
 	//button back
-	var btns_div1 = document.getElementById("btnsContainer_div1");
+	var btns1 = document.getElementById("back");
+	btns1.value = bh_back_mark;
 	if( master == "admin" )
-	btns_div1.onclick = function()
+	btns1.onclick = function()
 	{
 		return goto_url(0);
 	}
-	
-	var btn = btns_div1.getElementsByTagName("div");
-	var btn_text = document.createTextNode(bh_back_mark);
-	btn[0].appendChild(btn_text);
-	
+	else
+		btns1.className="grey_short_btn";
 	
 	//button next
-	var btns_div2 = document.getElementById("btnsContainer_div2");
+	var btns2 = document.getElementById("next");
+	btns2.value = bh_next_mark;
 	if( master == "admin" )
-	btns_div2.onclick = function()
+	btns2.onclick = function()
 	{
 		return goto_url(1);
 	}
-	
-	btn = btns_div2.getElementsByTagName("div");
-	btn_text = document.createTextNode(bh_next_mark);
-	btn[0].appendChild(btn_text);
+	else
+		btns2.className="grey_short_btn";
 }
 
 function goto_url(tag)

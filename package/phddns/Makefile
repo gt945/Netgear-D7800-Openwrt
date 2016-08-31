@@ -7,7 +7,6 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=phddns
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-#PKG_SOURCE_URL:=http://open.oray.com/doc/phddns-sdk-1.0.4.17314.tar.gz
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -15,15 +14,20 @@ define Package/phddns
 	SECTION:=utils
 	CATEGORY:=Network
 	TITLE:=Oray DDNS utility.
+	MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) -r ./src/* $(PKG_BUILD_DIR)/
+	$(CP) $(GIT_HOME)/phddns.git/* $(PKG_BUILD_DIR)/
 endef
 
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
 define Package/phddns/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/phddns $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/phddns $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_oray_ddns $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
 endef
 
 $(eval $(call BuildPackage,phddns))

@@ -34,6 +34,8 @@ function loadvalue()
                 cf.IPv6Filtering[1].checked = true;
         }
 */
+	login_type_show(cf);
+	cf.login_type.value = "bridge"; 
 }
 </script>
 
@@ -45,20 +47,8 @@ function loadvalue()
         <A tabindex=-1 href="javascript:loadhelp('_IPv6','internet')"><B>$ipv6_internet_con_type</B></A>
         </TD>
         <TD nowrap align=right>
-        <select name="con_type" onChange="change_ipv6(document.forms[0].con_type.value)">
-		<option value="disabled">$pppoe2_disable</option>
-                <option value="autoDetect">$ipv6_auto_detect</option>
-		<option value="autoConfig">$ipv6_auto_config</option>
-                <option value="6to4">$ipv6_6to4_tunnel</option>
-		<script>
-                if(top.ipv6_6rd_flag ==1)
-                        document.write('<option value="6rd">6rd</option>');
-                </script>
-                <option value="bridge" selected>$ipv6_pass_through</option>
-                <option value="fixed">$ipv6_fixed</option>
-                <option value="dhcp">$router_status_dhcp</option>
-                <option value="pppoe">$basic_intserv_pppoe</option>
-        </select>
+        <select name="login_type" onChange="change_ipv6(document.forms[0].login_type.value)">
+	</select>
         </TD>
 </TR>
 $bluebar

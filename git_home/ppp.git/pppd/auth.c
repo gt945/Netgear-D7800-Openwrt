@@ -727,15 +727,11 @@ link_established(unit)
     int i;
     struct protent *protp;
 
-#ifdef DNI_DETECT_PPP
 	if( do_detect ){
 		printf("Link established.\n");
 		system("echo 1 > /tmp/ppp_exist");
 		sleep(2);
 	}
-#endif
-
-
     /*
      * Tell higher-level protocols that LCP is up.
      */

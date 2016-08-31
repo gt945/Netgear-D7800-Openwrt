@@ -42,6 +42,9 @@ define Package/zebra/install
 	install -m0755 $(PKG_BUILD_DIR)/ripngd/ripngd $(1)/usr/sbin/
 	install -m0755 ./files/ripngd.conf $(1)/etc/ripngd.conf
 	install -m0755 ./files/ripngd.init $(1)/etc/init.d/ripngd
+
+	$(call DGC/ProductName,$(1)/etc/zebra.conf)
+	$(call DGC/ProductName,$(1)/etc/ripngd.conf)
 endef
 
 $(eval $(call BuildPackage,zebra))

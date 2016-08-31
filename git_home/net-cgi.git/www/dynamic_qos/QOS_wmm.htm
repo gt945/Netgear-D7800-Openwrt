@@ -8,9 +8,9 @@
     <script>
         var master="<% cfg_get("http_loginname") %>";
 	if( master=="admin" )
-		document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" onClick="wmmMain();"> &nbsp;&nbsp; <input class="new_apply_bt ui-corner-all" type="submit" name="apply" value="$apply_mark" onClick="return check_wmm_apply(document.forms[0]);">');
+		document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="wmmMain();"> &nbsp;&nbsp; <input class="new_apply_bt ui-corner-all" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_wmm_apply(document.forms[0]);">');
 	else
-		document.write('<input class="new_greyapply_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp; <input class="new_greyapply_bt ui-corner-all" type="submit" name="apply" value="$apply_mark" disabled>');    
+		document.write('<input class="new_greyapply_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp; <input class="new_greyapply_bt ui-corner-all" type="button" name="Apply" id="apply" value="$apply_mark" disabled>');
     </script>
     </TD>
 </TR>
@@ -80,13 +80,13 @@ function loadvalue()
 	change_web_format();
 
 	if( endis_wl_wmm == "1" )
-		cf.wmm_enable.checked = true;
+		cf.wmm_enable_2g.checked = true;
 	else
-		cf.wmm_enable.checked = false;
+		cf.wmm_enable_2g.checked = false;
         if( endis_wla_wmm == "1" )
-                cf.wmm_enable_a.checked = true;
+                cf.wmm_enable_5g.checked = true;
         else
-                cf.wmm_enable_a.checked = false;
+                cf.wmm_enable_5g.checked = false;
 
 	showWps_alert();
 }
@@ -102,10 +102,10 @@ function loadvalue()
 </td>
 </tr>
 <TR>
-	<TD><input type="checkbox" name="wmm_enable" value="1"><a tabindex=-1 href="javascript:loadhelp('_wmm','wifi')"><b>$qos_enable_wmm <script>if(an_router_flag) document.write("(2.4GHz b/g/n)");</script></b></a></TD>
+	<TD><input type="checkbox" name="wmm_enable_2g" id="wmm_enable_2g" value="1"><a tabindex=-1 href="javascript:loadhelp('_wmm','wifi')"><b>$qos_enable_wmm <script>if(an_router_flag) document.write("(2.4GHz b/g/n)");</script></b></a></TD>
 </TR>
 <TR id=wmm_an>
-	<TD><input type="checkbox" name="wmm_enable_a" value="1"><a tabindex=-1 href="javascript:loadhelp('_wmm','wifi')"><b>
+	<TD><input type="checkbox" name="wmm_enable_5g" id="wmm_enable_5g" value="1"><a tabindex=-1 href="javascript:loadhelp('_wmm','wifi')"><b>
 	<script>
 		if( ac_router_flag == 1 )
 			document.write("$qos_enable_wmm (5GHz 802.11a/n/ac)")

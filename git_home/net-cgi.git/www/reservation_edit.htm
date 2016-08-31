@@ -6,9 +6,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_reservation_add(document.forms[0],\'edit\')"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input id="cancel" class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'LAN_lan.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_reservation_add(document.forms[0],\'edit\')"></TD></TR>');
 else
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input id="cancel" class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </TABLE>
 </div>
@@ -51,22 +51,22 @@ function loadvalue()
 <TR>
 	<TD nowrap>$info_mark_ip</TD>
 	<TD nowrap>
-	<input type="text" name="rsv_ip1" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="rsv_ip2" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="rsv_ip3" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="rsv_ip4" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="rsv_ip1" id="rsv_ipaddress1" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="rsv_ip2" id="rsv_ipaddress2" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="rsv_ip3" id="rsv_ipaddress3" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="rsv_ip4" id="rsv_ipaddress4" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$info_mark_mac</TD>
 	<TD nowrap>
-	<input type="text" value="" name="rsv_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+	<input type="text" value="" name="rsv_mac" id="rsv_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$lan_mark_name</TD>
 	<TD nowrap>
-	<input type="text" name="dv_name" maxLength="20" size="16" onKeyPress="return getkey('ssid', event)">
+	<input type="text" name="dv_name" id="device_name" maxLength="20" size="16" onKeyPress="return getkey('ssid', event)">
 	</TD>
 </TR>
 $bluebar

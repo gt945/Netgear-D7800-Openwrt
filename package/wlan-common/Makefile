@@ -13,20 +13,16 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-define Package/wlan-common
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=DNI wlan common scripts
+  MENU:=1
 endef
 
 PLATFORM_PATCH_DIR:=./patches-$(BOARD)
 
-define Package/wlan-common/config
-	menu "Configurations"
-		depends on PACKAGE_wlan-common
- 		source "$(SOURCE)/Config.in"
-	endmenu
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/wlan-common.git/* $(PKG_BUILD_DIR)/
@@ -35,7 +31,7 @@ endef
 define Build/Compile
 endef
 
-define Package/wlan-common/install
+define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc
 	cp -af $(PKG_BUILD_DIR)/etc/* $(1)/etc
 	if [ -f $(PKG_BUILD_DIR)/etc/ath/wifi.conf ]; then \
@@ -48,8 +44,6 @@ define Package/wlan-common/install
 	$(INSTALL_DIR) $(1)/lib/wifi/
 	cp -af $(PKG_BUILD_DIR)/lib/wifi/* $(1)/lib/wifi
 	install -d -m0755 $(1)/etc/config
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 ./files/exist_ap_info.sh $(1)/usr/sbin/
 endef
 
-$(eval $(call BuildPackage,wlan-common))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -9,7 +9,6 @@ do
                dest=$(echo $line | awk '{print $4}')
                mask=$(echo $line | awk '{print $5}')
                gw=$(echo $line | awk '{print $6}')
-               echo "Delete static route: $dest"
                /sbin/route del -net $dest netmask $mask gw $gw >&- 2>&-
        fi
        num=$(($num+1))

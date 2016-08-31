@@ -6,9 +6,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if(master=="admin")
-document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="access_cancel();"> &nbsp;&nbsp;<input class="apply_bt" type="submit" name="apply" value="$apply_mark" onClick="access_control_apply(document.forms[0]);"></TD></TR>');
+document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="access_cancel();"> &nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="access_control_apply(document.forms[0], \'1\');"></TD></TR>');
 else
-document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="button" name="apply" value="$apply_mark" disabled></TD></TR>');
+document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </TABLE>
 </div>
@@ -85,7 +85,7 @@ function add_access(type)
 		next="add_blocked.htm";
 
 	var cf = document.forms[0];
-	access_control_apply(cf);
+	access_control_apply(cf, '0');
 	cf.submit_flag.value = "apply_acc_control";
 	cf.action="/apply.cgi?/"+next+" timestamp="+ts;
 	cf.submit();
@@ -98,21 +98,21 @@ function loadvalue()
 
 	if( show_edit_button== 1)
 	{
-		document.getElementById("edit1").style.display="";
-		document.getElementById("edit2").style.display="";
-		document.getElementById("edit3").style.display="";
+		document.getElementById("edit_attached").style.display="";
+		document.getElementById("edit_white").style.display="";
+		document.getElementById("edit_black").style.display="";
 	}
 	
 	
 	if(enable_block_device == 0)
-		cf.block_enable.checked = false;
+		cf.enable_acl.checked = false;
 	else
-		cf.block_enable.checked = true;
+		cf.enable_acl.checked = true;
 		
 	if(new_device_statue_by_default == "Block")
-		cf.allow_or_block[1].checked = true;
+		cf.access_all[1].checked = true;
 	else
-		cf.allow_or_block[0].checked = true;
+		cf.access_all[0].checked = true;
 
 	if( allow_no_con_sta == "show")
 		show_allow_no_connect();
@@ -124,75 +124,75 @@ function loadvalue()
 	var master="<% cfg_get("http_loginname") %>";
 	var cf = document.forms[0];
 	var flag;
-	flag = (!(cf.block_enable.checked));
-	setDisabled(flag, cf.allow_or_block[0], cf.allow_or_block[1], cf.Allow, cf.Block, cf.all_checked);
-	setDisabled(flag, cf.delete_allow_btn, cf.delete_block_btn, cf.allow_all, cf.block_all,cf.add_block_btn,cf.add_allow_btn);
+	flag = (!(cf.enable_acl.checked));
+	setDisabled(flag, cf.access_all[0], cf.access_all[1], cf.Allow, cf.Block, cf.checkbox_index);
+	setDisabled(flag, document.getElementById("delete_white"), document.getElementById("delete_black"), cf.checkbox_index_white, cf.checkbox_index_black,document.getElementById("add_black"),document.getElementById("add_white"));
 	if(master=="guest")
 	{
 		enable_block_device = 0;
-		cf.block_enable.disabled = true;
+		cf.enable_acl.disabled = true;
 		cf.Allow.className = "common_gray_bt";
 		cf.Block.className = "common_gray_bt";
-		for(i=0;i<access_control_device_num;i++)
-			eval('document.getElementsByName("check_device'+i+'")[0]').disabled = true;
+		for(i=1;i<=access_control_device_num;i++)
+			document.getElementById("checkbox_index"+i).disabled = true;
 
-		cf.delete_allow_btn.className= "common_big_gray_bt";
-		cf.add_allow_btn.className = "common_gray_bt";
-		for(i=0;i<allowed_no_connect_num;i++)
-			eval('document.getElementsByName("allow_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_white").className= "common_big_gray_bt";
+		document.getElementById("add_white").className = "common_gray_bt";
+		for(i=1;i<=allowed_no_connect_num;i++)
+			document.getElementById("checkbox_index_white"+i).disabled = true;
 
-		cf.delete_block_btn.className= "common_big_gray_bt";
-		cf.add_block_btn.className = "common_gray_bt";
-		for(i=0;i<blocked_no_connect_num;i++)
-			eval('document.getElementsByName("block_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_black").className= "common_big_gray_bt";
+		document.getElementById("add_black").className = "common_gray_bt";
+		for(i=1;i<=blocked_no_connect_num;i++)
+			document.getElementById("checkbox_index_black"+i).disabled = true;
 	}
-	else if(cf.block_enable.checked == false)
+	else if(cf.enable_acl.checked == false)
 	{
 		enable_block_device = 0;
 		cf.Allow.className = "common_gray_bt";
 		cf.Block.className = "common_gray_bt";
-		for(i=0;i<access_control_device_num;i++)
-			eval('document.getElementsByName("check_device'+i+'")[0]').disabled = true;
+		for(i=1;i<=access_control_device_num;i++)
+			document.getElementById("checkbox_index"+i).disabled = true;
 
-		cf.delete_allow_btn.className= "common_big_gray_bt";
-		cf.add_allow_btn.className = "common_gray_bt";
-		for(i=0;i<allowed_no_connect_num;i++)
-			eval('document.getElementsByName("allow_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_white").className= "common_big_gray_bt";
+		document.getElementById("add_white").className = "common_gray_bt";
+		for(i=1;i<=allowed_no_connect_num;i++)
+			document.getElementById("checkbox_index_white"+i).disabled = true;
 
-		cf.delete_block_btn.className= "common_big_gray_bt";
-		cf.add_block_btn.className = "common_gray_bt";
-		for(i=0;i<blocked_no_connect_num;i++)
-			eval('document.getElementsByName("block_not_connect'+i+'")[0]').disabled = true;
+		document.getElementById("delete_black").className= "common_big_gray_bt";
+		document.getElementById("add_black").className = "common_gray_bt";
+		for(i=1;i<=blocked_no_connect_num;i++)
+			document.getElementById("checkbox_index_black"+i).disabled = true;
 	}
 	else
 	{
 		enable_block_device = 1;
 		cf.Allow.className = "common_bt";
 		cf.Block.className = "common_bt";
-		for(i=0;i<access_control_device_num;i++)
-			eval('document.getElementsByName("check_device'+i+'")[0]').disabled = false;
+		for(i=1;i<=access_control_device_num;i++)
+			document.getElementById("checkbox_index"+i).disabled = false;
 
-		cf.delete_allow_btn.className= "common_big_bt";
-		cf.add_allow_btn.className = "common_bt";
-		for(i=0;i<allowed_no_connect_num;i++)
-			eval('document.getElementsByName("allow_not_connect'+i+'")[0]').disabled = false;
-		cf.delete_block_btn.className= "common_big_bt";
-		cf.add_block_btn.className = "common_bt";
+		document.getElementById("delete_white").className= "common_big_bt";
+		document.getElementById("add_white").className = "common_bt";
+		for(i=1;i<=allowed_no_connect_num;i++)
+			document.getElementById("checkbox_index_white"+i).disabled = false;
+		document.getElementById("delete_black").className= "common_big_bt";
+		document.getElementById("add_black").className = "common_bt";
 
-		for(i=0;i<blocked_no_connect_num;i++)
-			eval('document.getElementsByName("block_not_connect'+i+'")[0]').disabled = false;
+		for(i=1;i<=blocked_no_connect_num;i++)
+			document.getElementById("checkbox_index_black"+i).disabled = false;
 	}
 	
 	
-	sortTable('tableSort', 1, 1);
-	load_sortTable('tableSort', 1, 3, 'int', 1);
+	sortTable('control_table', 1, 1);
+	load_sortTable('control_table', 1, 3, 'int', 1);
 }
 
 </script>
 <input type="hidden" name="hid_able_block_device">
 <input type="hidden" name="hid_new_device_status">
-<input type="hidden" name="hid_allow_no_connect_sta">
-<input type="hidden" name="hid_block_no_connect_sta">
+<input type="hidden" name="hid_allow_no_connect_sta" value="hidden">
+<input type="hidden" name="hid_block_no_connect_sta" value="hidden">
 <input type="hidden" name="hidden_del_list" value="" />
 <input type="hidden" name="hidden_del_num" value="0" />
 <input type="hidden" name="hidden_change_list" value="" />
@@ -203,44 +203,44 @@ function loadvalue()
 	<TD nowrap colSpan="4"><b>$acc_control_allow_or_block</b></TD>
 </TR>
 <TR>
-	<TD nowrap colSpan="4"><input type="checkbox" name="block_enable" value="1" onclick="return check_status()"><a tabindex=-1 href="javascript:loadhelp('_access_control','enable_acc_control')">$turn_on_access</a></TD>
+	<TD nowrap colSpan="4"><input type="checkbox" name="enable_acl" id="enable_acl" value="1" onclick="return check_status()"><a tabindex=-1 href="javascript:loadhelp('_access_control','enable_acc_control')">$turn_on_access</a></TD>
 </TR>
 <TR>
 	<TD nowrap colSpan="3"><a tabindex=-1 href="javascript:loadhelp('_access_control','access_rule')">$acc_rule</a></TD>
 </TR>
 <TR>
-	<TD nowrap colSpan="4"><input type=radio name="allow_or_block" value="Allow">$allow_connect</TD>
+	<TD nowrap colSpan="4"><input type=radio name="access_all" id="allow_all" value="allow_all">$allow_connect</TD>
 </TR>
 <TR>
-	<TD nowrap colSpan="4"><input type=radio name="allow_or_block" value="Block">$block_connect</TD>
+	<TD nowrap colSpan="4"><input type=radio name="access_all" id="block_all" value="block_all">$block_connect</TD>
 </TR>
 
 <TR><TD colspan=4><img src=/liteblue.gif width=100% height=12></TD></TR>
 <TR>
 	<TD width="227px" align=left>
-		<input class="common_bt" type="button" name="Allow" value="$allow_mark" onclick="return set_allow_block(document.forms[0],1);">
+		<input class="common_bt" type="button" name="Allow" id="allow" value="$allow_mark" onclick="return set_allow_block(document.forms[0],1);">
 	</TD>
 	<TD align=left>
-		<input class="common_bt" type="button" name="Block" value="$block_mark" onclick="return set_allow_block(document.forms[0],0);">
+		<input class="common_bt" type="button" name="Block" id="block" value="$block_mark" onclick="return set_allow_block(document.forms[0],0);">
 	</TD>
 	<TD align=left>
-		<input class="common_gray_bt" type="button" name="Edit" value="$edit_mark" id="edit1" style="display:none" onclick="return check_edit(document.forms[0]);" disabled>
+		<input class="common_gray_bt" type="button" name="Edit" id="edit_attached" value="$edit_mark" style="display:none" onclick="return check_edit(document.forms[0]);" disabled>
 	</TD>
 	<TD align=right>
-		<input class="common_bt" type="button" name="Refresh" value="$refresh_mark" onclick='location.href="access_control.htm";'>
+		<input class="common_bt" type="button" name="Refresh" id="refresh" value="$refresh_mark" onclick='location.href="access_control.htm";'>
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=4>
-		<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="tableSort">
+		<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="control_table">
 			<thead>
 			<TR class=table_header>
-				<TD nowrap align=center><span class="subhead"><input type=checkbox name="all_checked" Onclick="check_all_device(this, 0, 'check_device');"></span></TD>
-				<TD nowrap align=left><a href=#  onclick="sortTable('tableSort',1)" class="subhead_acc_control">$stalist_Status</a></TD>
-				<TD nowrap align=left><a href=#  onclick="sortTable('tableSort',2)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
-				<TD nowrap align=left><a href=#  onclick="sortTable('tableSort',3, 'int')" class="subhead_acc_control">$block_ser_setup_ip_jp</a></TD>
-				<TD nowrap align=left><a href=#  onclick="sortTable('tableSort',4)" class="subhead_acc_control">$info_mark_mac</a></TD>
-				<TD nowrap align=left><a href=#  onclick="sortTable('tableSort',5)" class="subhead_acc_control">$trigger_contype</a></TD>
+				<TD nowrap align=center><span class="subhead"><input type=checkbox name="checkbox_index" id="checkbox_index" Onclick="check_all_device(this, 1, 'checkbox_index');"></span></TD>
+				<TD nowrap align=left><a href=#  onclick="sortTable('control_table',1)" class="subhead_acc_control">$stalist_Status</a></TD>
+				<TD nowrap align=left><a href=#  onclick="sortTable('control_table',2)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
+				<TD nowrap align=left><a href=#  onclick="sortTable('control_table',3, 'int')" class="subhead_acc_control">$block_ser_setup_ip_jp</a></TD>
+				<TD nowrap align=left><a href=#  onclick="sortTable('control_table',4)" class="subhead_acc_control">$info_mark_mac</a></TD>
+				<TD nowrap align=left><a href=#  onclick="sortTable('control_table',5)" class="subhead_acc_control">$trigger_contype</a></TD>
 			</TR>
 			</thead>
 		<script>
@@ -256,12 +256,12 @@ function loadvalue()
 					else
 						document.write("<TR class=\"odd_line\">");
 
-					document.write("<td nowrap align=center><input type='checkbox' name='check_device"+i+"'  id='check_device"+i+"' value='"+each_info[2]+"' onClick='toggle_edit();'></td>");
+					document.write("<td nowrap align=center><input type='checkbox' name='checkbox_index"+(i+1)+"'  id='checkbox_index"+(i+1)+"' value='"+each_info[2]+"' onClick='toggle_edit();'></td>");
 					if(each_info[0] == "Allowed")
 						document.write("<td nowrap><font color=green>$acc_allow</font></td>")
 					else
 						document.write("<td nowrap><font color=red>$acc_block</font></td>")
-					document.write("<td nowrap>"+str_name+"</td>")
+					document.write("<td nowrap>"+str_name.replace(/\s/g, '&nbsp;')+"</td>")
 					document.write("<td nowrap>"+each_info[1]+"</td>")
 					document.write("<td nowrap>"+each_info[2]+"</td>")
 					if(each_info[3]=="primary")
@@ -292,20 +292,20 @@ function loadvalue()
 <TR id="allow_0" style="display: none"><TD colspan=4><img src=/liteblue.gif width=100% height=12></TD></TR>
 <TR id="allow_1" style="display: none">
 	<TD nowrap colspan=4>
-		<input class="common_big_bt" type="button" value="$acc_remove" onClick="return delete_allow();" name="delete_allow_btn">
+		<input class="common_big_bt" type="button" name="delete_white" id="delete_white" value="$acc_remove" onClick="return delete_allow();">
 		&nbsp;&nbsp;
-		<input class="common_bt" type="button" value="$add_mark" onClick="return add_access('allow');" name="add_allow_btn">
-		<input class="common_gray_bt" type="button" value="$edit_mark" id="edit2" style="display:none" onClick="return check_allow_edit()" name="edit_allow_btn">
+		<input class="common_bt" type="button" value="$add_mark" onClick="return add_access('allow');" name="Add" id="add_white">
+		<input class="common_gray_bt" type="button" value="$edit_mark" id="edit_white" style="display:none" onClick="return check_allow_edit()" name="Edit" disabled>
 	</TD>
 </TR>
 <TR id="allow_2" style="display: none">
 	<TD nowrap colspan=4>
-		<TABLE  id="allow_table" border=0 cellpadding=2 cellspacing=0 width=70%>
+		<TABLE  id="white_control_table" border=0 cellpadding=2 cellspacing=0 width=70%>
 			<thead><TR class=table_header>
-				<TD><input type="checkbox" name="allow_all" Onclick="check_all_device(this, 0, 'allow_not_connect');"></TD>
-				<TD><a href=# onclick="sortTable('allow_table',1)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
-				<TD><a href=# onclick="sortTable('allow_table',2)" class="subhead_acc_control">$info_mark_mac</a></TD>
-				<TD><a href=# onclick="sortTable('allow_table',3)" class="subhead_acc_control">$trigger_contype</a></TD>
+				<TD><input type="checkbox" name="checkbox_index_white" id="checkbox_index_white" Onclick="check_all_device(this, 1, 'checkbox_index_white');"></TD>
+				<TD><a href=# onclick="sortTable('white_control_table',1)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
+				<TD><a href=# onclick="sortTable('white_control_table',2)" class="subhead_acc_control">$info_mark_mac</a></TD>
+				<TD><a href=# onclick="sortTable('white_control_table',3)" class="subhead_acc_control">$trigger_contype</a></TD>
 			</TR></thead>
 			<script>
 				for(i=0; i<allowed_no_connect_num; i++)
@@ -316,7 +316,7 @@ function loadvalue()
 						document.write("<TR class=\"even_line\">");
 					else
 						document.write("<TR class=\"odd_line\">");
-					document.write('<TD><input type="checkbox" name="allow_not_connect'+i+'" id="allow_not_connect'+i+'" value="'+each_info[1]+'" onClick="toggle_edit_allow();"></TD>');
+					document.write('<TD><input type="checkbox" name="checkbox_index_white'+(i+1)+'" id="checkbox_index_white'+(i+1)+'" value="'+each_info[1]+'" onClick="toggle_edit_allow();"></TD>');
 						document.write('<TD>'+each_info[0]+'</TD>');
 						document.write('<TD>'+each_info[1]+'</TD>');
 						document.write('<TD>'+each_info[2]+'</TD>');
@@ -337,20 +337,20 @@ function loadvalue()
 <TR id="block_0" style="display: none"><TD colspan=4><img src=/liteblue.gif width=100% height=12></TD></TR>
 <TR id="block_1" style="display: none">
 	<TD nowrap colspan=4>
-		<input class="common_big_bt" type="button" value="$acc_remove" onClick="return delete_block();" name="delete_block_btn">
+		<input class="common_big_bt" type="button" name="delete_black" id="delete_black" value="$acc_remove" onClick="return delete_block();">
 		&nbsp;&nbsp;
-		<input class="common_bt" type="button" value="$add_mark" onClick="return add_access('block');" name="add_block_btn">
-		<input class="common_gray_bt" type="button" value="$edit_mark" id="edit3" style="display:none" onClick="return check_block_edit(document.forms[0])" name="edit_block_btn">
+		<input class="common_bt" type="button" value="$add_mark" onClick="return add_access('block');" name="Add" id="add_black">
+		<input class="common_gray_bt" type="button" value="$edit_mark" id="edit_black" style="display:none" onClick="return check_block_edit(document.forms[0])" name="Edit" disabled>
 	</TD>
 </TR>
 <TR id="block_2" style="display: none">
 	<TD nowrap colspan=4>
-		<TABLE  id="block_table" border=0 cellpadding=2 cellspacing=0 width=70%>
+		<TABLE  id="black_control_table" border=0 cellpadding=2 cellspacing=0 width=70%>
 			<thead><TR class=table_header>
-				<TD><input type="checkbox" name="block_all" Onclick="check_all_device(this, 0, 'block_not_connect');"></TD>
-				<TD><a href=# onclick="sortTable('block_table',1)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
-				<TD><a href=# onclick="sortTable('block_table',2)" class="subhead_acc_control">$info_mark_mac</a></TD>
-				<TD><a href=# onclick="sortTable('block_table',3)" class="subhead_acc_control">$trigger_contype</a></TD>
+				<TD><input type="checkbox" name="checkbox_index_black" id="checkbox_index_black" Onclick="check_all_device(this, 1, 'checkbox_index_black');"></TD>
+				<TD><a href=# onclick="sortTable('black_control_table',1)" class="subhead_acc_control">$adva_wlan_devicename</a></TD>
+				<TD><a href=# onclick="sortTable('black_control_table',2)" class="subhead_acc_control">$info_mark_mac</a></TD>
+				<TD><a href=# onclick="sortTable('black_control_table',3)" class="subhead_acc_control">$trigger_contype</a></TD>
 			</TR></thead>
                         <script>
 				for(i=0; i<blocked_no_connect_num; i++)
@@ -361,7 +361,7 @@ function loadvalue()
 						document.write("<TR class=\"even_line\">");
 					else
 						document.write("<TR class=\"odd_line\">");
-					document.write('<TD><input type="checkbox" name="block_not_connect'+i+'" id="block_not_connect'+i+'" value="'+each_info[1]+'" onClick="toggle_edit_block();"></TD>');
+					document.write('<TD><input type="checkbox" name="checkbox_index_black'+(i+1)+'" id="checkbox_index_black'+(i+1)+'" value="'+each_info[1]+'" onClick="toggle_edit_block();"></TD>');
 						document.write('<TD>'+each_info[0]+'</TD>');
 						document.write('<TD>'+each_info[1]+'</TD>');
 						document.write('<TD>'+each_info[2]+'</TD>');

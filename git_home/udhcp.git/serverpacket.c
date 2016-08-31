@@ -47,6 +47,20 @@
 unsigned char g_src_addr[6] = {0};
 u_int32_t latest_addr;
 
+static int is_guest_client(u_int8_t *chaddr)
+{
+	int ret = 0;
+	FILE *pfile;
+	char cmd[128];
+
+	sprintf(cmd, "/usr/share/udhcpc/is_guest_client %02x:%02x:%02x:%02x:%02x:%02x", chaddr[0], chaddr[1], chaddr[2], chaddr[3], chaddr[4], chaddr[5]);
+	pfile = popen(cmd, "r");
+	ret = fgetc(pfile);
+	pclose(pfile);
+
+	return ret == '1';
+}
+
 /* send a packet to giaddr using the kernel ip stack */
 static int send_packet_to_relay(struct dhcpMessage *payload)
 {
@@ -163,6 +177,13 @@ int sendOffer(struct dhcpMessage *oldpacket)
 	
 #ifdef DHCPD_STATIC_LEASE
 	static_lease_ip = get_ip_by_mac(oldpacket->chaddr);
+
+        /* if static lease ip is out of ip range, static lease ip turn 0 */
+        if (static_lease_ip) {
+                if (ntohl(static_lease_ip) < ntohl(server_config.start) ||
+                    ntohl(static_lease_ip) > ntohl(server_config.end))
+                        static_lease_ip = 0;
+        }
 #endif
 
 	/* ADDME: if static, short circuit */
@@ -237,6 +258,10 @@ int sendOffer(struct dhcpMessage *oldpacket)
 	/* Make sure we aren't just using the lease time from the previous offer */
 	if (lease_time_align < server_config.min_lease) 
 		lease_time_align = server_config.lease;
+
+	if (is_guest_client(packet.chaddr))
+		lease_time_align = GUEST_LEASE_TIME;
+
 	/* ADDME: end of short circuit */		
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 
@@ -324,6 +349,9 @@ int sendACK(struct dhcpMessage *oldpacket, u_int32_t yiaddr)
 			lease_time_align = server_config.lease;
 	}
 	
+	if (is_guest_client(packet.chaddr))
+		lease_time_align = GUEST_LEASE_TIME;
+
 	add_simple_option(packet.options, DHCP_LEASE_TIME, htonl(lease_time_align));
 	
 	curr = server_config.options;

@@ -4,16 +4,7 @@
 <% rae_css() %>
 .ipbox{width: 450px; height: 210px; position:absolute; left:5%; top:320px;z-index:2; }
 </style>
-<div class="page_title">
-<script>
-                if(parent.rae_flag == "3")
-                        document.write('$rae_header');
-                else if(parent.rae_flag == "2")
-                        document.write('$qos_device10 / AP $wlan_mark_mode');
-                else if(parent.rae_flag == "1")
-                        document.write('$qos_device10 / $rae_em');
-</script>
-</div>
+<div class="page_title"><% rae_page_title() %></div>
 <div class="fix_button">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
@@ -23,7 +14,7 @@
 		if( master=="admin" )
 			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'rae_main.htm\';"><input class="new_apply_bt ui-corner-all" type="submit" name="Apply" value="$apply_mark" onClick="check_ap();return false;">');
 		else
-			document.write('<input class="new_cancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_apply_bt ui-corner-all" type="submiti" name="Apply" value="$apply_mark" disabled>');
+			document.write('<input class="new_greycancel_bt ui-corner-all" type="reset" name="Cancel" value="$cancel_mark" disabled><input class="new_greyapply_bt ui-corner-all" type="submit" name="Apply" value="$apply_mark" disabled>');
 	</script>
 	</TD>
 </TR>
@@ -188,7 +179,6 @@ function ap_show(type)
 	{
 	//	document.getElementById("learn").style.display="none";
 		document.getElementById("iptab").style.display="";
-		document.getElementById("devname_edit").style.display="none";
 	}
 		
 }
@@ -278,7 +268,7 @@ var form=document.forms[0];
 <input type="hidden" name="ap_dnsaddr2">
 <div id="main" class="main_top_button">
 
-<% rae_radios("ap") %>
+<% rae_radios("2") %>
 <div id="content1"  style="font-size:14px;">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
@@ -311,7 +301,7 @@ document.write(dev_name);
 <TR><TD height="10px"></TD></TR>
 <TR id=learn>
 	<TD nowrap colspan=3>
-	<input class="new_apply_bt ui-corner-all" type="button" name="learn_router" value="$learn_more" onclick="window.open('rae_learn.htm','newwindow','resizable=no,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no,alwaysRaised=yes,z-look=yes,width=800,height=600,left=200,top=100').focus();" >
+	<input class="new_apply_bt2 ui-corner-all" type="button" name="learn_router" value="$learn_more" onclick="window.open('rae_learn.htm','newwindow','resizable=no,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no,alwaysRaised=yes,z-look=yes,width=800,height=600,left=200,top=100').focus();" >
 	</TD>
 </TR>
 </TABLE>
@@ -373,7 +363,7 @@ else if (wla_sectype == 5)
 </TR>
 <TR><TD height="5px"></TD></TR>
 <TR>
-	<td nowrap colspan=3><input class="wireless_bt ui-corner-all" type="button" name="Apply" value="$wls_setup" onClick="gotto_link('setup', 'wireless');"></td>
+	<td nowrap colspan=3><input class="wireless_bt2 ui-corner-all" type="button" name="Apply" value="$wls_setup" onClick="gotto_link('setup', 'wireless');"></td>
 </TR>
 </TABLE>
 </div>

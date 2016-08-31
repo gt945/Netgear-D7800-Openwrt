@@ -8,9 +8,9 @@
     <script>
 	var master="<% cfg_get("http_loginname") %>";
 	if( master=="admin" )
-		document.write('<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="qosRule();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="apply" value="$apply_mark" onClick="return check_qos_online(document.forms[0],\'add\');">');
+		document.write('<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="qosRule();">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" id="apply" value="$apply_mark" onClick="return check_qos_online(document.forms[0],\'add\');">');
 	else
-		document.write('<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="apply" value="$apply_mark" disabled>');
+		document.write('<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" id="apply" value="$apply_mark" disabled>');
     </script>
     </TD>
 </TR>
@@ -43,12 +43,12 @@ function loadvalue()
 	<TR><TD nowrap colspan=2><b>$qos_priority</b> </TD></TR>
 	<TR>
 		<TD nowrap>$qos_policy_for</TD>
-		<TD nowrap><INPUT type="text" name="name" maxLength="60" size="20" onKeyPress="return getkey('ssid', event)" value=""></TD>
+		<TD nowrap><INPUT type="text" name="name" id="name" maxLength="60" size="20" onKeyPress="return getkey('ssid', event)" value=""></TD>
 	</TR>
 	<TR>
 		<TD nowrap>$qos_priority_category</TD>
 		<TD nowrap> 
-			<SELECT name="category" onChange="change_priority()">
+			<SELECT name="category" id="category" onChange="change_priority()">
 				<OPTION value="0">$qos_application</OPTION>
 				<OPTION value="1" selected>$qos_online</OPTION>
 				<OPTION value="2" >$qos_ether</OPTION>
@@ -59,7 +59,7 @@ function loadvalue()
 	<TR>
 		<TD nowrap>$qos_online</TD>
 		<TD nowrap> 
-			<SELECT name="apps" onChange="change_serv_online()">
+			<SELECT name="apps" id="apps" onChange="change_serv_online()">
 				<OPTION value="Counter-Strike">$qos_counter_strike</OPTION>
 				<OPTION value="Age-of-Empires" >$qos_ageof_empires</OPTION>
 				<OPTION value="Everquest" >$qos_everquest</OPTION>
@@ -74,7 +74,7 @@ function loadvalue()
 	<TR>
 		<TD nowrap>$qos_priority</TD>
 		<TD nowrap>
-			<SELECT name="priority">
+			<SELECT name="priority" id="priority">
 				<OPTION value="0" >$qos_highest</OPTION>
 				<OPTION value="1" selected>$qos_high</OPTION>			
 				<OPTION value="2" >$qos_normal</OPTION>
@@ -93,7 +93,7 @@ function loadvalue()
 	<TR>
 		<TD nowrap>$trigger_contype</TD>
 		<TD nowrap> 
-			<select name="port_type" size="1">
+			<select name="protocol" id="protocol" size="1">
 				<option value="TCP/UDP">TCP/UDP</option>
 				<option value="TCP">TCP</option>
 				<option value="UDP">UDP</option>
@@ -103,13 +103,13 @@ function loadvalue()
 	<TR>
 		<TD nowrap>$block_ser_start_port</TD>
 		<TD nowrap>
-			<input type="text" name="portstart" size="6" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
+			<input type="text" name="port_start" id="port_start" size="6" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
 		</TD>
 	</TR>
 	<TR>
 		<TD nowrap>$block_ser_end_port</TD>
 		<TD nowrap> 
-			<input type="text" name="portend" size="6" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
+			<input type="text" name="port_end" id="port_end" size="6" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
 		</TD>
 	</TR> 
 $bluebar	

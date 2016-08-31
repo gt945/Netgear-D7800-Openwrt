@@ -108,10 +108,6 @@ QCAWLAN_MODULE_LIST+=$(strip $(call if_opt_set, UNIFIED_SMARTANTENNA, \
 QCAWLAN_MODULE_LIST+=$(strip $(call if_opt_set, ATH_SW_WOW_SUPPORT, \
 	$(PKG_BUILD_DIR)/wow/sw_wow.$(LINUX_KMOD_SUFFIX)))
 
-define KernelPackage/qca-wifi/config
-	source "$(SOURCE)/Config.in"
-endef
-
 ifneq ($(CONFIG_QCA_WIFI_USE_DNI_GIT),)
 PKG_GIT_DIR=madwifi-11n.git
 QCA_WIRELESS_GIT_TREEISH=madwifi-11n-10.4-2.4.3.1008.232-dni3
@@ -126,7 +122,7 @@ ifneq ($(CONFIG_QCA_WIFI_DISPLAY_SCAN_IN_PROC),)
   DNI_EXTRA_FLAGS+=-DENABLE_DNI_SYSCTL
 endif
 
-DNI_COMMON_CFLAGS= COMMON_CFLAGS="-DDNI_READ_BACKUP_CAL -DNETGEAR_ENHANCED_ACS -DNETGEAR_ACL -DDNI_TPSCALE -DDNI_LED_CONTROL -DNETGEAR_CUSTOMISED_LED -DNETGEAR_WLAN_LOG -DENABLE_DNI_SYSCTL -DWPS_NOTIFICATION -DDNI_HOSTAP_JUDGE_PIN_LENGTH -DNETGEAR_DISABLE_WPS_IE -D__EXPORTED_HEADERS__ -DDNI_SHOW_VAP_STATUS $(DNI_EXTRA_FLAGS)"
+DNI_COMMON_CFLAGS= COMMON_CFLAGS="-DDNI_READ_BACKUP_CAL -DNETGEAR_ENHANCED_ACS -DNETGEAR_ACL -DNETGEAR_SUPER_WIFI -DDNI_TPSCALE -DDNI_LED_CONTROL -DNETGEAR_CUSTOMISED_LED -DNETGEAR_WLAN_LOG -DENABLE_DNI_SYSCTL -DWPS_NOTIFICATION -DDNI_HOSTAP_JUDGE_PIN_LENGTH -DNETGEAR_DISABLE_WPS_IE -D__EXPORTED_HEADERS__ -DDNI_SHOW_VAP_STATUS $(DNI_EXTRA_FLAGS)"
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/madwifi-11n.git/* $(PKG_BUILD_DIR)/
@@ -143,7 +139,7 @@ define KernelPackage/qca-wifi/Default
   URL:=http://www.qca.qualcomm.com
   MAINTAINER:=Qualcomm Atheros
   TITLE:=QCA Wireless LAN Driver
-  DEPENDS:=@(PACKAGE_qca-wifi-fw-hw1-10.4-asic||PACKAGE_qca-wifi-fw-hw2-10.4-asic||PACKAGE_qca-wifi-fw-hw2-10.4-emu_bb||PACKAGE_qca-wifi-fw-hw2-10.4-emu_m2m) \
+  DEPENDS:=@(PACKAGE_qca-wifi-fw-hw1-10.4-asic||PACKAGE_qca-wifi-fw-hw2-10.4-asic||PACKAGE_qca-wifi-fw-hw2-10.4-emu_bb||PACKAGE_qca-wifi-fw-hw2-10.4-emu_m2m||PACKAGE_qca-wifi-fw-asic) \
 	+libgcc +libc +wireless-tools +librt \
 	@(!(PACKAGE_kmod-ath&&PACKAGE_kmod-mac80211)) +qsdk-wifi-script
   FILES:= $(strip $(QCAWLAN_MODULE_LIST))
@@ -277,6 +273,7 @@ endef
 
 define KernelPackage/qca-wifi/config
 $(call KernelPackage/qca-wifi/config/Default)
+  source "$(SOURCE)/Config.in"
 endef
 
 define KernelPackage/qca-wifi/install

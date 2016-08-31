@@ -1,0 +1,22 @@
+diff -Nur wlan-common/sbin/update-wifi wlan-common-new/sbin/update-wifi
+--- wlan-common/sbin/update-wifi	2015-08-04 06:40:18.033126819 -0400
++++ wlan-common-new/sbin/update-wifi	2015-09-01 05:47:28.522838518 -0400
+@@ -62,6 +62,11 @@
+         }
+         uci set wireless.${a_device}.macaddr=${wl_value:-"4C:60:DE:CE:61:AF"}
+     fi    
++
++	[ "x$(/bin/config get factory_mode)" = "x1" ] && {
++		uci set wireless.${g_device}.macaddr="4C:60:DE:CE:61:22"
++		uci set wireless.${a_device}.macaddr="4C:60:DE:CE:61:33"
++	}
+ }
+ 
+ generate_channel()
+@@ -682,4 +687,4 @@
+ fi
+ 
+ uci commit wireless
+-sync
+\ No newline at end of file
++sync

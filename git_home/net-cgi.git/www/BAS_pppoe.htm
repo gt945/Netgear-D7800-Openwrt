@@ -46,6 +46,9 @@ if (pppoe_get_this_mac == "")
 
 var pppoe_mac_router_flag=parent.parent.pppoe_mac_router_flag;
 var pppoe_empty=<% cfg_get_length("wan_pppoe_passwd") %>;
+var vlan_iptv_enable = "<% cfg_get("vlan_iptv_enable"); %>";
+var readycloud_enable = "<% cfg_get("readycloud_enable") %>";
+var upnp_enableMedia = "<% cfg_get("upnp_enableMedia") %>";
 
 function change_web_format()
 {
@@ -112,12 +115,12 @@ function loadvalue()
 		}
 		else
 		{
-			form.pppoe_passwd.outerHTML='<input type="text" name="pppoe_passwd" maxlength="64" size="16" onFocus="this.select();change_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
+			form.pppoe_passwd.outerHTML='<input type="text" name="pppoe_passwd" id="pppoe_passwd" maxlength="64" size="16" onFocus="this.select();change_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
 		}
 	}
 	else if( get_browser() == "IE" )
 	{
-		form.pppoe_passwd.outerHTML='<input type="password" name="pppoe_passwd" maxlength="64" size="16" style="width: 126px" onFocus="change_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
+		form.pppoe_passwd.outerHTML='<input type="password" name="pppoe_passwd" id="pppoe_passwd" maxlength="64" size="16" style="width: 126px" onFocus="change_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)">';
 	}
 	init_passwd();
 	form.pppoe_dod.value = '<% cfg_get("wan_pppoe_demand") %>';
@@ -272,9 +275,9 @@ function show_idleout(form,time)
 var master="<% cfg_get("http_loginname") %>";
 
 if( master =="admin" )
-	document.write('<TD nowrap colspan=2 align=center><input class="common_bt" type="submit" name="Test" value="$test_mark" onClick="return check_pppoe(document.forms[0],1)">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'BAS_pppoe.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_pppoe(document.forms[0],0)">&nbsp;&nbsp;</TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Test" id="test" value="$test_mark" onClick="return check_pppoe(document.forms[0],1)">&nbsp;&nbsp;<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'BAS_pppoe.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_pppoe(document.forms[0],0)">&nbsp;&nbsp;</TD>');
 else
-	document.write('<TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" value="$apply_mark" disabled>&nbsp;&nbsp;</TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Test" id="test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled>&nbsp;&nbsp;</TD>');
 </script>        
 </TR>
 </TABLE>
@@ -287,12 +290,12 @@ else
 </TD></TR>
 <TR>
         <TD nowrap>
-        <input type="radio" name="loginreq" value="pppoe" checked="true">$yes_mark
+        <input type="radio" name="loginreq" id="loginreq" value="pppoe" checked="true">$yes_mark
         </TD>
 </TR>
 <TR>
         <TD nowrap>
-        <input onclick='goto_formframe("BAS_ether.htm");' type="radio" name="loginreq" value="dhcp">$no_mark
+        <input onclick='goto_formframe("BAS_ether.htm");' type="radio" name="loginreq" id="no_loginreq" value="dhcp">$no_mark
         </TD>
 </TR>
 $bluebar
@@ -307,7 +310,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','isp')"><B>$basic_intserv_provider</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<select name="login_type" onChange="change_serv(document.forms[0])">
+	<select name="login_type" id="login_type" onChange="change_serv(document.forms[0])">
 <script>
 	if( !is_jp_version )
 		document.write('<option value="PPTP">$basic_intserv_pptp</option>');
@@ -317,7 +320,7 @@ $bluebar
 	if(parent.parent.bigpond_flag == 1 && !is_jp_version)
 		document.write('<option value="Telstra Bigpond">$basic_intserv_bpa</option>');
 </script>
-		<option value="Other" selected>$basic_intserv_pppoe</option>
+		<option value="PPPoE" selected>$basic_intserv_pppoe</option>
 <script>
 	if( ((parent.jp_multiPPPoE == 1 || gui_region == "Japanese") && (netgear_region == "" || netgear_region.toUpperCase() == "WW")) || netgear_region.toUpperCase() == "JP")
 		document.write('<option value=\"multiPPPoE\">$basic_intserv_mulpppoe</OPTION>');
@@ -331,7 +334,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','login')"><B>$basic_pppoe_login</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" name="pppoe_username" maxLength="64" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pppoe_username") %>">
+	<input type="text" name="pppoe_username" id="pppoe_username" maxLength="64" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pppoe_username") %>">
 	</TD>
 </TR>
 <TR>
@@ -339,7 +342,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','password')"><B>$basic_pppoe_passwd</B></A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="password" name="pppoe_passwd" maxlength="64" size="16" onFocus="change_pppoe_password(this);" onKeyPress="return getkey('ssid', event)">
+	<input type="password" name="pppoe_passwd" id="pppoe_passwd" maxlength="64" size="16" onFocus="change_pppoe_password(this);" onKeyPress="return getkey('ssid', event)">
 	</TD>
 </TR>
 <TR>
@@ -347,14 +350,14 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','serv_name')">$basic_pppoe_serv_name</A>
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" name="pppoe_servername" maxLength="50" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pppoe_service") %>">
+	<input type="text" name="pppoe_servername" id="pppoe_servername" maxLength="50" size="16" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_pppoe_service") %>">
 	</TD>
 </TR>
 <TR> 
 	<TD>
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','conn_mode')"><B>$basic_int_connection_mode</B></A></TD> 
 	<TD align=right> 
-	<select name="pppoe_dod" onchange="show_idleout(document.forms[0],this.value)"> 
+	<select name="pppoe_dod" id="pppoe_dod" onchange="show_idleout(document.forms[0],this.value)"> 
 		<option value="0">$basic_mode_always</option>
 		<option value="1">$basic_mode_dial</option>
 		<option value="2">$basic_mode_manual</option> 
@@ -366,7 +369,7 @@ $bluebar
 	<A tabindex=-1 href="javascript:loadhelp('_BAS_pppoe','pppoe_idletime')">$basic_pppoe_idle</A>
 	</TD>
 	<TD align=right>
-	<input type="text" name="pppoe_idletime" maxLength="5" size="16" value="<% idle_time("wan_pppoe_idletime") %>" onKeyPress="return getkey('num', event)">
+	<input type="text" name="pppoe_idletime" id="pppoe_idletime" maxLength="5" size="16" value="<% idle_time("wan_pppoe_idletime") %>" onKeyPress="return getkey('num', event)">
 	</TD>
 </TR>
 <TR id=auto_conn_play style="display:none">
@@ -456,21 +459,21 @@ $bluebar
 </TR>
 <TR>
        <TD nowrap colspan=2>
-       <input type="radio" name="WANAssign" value="Dynamic" onClick="setIP(document.forms[0],'bas')">$basic_int_autoip
+       <input type="radio" name="WANAssign" id="wan_assign_dynamic" value="Dynamic" onClick="setIP(document.forms[0],'bas')">$basic_int_autoip
        </TD>
 </TR>
 <TR>
        <TD nowrap colspan=2>
-       <input type="radio" name="WANAssign" value="Fixed" onClick="setIP(document.forms[0],'bas')">$basic_int_static_ip
+       <input type="radio" name="WANAssign" id="wan_assign_fixed" value="Fixed" onClick="setIP(document.forms[0],'bas')">$basic_int_static_ip
        </TD>
 </TR>
 <TR>
         <TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$lan_mark_ip</TD>
         <TD nowrap align=right>
-        <input type="text" name="WPethr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-        <input type="text" name="WPethr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" name="WPethr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" name="WPethr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+        <input type="text" name="WPethr1" id="wpethr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+        <input type="text" name="WPethr2"  id="wpethr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" name="WPethr3" id="wpethr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" name="WPethr4" id="wpethr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
         </TD>
 </TR>
 $bluebar
@@ -481,30 +484,30 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
+	<input type="radio" name="DNSAssign" id="dns_assign_auto" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
+	<input type="radio" name="DNSAssign" id="dns_assign_static" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_primary_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="DAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="DAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="DAddr1" id="daddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="DAddr2" id="daddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr3" id="daddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr4" id="daddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_second_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="PDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="PDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="PDAddr1" id="pdaddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="PDAddr2" id="pdaddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr3" id="pdaddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr4" id="pdaddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 $bluebar
@@ -515,20 +518,20 @@ $bluebar
 </TR>
 <TR id=mac_default style="display:none">
         <TD nowrap colspan=2>
-        <input type="radio" name="MACAssign" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
+        <input type="radio" name="MACAssign" id="mac_assign_default" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
         </TD>
 </TR>
 <TR id=mac_comp style="display:none">
         <TD nowrap colspan=2>
-        <input type="radio" name="MACAssign" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
+        <input type="radio" name="MACAssign" id="mac_assign_computer" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
         </TD>
 </TR>
 <TR id=mac_this style="display:none">
         <TD nowrap>
-        <input type="radio" name="MACAssign" value="2" onClick="setMAC(document.forms[0], pppoe_get_this_mac)">$basic_int_this_mac
+        <input type="radio" name="MACAssign" id="mac_assign_define" value="2" onClick="setMAC(document.forms[0], pppoe_get_this_mac)">$basic_int_this_mac
         </TD>
         <TD nowrap align=right>
-        <input type="text" value="" name="Spoofmac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+        <input type="text" value="" name="Spoofmac" id="spoof_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
         </TD>
 </TR>
 <TR id=bluebar style="display:none"><td colspan=2><img src=/liteblue.gif width=100% height=12></td></TR>

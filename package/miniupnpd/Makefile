@@ -25,23 +25,19 @@ config-y					+= --with-wan_ifname=$(CONFIG_WAN_IFNAME)
 config-$(CONFIG_MINIUPNPD_SUPPORT_PNPX)		+= --enable-support_pnpx
 config-$(CONFIG_MINIUPNPD_SUPPORT_PNPX)		+= --with-pnpx_hwid=$(CONFIG_MINIUPNPD_PNPX_HWID)
 
-define Package/miniupnpd
+define Package/$(PKG_NAME)
   SECTION:=net
   CATEGORY:=Network
   TITLE:=Miniupnpd Daemon
   URL:=http://pptpclient.sourceforge.net/
-endef
-
-define Package/miniupnpd/config
-	menu "Configuration"
-		depends on PACKAGE_miniupnpd
-		source "$(SOURCE)/Config.in"
-	endmenu
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/miniupnpd.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Configure
 endef
@@ -49,13 +45,14 @@ endef
 define Build/Compile
 endef
 
-define Package/miniupnpd/install
+define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/miniupnpd $(1)/usr/sbin/
 	install -d -m0755 $(1)/sbin
 	install -m0755 $(PKG_BUILD_DIR)/cmdupnp $(1)/sbin/
 	install -d -m0755 $(1)/etc/init.d
 	install -m0755 ./files/upnp.init $(1)/etc/init.d/upnp
+
 endef
 
-$(eval $(call BuildPackage,miniupnpd))
+$(eval $(call BuildPackage,$(PKG_NAME)))

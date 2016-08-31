@@ -22,6 +22,7 @@ var is_Mac = detectOS();
 var RS_num=1;
 var genie_mac_num=1;
 var genie_num=1;
+var usb_router_flag = top.usb_router_flag;
 </script>
 	
 <div id="choices_div" class="wizard_words_div">
@@ -39,7 +40,7 @@ var genie_num=1;
                                 else
                                 {
                                         document.write('<td nowrap height=25px; width=25px; >')
-                                        document.write('<div id="genie_chice" class="checked" onclick="genie_choose(genie_num, document.forms[0]);genie_num++;"></div>')
+                                        document.write('<div id="genie_choice" class="checked" onclick="genie_choose(genie_num, document.forms[0]);genie_num++;"></div>')
                                         document.write('</td>')
                                         document.write('<td height=40px;>'+ bh_genie_app+'</td>');
                                 }
@@ -48,10 +49,10 @@ var genie_num=1;
 			</tr>
 			<tr>			
 			<script>
-			if( is_Mac != "Mac" )
+			if( is_Mac != "Mac" && usb_router_flag == 1)
 			{
 				document.write('<td nowrap height=25px; width=25px;>');
-				 document.write('<div id="RS_choose" class="checked"  onclick="choose_RS(RS_num, document.forms[0]);RS_num++;"></div>');
+				 document.write('<div id="rs_choose" class="checked"  onclick="choose_RS(RS_num, document.forms[0]);RS_num++;"></div>');
 				document.write('</td>');
 				document.write('<td height=40px;>'+bh_rs_vault_app+'</td>');
 			}	
@@ -65,12 +66,12 @@ var genie_num=1;
          <TR>
 		 <TD nowrap  align=left>
 		 <script>
-		document.write('<INPUT  class="short_common_hdd" type="button" name="exit" value='+bh_exit_mark+' onClick="click_exit()">');
+		document.write('<INPUT  class="short_common_hdd" type="button" name="Exit" id="exit" value='+bh_exit_mark+' onClick="click_exit()">');
 		</script>
 		</TD>
 	   <TD nowrap  align=right>
 	   <script>
-		  document.write('<INPUT class="short_common_hdd" type="button" name="Next" value="'+'< '+ bh_previous+'" onClick="click_pre()">&nbsp;&nbsp;&nbsp;&nbsp;<INPUT class="short_common_hdd" type="button" name="Next" value="'+ bh_next_mark+' >'+'" onClick="readshare_next( document.forms[0])"');
+		  document.write('<INPUT class="short_common_hdd" type="button" name="Previous" id="previous" value="'+'< '+ bh_previous+'" onClick="click_pre()">&nbsp;&nbsp;&nbsp;&nbsp;<INPUT class="short_common_hdd" type="button" name="Next" id="next" value="'+ bh_next_mark+' >'+'" onClick="readshare_next( document.forms[0])"');
 	   </script>    
 		<TD>
        </TR>
@@ -82,14 +83,14 @@ var genie_num=1;
 <script>
 function choose_RS(n, cf)
 {
-	if(  document.getElementById("RS_choose").className == "checked")
+	if(  document.getElementById("rs_choose").className == "checked")
 	{
-		document.getElementById("RS_choose").className = "uncheck"
+		document.getElementById("rs_choose").className = "uncheck"
 		cf.download_readyshare.value = "0";
 	}
 	else
 	{
-		document.getElementById("RS_choose").className = "checked"
+		document.getElementById("rs_choose").className = "checked"
 		cf.download_readyshare.value = "1";
 	}	
 		//alert(RS_num);
@@ -110,14 +111,14 @@ function genie_mac_choose(n, cf)
 
 function genie_choose(n, cf)
 {
-        if( document.getElementById("genie_chice").className == "checked")
+        if( document.getElementById("genie_choice").className == "checked")
         {
-                document.getElementById("genie_chice").className = "uncheck"
+                document.getElementById("genie_choice").className = "uncheck"
                 cf.download_desktop_genie.value = "0";
         }
         else
         {
-                document.getElementById("genie_chice").className = "checked"
+                document.getElementById("genie_choice").className = "checked"
                 cf.download_desktop_genie.value = "1";
         }
 }
@@ -134,7 +135,7 @@ function click_pre(cf)
 
 function readshare_next(cf)
 {
-	if( is_Mac == "Mac" )
+	if( is_Mac == "Mac" || usb_router_flag == 0 )
 		cf.download_readyshare.value = "0";
 	
 	cf.submit();

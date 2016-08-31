@@ -13,7 +13,6 @@ PKG_NAME:=kmod-ipv6-cone
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-ipv6-cone-v3.4-dni1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/ipv6-cone
   FILES:= \
 	$(PKG_BUILD_DIR)/ip6t_CONE.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,ip6t_CONE)
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/kmod-ipv6-cone.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 #ifeq ($(BOARD),brcm)
 #BUILDFLAGS := -DBROADCOM -DBCMDRIVER -I$(LINUX_DIR)/arch/mips/bcm947xx/include

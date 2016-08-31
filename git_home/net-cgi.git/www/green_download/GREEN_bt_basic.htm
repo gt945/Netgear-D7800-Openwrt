@@ -1,5 +1,5 @@
 <% http_header("style/form.css", "/funcs.js", "add_download_item.js") %>
-<body onLoad="loadvalue();" bgcolor=#ffffff>
+<body onLoad="loadvalue(); please_wait(false);" bgcolor=#ffffff>
 
 <div id="page_title" class="page_title" style="display:none">$greendl_common_manager</div>
 <div id="main" class="main" style="display:none">
@@ -10,9 +10,13 @@
 <table width=100% border=0 cellpadding=0 cellspacing=2>
 <tr>
         <td nowrap colspan=2 align=center>
+	<div id="msg_line_1" class="msg_nousb" style="display:none"><b>$greendl_common_plug_usb</b></div>
+	<div id="msg_line_2" class="msg_nousb" style="display:none"><b>$greendl_common_usb_removed</b></div>
+	<div class="download_bts">
 	<input class="cancel_bt" type='button' name="Cancel" value='$cancel_mark' onClick='reset_form(); loadvalue();'>&nbsp;&nbsp;
 	<input class="apply_bt" type='submit' name="Apply" value='$apply_mark' onclick='return enable_greendownload(document.forms[0],"bt");'>
         </td>
+	</div>
 </tr>
 $bluebar
 </table>
@@ -46,6 +50,8 @@ var fileTP_max_concurrent_tasks="<% cfg_get("green_download_fileTP_max_tasks") %
 <% cfg_set("mlnet_error", "0") %>
 <% config_commit() %>
 var this_download_type = "bt";
+<% green_download_changed() %>
+
 function change_file_path(type)
 {
 	if( type == "0" )
@@ -172,6 +178,13 @@ function add_magnet()
 
 function loadvalue()
 {
+	if(disk_num == 0)
+	{
+		if( green_download_changed == "1")
+			document.getElementById("msg_line_2").style.display="";
+		else
+			document.getElementById("msg_line_1").style.display="";
+	}
 	form_1 = document.forms[0];
 	form_2 = document.forms[1];
 	var cf=document.forms[2];
@@ -191,7 +204,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=true;
 		document.getElementById("download_save_path").style.color="gray";
 		form_1.green_link_basic.disabled=true;
-		form_1.green_link_basic.className = "edit_gray_bt";
+		form_1.green_link_basic.className = "long_edit_gray_bt";
 		document.getElementById("type").style.color="gray";
 		document.getElementById("pc").style.color="gray";
 		form_1.download_type_1.disabled=true;
@@ -206,8 +219,8 @@ function loadvalue()
 		form_2.reset.disabled=true;
 		form_1.Add.className = "add_gray_bt";
 		form_2.Add.className = "add_gray_bt";
-		form_1.reset.className = "delete_gray_bt";
-		form_2.reset.className = "delete_gray_bt";
+		form_1.reset.className = "long_delete_gray_bt";
+		form_2.reset.className = "long_delete_gray_bt";
 	}
 	else if(disk_num !=0 && green_download_enable == "0")
 	{
@@ -219,7 +232,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		form_1.green_link_basic.disabled=false;
-		form_1.green_link_basic.className = "edit_bt";
+		form_1.green_link_basic.className = "long_edit_bt";
 		document.getElementById("type").style.color="gray";
 		document.getElementById("pc").style.color="gray";
 		form_1.download_type_1.disabled=true;
@@ -234,8 +247,8 @@ function loadvalue()
 		form_2.reset.disabled=true;
 		form_1.Add.className = "add_gray_bt";
 		form_2.Add.className = "add_gray_bt";
-		form_1.reset.className = "delete_gray_bt";
-		form_2.reset.className = "delete_gray_bt";
+		form_1.reset.className = "long_delete_gray_bt";
+		form_2.reset.className = "long_delete_gray_bt";
 	}
 	else
 	{
@@ -247,7 +260,7 @@ function loadvalue()
 		form_1.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		form_1.green_link_basic.disabled=false;
-		form_1.green_link_basic.className = "edit_bt";
+		form_1.green_link_basic.className = "long_edit_bt";
 		document.getElementById("type").style.color="black";
 		document.getElementById("pc").style.color="black";
 		form_1.download_type_1.disabled=false;
@@ -262,8 +275,8 @@ function loadvalue()
                 form_2.reset.disabled=false;
                 form_1.Add.className = "add_bt";
                 form_2.Add.className = "add_bt";
-                form_1.reset.className = "cancel_bt";
-                form_2.reset.className = "cancel_bt";
+                form_1.reset.className = "long_delete_bt";
+                form_2.reset.className = "long_delete_bt";
 		
 	}
 
@@ -280,7 +293,7 @@ function loadvalue()
 		cf.remove.disabled=true;
 		cf.remove.className = "common_gray_bt";
 		cf.rm_history.disabled=true;
-		cf.rm_history.className = "common_gray_bt";
+		cf.rm_history.className = "common_big_gray_bt";
 	}
 	else
 	{
@@ -295,7 +308,7 @@ function loadvalue()
 		cf.remove.disabled=false;
 		cf.remove.className = "common_bt";
 		cf.rm_history.disabled=false;
-		cf.rm_history.className = "common_bt";
+		cf.rm_history.className = "common_big_bt";
 	}
 	refresh_content();
 
@@ -336,7 +349,7 @@ function select_all_items()
 		</script>
 	</td>
 	<td nowrap align="center">
-		<input class="edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
+		<input class="long_edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
 	</td>
 </tr>
 $bluebar
@@ -371,7 +384,7 @@ $bluebar
         <tr>
                 <td nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_item();">&nbsp;&nbsp;
-                <input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
+                <input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
                 </td>
         </tr>
 </table>
@@ -395,7 +408,7 @@ $bluebar
         <tr>
                 <td nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_magnet();">&nbsp;&nbsp;
-                <input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
+                <input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
                 </td>
         </tr>
 </table>
@@ -423,7 +436,7 @@ $bluebar
         <tr>
                 <td nowrap colspan=2 align=center>
                 <input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_BT();">&nbsp;&nbsp;
-		<input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
+		<input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='reset_form();'>
                 </td>
         </tr>
 </table>
@@ -475,7 +488,7 @@ $bluebar
 		$bluebar
 		<TR>
 			<TD nowrap colspan=2 align=center>
-			<input type="button" class="common_bt"  name="rm_history" value="$greendl_common_button_removeHistory" onClick='remove_history(document.forms[2]);'>&nbsp;&nbsp;
+			<input type="button" class="common_big_bt"  name="rm_history" value="$greendl_common_button_removeHistory" onClick='remove_history(document.forms[2]);'>&nbsp;&nbsp;
 			</TD>
 		</TR>
 	</TABLE>

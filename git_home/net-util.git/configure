@@ -1,0 +1,87 @@
+#! /bin/bash
+
+INS_DIR_PRE=${INS_DIR_PRE}
+INS_BIN_DIR='$(INS_DIR_PRE)/sbin'
+INS_USR_BIN_DIR='$(INS_DIR_PRE)/usr/sbin'
+
+NET_UTIL_CONF=$(pwd)/files/net-util.config
+
+print_usage()
+{
+	printf "Usage:	configure [option]...\n\n"
+	printf "  %s\n" \
+		"--help		print this message"
+}
+
+# parse arguments
+parse_args()
+{
+	while true
+	do
+		[ $# -eq 0 ] && break	# no more args
+
+		case "$1" in
+			"--help")
+				print_usage; exit;;
+			"--with_wlan_common")
+				WLAN_COMMON_SUUPPORT=1; shift;;
+			"--with_rfc3442_249")
+				RFC3442_249_SUPPORT=1; shift;;
+			"--with_dni_wan_dns3")
+				DNI_WAN_DNS3_SUPPORT=1; shift;;
+			"--with_detwanv6")
+				DETWANV6=1; shift;;
+			*)
+				print_usage; exit 1;;
+		esac
+	done
+}
+
+generate_makefile()
+{
+	tab=$'\t'
+	cat <<-EOF
+		# GENERATED AUTOMATICALLY BY configure, DON'T EDIT THIS FILE MANUALLY.
+
+		export INSTALL_DIR:=install -d -m0755
+		export INSTALL_BIN:=install -m0755
+		export INSTALL_DATA:=install -m0644
+		export INSTALL_CONF:=install -m0600
+		export LN:=ln -sf
+		export CP:=cp -fpR
+		export TOUCH:=touch
+
+		export INS_DIR_PRE:=$INS_DIR_PRE
+		export INS_BIN_DIR:=$INS_BIN_DIR
+		export INS_USR_BIN_DIR:=$INS_USR_BIN_DIR
+
+		export NET_UTIL_CONF:=$NET_UTIL_CONF
+
+		SOURCE_DIR="src"
+		FILES_DIR="files"
+		SCRIPT_DIR="scripts"
+		
+		all %::
+			$tab\$(MAKE) -C \$(SOURCE_DIR) \$@
+			$tab\$(MAKE) -C \$(SCRIPT_DIR) \$@
+	EOF
+}
+
+generate_makeconf()
+{
+	cat <<-EOF
+		# GENERATED AUTOMATICALLY BY configure, DON'T EDIT THIS FILE MANUALLY.
+		WLAN_COMMON_SUUPPORT=${WLAN_COMMON_SUUPPORT:-0}
+		RFC3442_249_SUPPORT=${RFC3442_249_SUPPORT:-0}
+		DNI_WAN_DNS3_SUPPORT=${DNI_WAN_DNS3_SUPPORT:-0}
+		DETWANV6=${DETWANV6:-0}
+	EOF
+}
+
+parse_args $@
+
+# generate pot.config file base on arguments
+generate_makeconf > ${NET_UTIL_CONF}
+
+# top level Makefile
+generate_makefile > Makefile

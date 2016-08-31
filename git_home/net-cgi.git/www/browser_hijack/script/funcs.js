@@ -1,6 +1,10 @@
 function check_DNS(dnsaddr1,dnsaddr2,wan_assign,wan_ip)
 {
-        if(dnsaddr1!="")
+	if(dnsaddr1 == "")
+		dnsaddr1 = "...";
+	if(dnsaddr2 == "")
+		dnsaddr2 = "...";
+        if(dnsaddr1!="...")
         {
                 if(checkipaddr(dnsaddr1)==false)
                 {
@@ -13,7 +17,7 @@ function check_DNS(dnsaddr1,dnsaddr2,wan_assign,wan_ip)
                         return false;
                 }
         }
-        if(dnsaddr2!="")
+        if(dnsaddr2!="...")
         {
                 if(checkipaddr(dnsaddr2)==false)
                 {
@@ -27,7 +31,7 @@ function check_DNS(dnsaddr1,dnsaddr2,wan_assign,wan_ip)
                 }
         }
 
-        if(dnsaddr1=="" && dnsaddr2=="" )
+        if(dnsaddr1=="..." && dnsaddr2=="...")
         {
                 alert(bh_dns_must_specified);
                 return false;
@@ -37,7 +41,13 @@ function check_DNS(dnsaddr1,dnsaddr2,wan_assign,wan_ip)
 
 function check_three_DNS(dnsaddr1,dnsaddr2,dnsaddr3,wan_assign,wan_ip)
 {
-        if(dnsaddr1!="")
+	if(dnsaddr1 == "")
+		dnsaddr1 = "...";
+	if(dnsaddr2 == "")
+		dnsaddr2 = "...";
+	if(dnsaddr3 == "")
+		dnsaddr3 = "...";
+        if(dnsaddr1!="...")
         {
                 if(checkipaddr(dnsaddr1)==false)
                 {
@@ -50,7 +60,7 @@ function check_three_DNS(dnsaddr1,dnsaddr2,dnsaddr3,wan_assign,wan_ip)
                         return false;
                 }
         }
-        if(dnsaddr2!="")
+        if(dnsaddr2!="...")
         {
                 if(checkipaddr(dnsaddr2)==false)
                 {
@@ -64,7 +74,7 @@ function check_three_DNS(dnsaddr1,dnsaddr2,dnsaddr3,wan_assign,wan_ip)
                 }
         }
 
-        if(dnsaddr3!="")
+        if(dnsaddr3!="...")
         {
                 if(checkipaddr(dnsaddr3)==false)
                 {
@@ -78,7 +88,7 @@ function check_three_DNS(dnsaddr1,dnsaddr2,dnsaddr3,wan_assign,wan_ip)
                 }
         }
 
-        if(dnsaddr1=="" && dnsaddr2=="" && dnsaddr3 == "")
+        if(dnsaddr1=="..." && dnsaddr2=="..." && dnsaddr3 == "...")
         {
                 alert(bh_dns_must_specified);
                 return false;

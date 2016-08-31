@@ -1,6 +1,19 @@
 #! /bin/sh
 
-DISK_FIND_TABLE=/tmp/find_disk_abcxzy
+#include scan_disk
+. /sbin/scan_disk
+scan_disk_entries
+
+#DISK_FIND_TABLE=/tmp/find_disk_abcxzy
+download_state="$(/bin/config get green_download_enable)"
+download_start() {
+	sleep 2
+	green_download=`ps -w| grep -v grep |grep -c green_download.sh`
+	download_entry=`ps -w| grep -v grep |grep -c greendownload`
+	[ "x$green_download" != "x0" ] && return
+	[ "x$download_entry" != "x0" ] && return
+	[ "x$download_state" == "x1" ] && echo "hotplug starting green_download ........" > /dev/console && /usr/sbin/green_download.sh start
+}
 
 # $---> sda1
 print_log()
@@ -9,20 +22,12 @@ print_log()
                 return
         fi
 
-		sata_disk_name=`/bin/config get sata_diskname`
-#some times the DISK_FIND_TABLE is NULL, So we need to wait a moment
-		d_num=0
-        device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
-		while [ !$device_name ];
-		do
-			sleep 3
-			device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
-			let d_num=$d_num+1
-			if [ $d_num -eq 20 ];
-			then
-				return
-			fi
-		done
+	sata_disk_name=`/bin/config get sata_diskname`
+	device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
+	if [ ! -n "$device_name" ];then
+		return
+	fi
+
 	volume_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{{{i=NF-3; a="*";while(i!=0) {printf $(NF-i); if(i!=1) printf a; i--}}}}'`
 
 	if [ "x$sata_disk_name" = "x$1" ]; then
@@ -116,13 +121,8 @@ if [ "x$(parted -s /dev/`echo $1 | sed 's/[0-9]//g'` print noshare | grep $1)" =
 fi
 
 diskname=$(echo $1 | sed 's/[0-9].*//')
-firstpartion=$(echo $1 | sed 's/[0-9].*//')
 lastpartition=$(cat /proc/partitions | grep $diskname | awk '{print $4}' | tail -1)
 echo "disk name is $diskname last partition is $lastpartition"
-
-if [ !$firstpartion ]; then
-	/sbin/cmddlna restart &
-fi
 
 if [ $1 = $lastpartition ]; then
 	echo noop > /sys/block/$diskname/queue/scheduler
@@ -136,8 +136,10 @@ if [ $1 = $lastpartition ]; then
 	update_smb $diskname
 	/usr/sbin/update_afp $diskname
 	#/usr/sbin/usb_cfg approve $1
-	/sbin/cmdftp restart
-	#/sbin/cmddlna restart &
+	cmd_ftp restart
+	/sbin/cmddlna restart &
+	#if download is ennable  start download
+	download_start
 fi
 
 print_log $1

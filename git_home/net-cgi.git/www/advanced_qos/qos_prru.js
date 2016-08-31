@@ -169,14 +169,14 @@ function setGray()
 				cf.Add.disabled = false;
 				cf.Add.className = "new_apply_bt ui-corner-all";
 				cf.Reset.disabled = false;
-				cf.Reset.className = "new_apply_bt ui-corner-all";
+				cf.Reset.className = "new_apply_bt2 ui-corner-all";
 
 				cf.Edit.disabled = false;
 				cf.Edit.className = "new_apply_bt ui-corner-all";
 				cf.Deleteone.disabled = false;
 				cf.Deleteone.className = "new_apply_bt ui-corner-all";
 				cf.DeleteAll.disabled = false;
-				cf.DeleteAll.className = "new_apply_bt ui-corner-all";
+				cf.DeleteAll.className = "new_apply_bt2 ui-corner-all";
 			}
 	/*	}
 		else
@@ -877,7 +877,6 @@ function check_prru_qos_apply(cf)
 		sAlert("$wps_to_fasttrack", check_prru_qos_apply2());
 	else
 		check_prru_qos_apply2();
-
 }
 
 function check_prru_qos_apply2()

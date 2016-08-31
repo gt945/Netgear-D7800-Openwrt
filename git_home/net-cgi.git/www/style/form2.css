@@ -9,12 +9,13 @@ A {COLOR: #646466; TEXT-DECORATION: none}
 
 .fix_adv_button{width: 100%; height: 100px; position: absolute; top: 40px; left: 0px; background-image: url(../image/topline.gif); background-repeat: no-repeat; background-position: 50% 80%;}
 .fix_button{width: 100%; height: 80px; position: absolute; top: 40px; left: 0px; background-image: url(../image/topline.gif); background-repeat: no-repeat; background-position: 50% 80%;}
-.new_cancel_bt, .new_apply_bt{ height: 22px; width: 100px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px;}
+.new_cancel_bt, .new_apply_bt{ height: 22px; width: 130px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px;}
 .new_apply_bt{ background-color: #702b86; margin-left: 10px;}
+.new_apply_bt2{ height: 22px; width: auto; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding: 2px 15px; background-color: #702b86; margin-left: 10px;}
 .new_edit_bt{ height: 22px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px; background-color: #702b86; margin-left: 10px; padding-left: 10px; padding-right: 10px;}
 .new_cancel_bt{ background-color: #5bb6e5;}
-.wireless_bt{height: 22px; width: 170px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px;  background-color: #702b86; margin-left: 10px;}
-
+.wireless_bt{height: 22px; width: 170px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px; background-color: #702b86; margin-left: 10px;}
+.wireless_bt2{height: 22px; width: auto; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding: 2px 15px;  background-color: #702b86; margin-left: 10px;}
 .eth, .wifi, .contype{width:120px; height: 40px; position: relative; top:20px; left: -20px; float: left;  font-weight: bold;}
 .eth{background-image: url(../image/eth.gif); background-repeat: no-repeat; background-position: 100% 0%; }
 .wifi{background-image: url(../image/wifi.png); background-repeat: no-repeat; background-position: 100% 0%; }
@@ -28,8 +29,8 @@ A {COLOR: #646466; TEXT-DECORATION: none}
 #help_switch #help_center{ width: 180px; color: white; font-family: Arial; font-weight: Bold; font-size: 15px; line-height: 30px; position: absolute; z-index: 2; top: 0; left: 35px; }
 #help_switch #help_show_hidden { width: 270px; font-family: Arial; color: white; font-size: 12px; font-style: italic; text-align: right; line-height: 30px; position: absolute; z-index: 2; top: 0; right: 5px; }
 #help_switch #help_show_hidden a{ color:white; background-color: transparent;  position: relative; top: -2px; text-decoration:underline;}
-.close_help #help_button{ width: 45px; height: 12px; background: url(../image/buttons.gif) no-repeat -390px 0; cursor:pointer; position: absolute; z-index: 1; top: 8px; right: 350px; }
-.open_help  #help_button{ width: 46px; height: 13px; background: url(../image/buttons.gif) no-repeat -390px -14px;  cursor:pointer; position: absolute; z-index: 1; top: 8px; right: 350px;}
+.close_help #help_button{ width: 45px; height: 12px; background: url(../image/buttons.gif) no-repeat -390px 0; cursor:pointer; position: absolute; z-index: 1; top: 8px; right: 50%; }
+.open_help  #help_button{ width: 46px; height: 13px; background: url(../image/buttons.gif) no-repeat -390px -14px;  cursor:pointer; position: absolute; z-index: 1; top: 8px; right: 50%;}
 
 #content1{ width: 58%; height: auto; position: relative; left: 5%; float:left; background-image: url(../image/v_middleline.gif); background-repeat: repeat-y; background-position: 100% 0%;}
 #content3{ width: 25%; height: auto; position: relative; left: 5%; float: left;}
@@ -66,12 +67,13 @@ A {COLOR: #646466; TEXT-DECORATION: none}
 
 .spliteline{width:100%; height:2px; background: url(../image/middleline.gif) 0 0 repeat-x;}
 .qospage_title{width: 100%; height: 20px; font: bold 17px arial; color: #9d98ff; position: absolute; top: 0px; left: 0px;}
-.new_speed_test{ height: 22px; width: 158px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px; background-color: #702b86; margin-left: 9px;}
+.new_speed_test{ height: 22px; width: 165px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px; background-color: #702b86; margin-left: 9px;}
 .new_greyspeed_test{ height: 22px; width: 158px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px; background-color: #B5B5B5; margin-left: 9px;}
 .new_greycancel_bt, .new_greyapply_bt{ height: 22px; width: 100px; color: #f2f2f2; font-family: Arial; font-weight: Bold; font-size: 14px;  border: none; cursor: pointer; padding-bottom: 2px;}
 .new_greyapply_bt{ background-color: #B5B5B5; margin-left: 10px;}
 .new_greycancel_bt{ background-color: #B5B5B5;}
 .linktype {color:  #5bb6e5; text-decoration:   underline  }
+.linkbold {font-weight: Bold;}
 .table_header{
         color: #ffffff;
         font-weight: Bold;

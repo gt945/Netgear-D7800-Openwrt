@@ -36,6 +36,7 @@ var netgear_region="<% get_firmware_region() %>"
 var gui_region = "<% cfg_get("GUI_Region") %>";
 var browser_lang="<% get_browser_language() %>";
 var is_Mac_Win = detectOS();
+var have_wifi_flag = "<% get_have_wifi_flag() %>";
 
 function to_success()
 {
@@ -55,12 +56,14 @@ function location_to_OS()
 
 	<div id="words_div_success" class="wizard_words_div">
 		
-		<h1><!--congratulations--></h1>
+		<h2 id="message"><!--congratulations--></h2>
 		
 		<p><!--connect_success_1--></p>
 		
 		<p>
 			<script language="javascript" type="text/javascript">
+		if(have_wifi_flag == "1")
+		{
 			if(an_router_flag == "0")
 			{
 				if(wl_sectype == 1)
@@ -100,7 +103,8 @@ function location_to_OS()
 					else
 						document.write(bh_network_key);
 				}
-			}							
+			}
+		}
 			</script>
 		</p>
 		
@@ -109,6 +113,12 @@ function location_to_OS()
 			document.write('<div id="info_div_24">');
 		else
 			document.write('<div id="info_div">');
+		
+		var wl_info_div = (an_router_flag=="1") ? document.getElementById("info_div") : document.getElementById("info_div_24");
+		if(have_wifi_flag == "0")
+			wl_info_div.style.display = "none";
+		else
+			wl_info_div.style.display = "";
 		</script>
 			<div id="network_name" class="left_div"><!--wirless_name--></div>
 			<div class="right_div"><% cfg_get_ssid_html("wl_ssid") %></div>
@@ -146,6 +156,15 @@ function location_to_OS()
 			<div class="right_div"><% passphrase_ag_msg() %></div>
 			</div>
 			
+			<div id="admin_passwd">
+			<div class="left_div"><span style="font-weight:bold; text-decoration:underline;">Router Admin Settings:</span></div>
+			<div class="right_div"></div>
+			<div class="left_div">Admin User Name:</div>
+			<div class="right_div"><% cfg_get("http_username") %></div>
+			<div class="left_div">New Admin Password:</div>
+			<div class="right_div"><% cfg_get("http_passwd") %></div>
+			</div>
+
 			<div style="clear:both"></div>
 		</div>
 	
@@ -155,11 +174,11 @@ function location_to_OS()
 		<TABLE width="90%" align=center>
 			<TR><TD align="left">
 			<script>
-			document.write('<input class="short_common_hdd" type="button" name="exit" value="'+bh_quit_mark+'" onClick="to_success()"></TD>');
+			document.write('<input class="short_common_hdd" type="button" name="Exit" id="exit" value="'+bh_exit_mark+'" onClick="to_success()"></TD>');
 			</script>
 			<TD align="right">
 			<script>
-			document.write('<input class="short_common_hdd" type="button" name="next" value="'+bh_next_mark+'" onClick="location_to_OS()"></TD>');
+			document.write('<input class="short_common_hdd" type="button" name="Next" id="next" value="'+bh_next_mark+'" onClick="location_to_OS()"></TD>');
 			</script>
 
 		</TABLE>

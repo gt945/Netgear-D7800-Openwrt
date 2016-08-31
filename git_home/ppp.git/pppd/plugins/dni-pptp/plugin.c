@@ -90,6 +90,8 @@ static option_t pptp_options[] = {
 	{ "language", o_string, &language, "Which language version is using now, for static pptp(Russian)" },
 	{ "pptp_wan_assign", o_uint32, &wan_assign, "if my ip address is specified" },
 	{ "pptp_conn_ID", o_string, &pptp_conn_ID,"connection ID/name" },
+	{ "pptp_hostname", o_string, &pptp_hostname,"PPTP hostname" },
+	{ "pptp_vendor", o_string, &pptp_vendor,"PPTP vendor" },
 	{ NULL }
 };
 

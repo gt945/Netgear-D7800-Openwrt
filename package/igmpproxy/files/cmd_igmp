@@ -1,0 +1,140 @@
+#!/bin/sh
+
+#[ -f /usr/local/sbin/igmpproxy ] || exit 0
+
+RETVAL=0
+prog="igmpproxy"
+PID_FILE="/var/run/igmpproxy.pid" #if the path/file changes, remember to modify snmp checking function
+CONFIG_FILE="/var/igmpproxy.conf"
+CONFIG=/bin/config
+lan_ifname=`config get lan_ifname`
+wan_ifname=`config get wan_ifname`
+wan_hwifname=ethwan
+wan_proto=`config get wan_proto`
+current_language=`config get GUI_Region`
+wan2_is_upstream_iface=0
+
+kill_igmpproxy()
+{
+	IGMP_PID=`ps | grep igmpproxy | grep -v 'grep' | awk '{print $1}'`
+	for PID in $IGMP_PID ; do
+		kill -9 $PID
+	done
+}
+
+if [ "x$($CONFIG get dsl_wan_preference)" = "x1" ] && [ "x$($CONFIG get wan2_active)" = "x1" ] && [ "x$($CONFIG get dsl_wan_video_enable)" = "x1" ] && [ "x$($CONFIG get dsl_wan2_enablewan)" = "x1" ] && [ "x$($CONFIG get wan2_proto)" != "xbridged" ]; then
+	wan_ifname=`$CONFIG get real_wan2_ifname`
+	wan2_is_upstream_iface=1
+fi
+
+wan_ifname=${wan_ifname:-brwan}
+
+start() {
+	# Start daemons.
+	local cnt=0 igmp_enable=`config get wan_endis_igmp`
+	kill_igmpproxy
+	if [ "$igmp_enable" = "0" ]; then	
+		return $RETVAL
+	fi
+	echo $"Starting $prog: "
+	echo "quickleave" > $CONFIG_FILE
+	echo "mode 2" >> $CONFIG_FILE
+	echo "" >> $CONFIG_FILE
+
+	case "$wan_proto" in
+		static|dhcp)
+			wan_ifname_upstream=$wan_ifname
+			;;
+		pppoe|pptp|l2tp|pppoa|ipoa)
+			if [ $current_language = "Russian" ]; then
+				wan_ifname_upstream=$wan_hwifname
+			else
+				wan_ifname_upstream=ppp0
+			fi
+			[ "x$wan2_is_upstream_iface" = "x1" -a "$($CONFIG get dsl_wan_isp)" != "BT" -a "$($CONFIG get dsl_wan_isp)" != "PlusNet" ] && wan_ifname_upstream=$wan_ifname #always use wan2 interface.
+			;;
+		*)
+			wan_ifname_upstream=$wan_ifname
+			;;
+	esac
+	
+	echo "phyint $wan_ifname_upstream upstream  ratelimit 0  threshold 1" >> $CONFIG_FILE
+	echo "" >> $CONFIG_FILE
+
+	if [ "$($CONFIG get dsl_wan_type)" = "adsl" ] && [ "$($CONFIG get dsl_wan_country)" = "UK" ] && [ "$($CONFIG get dsl_wan_isp)" = "BT" ] && [ "X$($CONFIG get real_wan2_ifname)" != "X" ]; then
+		echo "phyint `$CONFIG get real_wan2_ifname` disabled" >> $CONFIG_FILE
+		echo "" >> $CONFIG_FILE
+	fi
+
+	echo "phyint $lan_ifname downstream  ratelimit 0  threshold 1" >> $CONFIG_FILE
+	echo "" >> $CONFIG_FILE
+
+	if [ "$wan_ifname_upstream" = "$wan_hwifname" ]; then
+		echo "phyint ppp0 disabled" >> $CONFIG_FILE
+	echo "" >> $CONFIG_FILE
+	fi
+
+	touch $PID_FILE
+
+	#ebtables -A OUTPUT -o ethwan -p ipv4 --ip-dst 239.255.255.250 -j ACCEPT
+	#ebtables -A OUTPUT -o ethwan -p ipv4 --ip-dstrange 224.0.1.0-239.255.255.255 -j DROP
+
+	#echo 1 > /proc/igmpsnoop
+
+	#enable BT IGMP
+	ENABLE_BT_IGMP=`$CONFIG get enable_bt_igmp`
+	if [ "$($CONFIG get dsl_wan_type)" = "vdsl" ] && [ "$($CONFIG get dsl_wan_country)" = "UK" ] && [ "$($CONFIG get dsl_wan_isp)" = "BT" -o "$($CONFIG get dsl_wan_isp)" = "PlusNet" ]; then
+		$CONFIG set enable_bt_igmp=1
+		echo 1 > /proc/bt_igmp_group
+	elif [ "$wan_proto" = "pppoe" -a "x$ENABLE_BT_IGMP" = "x1" ]; then
+		echo 1 > /proc/bt_igmp_group
+	else
+		echo 0 > /proc/bt_igmp_group
+	fi
+
+#	sw_enable_igmp_snooping
+
+	${prog} -c $CONFIG_FILE &
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+stop() {
+	# Stop daemons.
+	echo $"Shutting down $prog: "
+	kill_igmpproxy
+	rm -f ${PID_FILE}
+	#ebtables -D OUTPUT -o ethwan -p ipv4 --ip-dst 239.255.255.250 -j ACCEPT
+        #ebtables -D OUTPUT -o ethwan -p ipv4 --ip-dstrange 224.0.1.0-239.255.255.255 -j DROP
+
+	# disable BT IGMP
+	echo 0 > /proc/bt_igmp_group
+#	sw_disable_igmp_snooping
+
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	stop
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	start
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $RETVAL
+

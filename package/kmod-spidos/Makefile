@@ -13,7 +13,6 @@ PKG_NAME:=kmod-spidos
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=kmod-spidos-dni9
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/spidos
   FILES:= \
 	$(PKG_BUILD_DIR)/ipt_spiDoS.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,46,ipt_spiDoS)
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/kmod-spidos.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 endef

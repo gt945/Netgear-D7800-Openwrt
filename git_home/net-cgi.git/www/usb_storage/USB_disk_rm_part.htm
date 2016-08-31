@@ -31,7 +31,6 @@ var device_array = new Array();
 var device_name_tmp = new Array();
 var device_vendor_tmp = new Array();
 var array_num=0;
-var old_dev_name;
 var getOpenerUrl=location.href.indexOf("opener=",0);
 var opener_len=location.href.length-getOpenerUrl-7;
 var opener_url=location.href.substr(getOpenerUrl+7,opener_len);
@@ -42,15 +41,12 @@ for(i=0;i<disk_num;i++)
 	var vol_name = eval('dev_vol' + i );
 	each_info = str.split('*');
 
-	if( i > 0 )
-		if( old_dev_name != each_info[2] )
+	if( each_info[1] == 0 ){ //first disk of a device
+		if( i > 0 )
 		{
 			device_array[array_num] = device_array[array_num] + ')';
 			array_num++;
-		}				
-	old_dev_name = each_info[2];	
-	
-	if( each_info[1] == 0 ){
+		}
 		device_array[array_num] = each_info[2] + '('+each_info[3]+':'+vol_name;//change each_info[4] to vol_name;
 		device_name_tmp[array_num] = each_info[0];
 		device_vendor_tmp[array_num] = each_info[2];
@@ -106,7 +102,7 @@ function click_apply()
 		}
 	}
 
-	form.action="/apply.cgi?USB_disk_rm.htm?opener="+opener_url+"&dev_name="+dev_value+" timestamp="+ts;
+	form.action="/apply.cgi?/USB_disk_rm.htm?opener="+opener_url+"&dev_name="+dev_value+" timestamp="+ts;
 	form.submit_flag.value="disk_remove";
 	form.submit();
 	opener.parent.formframe.location.href="USB_device_refresh.htm";

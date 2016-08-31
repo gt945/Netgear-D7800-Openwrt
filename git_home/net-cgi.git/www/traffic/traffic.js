@@ -65,6 +65,13 @@ function check_traffic_apply(cf)
 
 		if(cf.tm_type[0].checked)
 		{
+			cf.hidden_tm_type.value = "0";
+			if(cf.traff_dir.value == "No limit")
+				cf.hidden_traff_dir.value = "0";
+			else if(cf.traff_dir.value == "Download only")
+				cf.hidden_traff_dir.value = "1";
+			else
+				cf.hidden_traff_dir.value = "2";
 			if(cf.volume_monthly_limit.value=='')
 			{
 				alert("$monthly_limit_error");
@@ -125,21 +132,24 @@ function check_traffic_apply(cf)
 		}
 		else
 		{
+			cf.hidden_tm_type.value = "1";
+			var str1 = cf.conntime_monthly_limit.value;
 			if(cf.conntime_monthly_limit.value=='')
 			{
 				alert("$monthly_limit_error");
 				return false;
 			}
+			for(var i=0; i < str1.length; i++)
+			{
+				if(!(str1[i]>=0 && str1[i]<=9))
+				{
+					alert("$month_linmit_int");
+					return false;
+				}
+			}
 			if(!(cf.conntime_monthly_limit.value <= 744))
 			{
 				alert("$monthly_limit_744");
-				return false;
-			}
-			var str1 = cf.conntime_monthly_limit.value;
-			var arry = str1.split('.');
-			if (arry.length>1)
-			{
-				alert("$month_linmit_int");
 				return false;
 			}
 			if(cf.waterMark.value=='')
@@ -198,6 +208,7 @@ function check_traffic_apply(cf)
 			cf.traffic_block_all.value=0;
 	}
 	
+	cf.submit();
 	return true;
 }
 
@@ -235,12 +246,12 @@ function click_status()
 function reset_time()
 {
 	cf=document.forms[0];
-	if( cf.timeset.value == "")
+	if( cf.interval.value == "")
 	{
-		cf.timeset.value = "10";
+		cf.interval.value = "10";
 		return true;
 	}
-	var timeset=cf.timeset.value;
+	var timeset=cf.interval.value;
 
         for(i=0;i<timeset.length;i++)
         {
@@ -252,12 +263,13 @@ function reset_time()
                 }
         }
 
-	cf.timeset.value=parseInt(cf.timeset.value,10);
-	if(!(cf.timeset.value >=5 && cf.timeset.value<=  86400))
+	cf.interval.value=parseInt(cf.interval.value,10);
+	if(!(cf.interval.value >=5 && cf.interval.value<=  86400))
 	{
 		alert("$rang_pool");
 		return false;
 	}
+	cf.submit();
 
 	return true;
 }

@@ -11,9 +11,9 @@ PKG_NAME:=libplist
 PKG_VERSION:=1.8
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://www.libimobiledevice.org/downloads
-PKG_MD5SUM:=2a9e0258847d50f9760dc3ece25f4dc6
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+#PKG_SOURCE_URL:=http://www.libimobiledevice.org/downloads
+#PKG_MD5SUM:=2a9e0258847d50f9760dc3ece25f4dc6
 
 CMAKE_INSTALL:=1
 
@@ -35,11 +35,18 @@ define Package/libplist
   CATEGORY:=Libraries
   DEPENDS:=+libxml2
   TITLE+= library
+  MENU:=1
 endef
 
 define Package/libplist/description
   $(call Package/libplist/Default/description)
 endef
+
+define Build/Prepare
+	$(CP) $(GIT_HOME)/libplist.git/* $(PKG_BUILD_DIR)/
+endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Package/libplistcxx
   $(call Package/libplist/Default)

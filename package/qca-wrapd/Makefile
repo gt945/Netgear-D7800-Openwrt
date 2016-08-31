@@ -25,7 +25,7 @@ define Package/$(PKG_NAME)
   URL:=http://www.qca.qualcomm.com
   MAINTAINER:=Qualcomm Atheros
   TITLE:=QCA wrapd daemon
-  DEPENDS:=qca-hostap-10.4 @(!(PACKAGE_hostapd))
+  DEPENDS:=qca-hostap @(!(PACKAGE_hostapd))
 endef
 
 define Package/$(PKG_NAME)/config

@@ -451,6 +451,10 @@ menu "Global build settings"
 
 endmenu
 
+menu "DNI Global Configs"
+	source "dni_global_config/*.in"
+endmenu
+
 menuconfig DEVEL
 	bool "Advanced configuration options (for developers)"
 	default n

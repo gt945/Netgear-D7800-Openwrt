@@ -1,0 +1,66 @@
+config wide-dhcpv6_KERNEL_NO_IN6_PKTINFO
+	bool "define in6_pktinfo"
+	default n
+	help
+	  it control if need define struct in6_pktinfo in wide-dhcpv6. 
+	  For example:R7500/R7500v2/R7800/WNDR4500v3 with kernel 3.4.10  did not define struct in6_pktinfo, so need wide-dhcpv6_KERNEL_NO_IN6_PKTINFO.
+
+config wide-dhcpv6_NETGEAR_getifaddrs
+	bool "netgear router get addr and name about interface "
+	default y
+	help
+	  rewrite getifaddrs for NETGEAR router (uClibc system),read file "/pro/net/in_inet6" to get the addr and interface name and use "itcol" to get MAC addr
+
+config wide-dhcpv6_NETGEAR_lease_phase 
+	bool "solicit with prefix and address"
+	default y
+	help
+	  Write the prefix and address of solicit messages to LEASE_FILE,and send solicit messages with prefix and addr from it.when DHCP client restart=,route send that solicit.
+
+config wide-dhcpv6_NETGEAR_reconfig 
+	bool "dhcp6c support respond reconfig message"
+	default y
+	help
+	  when recieving the dhcpv6 server reconfig message,client can processes the request and responds it
+
+config wide-dhcpv6_NETGEAR_user_class 
+	bool "support user class option"
+	default y
+	help
+	  On the GUI,user can enter a string to be put in the class option which the router includers in its solicit,request,renew,rebind,and information-request.
+
+config wide-dhcpv6_NETGEAR_select_server 
+	bool "support dhcp6c select server"
+	default y
+	help
+	  support select server when more than one server respond the solicit
+
+config wide-dhcpv6_NETGEAR_dhcp6c_gw 
+	bool "dhcp6c set default gateway"
+	default y
+	help
+	  it can set default route according to the received RA after send RS
+
+config wide-dhcpv6_NETGEAR_dhcp6c_dad
+	bool "support new status DHCP6S_REPLY "
+	default y
+	help
+	  Add a new status,which indicates is "after receivinf DHCPV6 Reply",and handle the icmpv6 NA packet.
+
+config wide-dhcpv6_NETGEAR_dhcp6s_iata 
+	bool "support IATA option"
+	default y
+	help
+	   Server MUST support both acquires of non-temporary (IA_NA: 3) and a temporary address (IA_TA:4) from clent	  
+
+config wide-dhcpv6_NETGEAR_script 
+	bool "support run dhcp6c script"
+	default y
+	help
+	   run dhcp6c script  when prefix timeout happens with REASON=prefix_timeout),or decline_script and so on.
+
+config wide-dhcpv6_NETGEAR_dhcp6c_inforeq
+	bool "support send information request "
+	default y
+	help
+	  send Information Request to DHCPv6 server to query the information of DNS, SIP and NTP server address and record them.

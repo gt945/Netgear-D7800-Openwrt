@@ -34,9 +34,9 @@ var netgear_ver="<% cat_file("/firmware_version") %>";
 	<script>
 	var master="<% cfg_get("http_loginname") %>";
 	if( master == "admin" )
-		document.write('<td nowrap><input class="short_common_bt" type="button" name="Check" value="$check_mark" onclick="click_check();"></td>');
+		document.write('<td nowrap><input class="short_common_bt" type="button" name="Check" id="check" value="$check_mark" onclick="click_check();"></td>');
 	else
-		document.write('<td nowrap><input class="short_common1_bt" type="button" name="Check" value="$check_mark" disabled></td>');
+		document.write('<td nowrap><input class="short_common1_bt" type="button" name="Check" id="check" value="$check_mark" disabled></td>');
 	</script>
 </tr>
 $bluebar
@@ -52,13 +52,17 @@ $bluebar
 	<a tabindex=-1 href="javascript:loadhelp('_upgrade','locate')"><b>$upgrade_select_disk</b></a>
 	</td>
 </tr>
-<tr><td nowrap><input name="mtenFWUpload" type="file" size="32"></td></tr>
+<tr><td nowrap>
+	 <input name="mtenFWUpload" type="file" size="32" id="router_upload" maxlength="1024" class="type-file-file" onchange="this.form.upfile.value=this.value.substr(this.value.lastIndexOf('\\')+1);" contentEditable=false onkeydown="return false;" onbeforeeditfocus="return false;" onpaste="return false;" onmouseover="this.style.cursor='pointer';" />
+	 <input type="text" name="upfile" size="20" maxlength="1024" readonly />&nbsp;&nbsp;&nbsp;
+	 <input type="button" value="$browse_mark"  id="browse" name="Browse" class="middle_common_bt" onclick="if(IE_version()!=6){this.form.router_upload.click();}" onmouseover="this.style.cursor='default';" />
+</td></tr>
 $bluebar
 <script>
 	if( master == "admin" )
-		document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'UPG_upgrade.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Upgrade" value="$upg_mark" onClick="return clickUpgrade(document.forms[1]);"></td></tr>');
+		document.write('<tr><td nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'UPG_upgrade.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Upload" id="Upload" value="$upg_mark" onClick="return clickUpgrade(document.forms[1]);"></td></tr>');
 	else
-		document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="reset" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Upgrade" value="$upg_mark" disabled></td></tr>');
+		document.write('<tr><td nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Upload" id="Upload" value="$upg_mark" disabled></td></tr>');
 </script>
 </table>
 </form>

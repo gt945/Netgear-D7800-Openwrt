@@ -488,7 +488,7 @@ apply_action() {
 
 	# DON'T ADD STUFF AFTER THIS, as sourcing rc.appflow causes sys.conf to regenerate
 	if [ "$action" = "boot" -o "$action" = "start" -o "$action" = "stop" ]; then
-		net-wall restart
+		firewall.sh restart
 	fi
 	# Bug 50855, this is workaround, we will find a better solution.
 	if [ "$action" = "boot" -o "$action" = "start" ]; then

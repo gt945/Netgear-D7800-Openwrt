@@ -1,0 +1,11 @@
+#!/bin/sh
+
+[ -f /dni-gconfig ] && . /dni-gconfig
+
+if [ "x$DGC_MTD_POT" = "x" ]; then
+	echo "!!!! POT MTD defined MISS!!!!"
+	exit 1
+fi
+
+i_potval $* -d $DGC_MTD_POT
+

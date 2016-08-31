@@ -2,26 +2,24 @@ function setRemote()
 {
 	var cf = document.forms[0];
 	var i;
-	for( i=0; i<cf.Romte_IP.length; i++)
+	if( cf.relay[0].checked == true )
 	{
-		if( cf.remote[0].checked == true )
-		{
-			cf.Romte_IP[i].disabled = true;
-		}
-		else if( cf.remote[1].checked == true )
-		{
-			cf.Romte_IP[i].disabled = false;
-		}
+		cf.WIp1.disabled = true;
+		cf.WIp2.disabled = true;
+		cf.WIp3.disabled = true;
+		cf.WIp4.disabled = true;
+	}
+	else if( cf.relay[1].checked == true )
+	{
+		cf.WIp1.disabled = false;
+		cf.WIp2.disabled = false;
+		cf.WIp3.disabled = false;
+		cf.WIp4.disabled = false;
 	}
 }	
 
 function check_ipv6_6to4(cf)
 {
-	if(enable_vpn == "1")
-	{
-		alert("$no_enable_ipv6");
-		return false;
-	}
 	var i;
 
 	if(internet_basic_type == 0)	//not dhcp
@@ -36,28 +34,21 @@ function check_ipv6_6to4(cf)
 	}
 
 	/* Remote 6to4 Relay Router */
-	if(cf.remote[1].checked == true)
+	if(cf.relay[1].checked == true)
 	{
-		cf.ipv6_hidden_6to4_relay.value = "";
-		for( i=0; i<cf.Romte_IP.length; i++)
-		{
-			if( i < (cf.Romte_IP.length-1) )
-			{
-				cf.ipv6_hidden_6to4_relay.value = cf.ipv6_hidden_6to4_relay.value + cf.Romte_IP[i].value + ".";
-			}
-			else if( i == (cf.Romte_IP.length-1) )
-			{
-				cf.ipv6_hidden_6to4_relay.value = cf.ipv6_hidden_6to4_relay.value + cf.Romte_IP[i].value;
-			}
-		}
+		cf.ipv6_hidden_6to4_relay.value = cf.WIp1.value + "." + cf.WIp2.value + "." + cf.WIp3.value + "." + cf.WIp4.value;
 		if( checkipaddr(cf.ipv6_hidden_6to4_relay.value) == false )
 		{
 			alert("$invalid_ip");
 			return false;
 		}
+		cf.ipv6_hidden_remote.value = "1";
 	}
 	else
+	{
 		cf.ipv6_hidden_6to4_relay.value = ipv6_6to4_relay_ip;
+		cf.ipv6_hidden_remote.value = "0";
+	}
 	
 	if(top.ipv6_dns_manual == 1)
 	{

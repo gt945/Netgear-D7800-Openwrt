@@ -1,0 +1,32 @@
+comment "Global config file on running"
+	config DGC_DNI_CMD_DIR
+		string "folder where to stores DNI function control commands."
+		default "/lib/dnicmd"
+		help
+		  should add unique control scripts for each functionality
+		  package in this folder.
+
+	config DGC_DNI_GLOBAL_CONFIG_FILE
+		string "DNI Global Config File on Running" 
+		default "/dni-gconfig"
+		help
+		  All other modules/packages could read DNI global configs from this file.
+		  It's a run time file, so it should be used during DUT running.
+
+		  During compiling, will write all CONFIG_DGC_*** to this file, and modules
+		  could load feactures dynamically depends on contents of this file.
+
+		  Value must be an absolute path!!!
+
+comment "Enable/Disable Features"
+
+	config DGC_WAN_IF_NONUSE_BRIDGE
+		bool "WAN interface don't use bridge"
+		default n
+		help
+		  Current QCA don't support hardware acceleration on bridge interfae.
+		  As Netgear required, just use physical Ethernet interface as WAN
+		  on PPPoE connection, and disables IPTV/VLAN too in this case.
+
+		  Once QCA upgrade SDK to support hardware acceleration on bridge,
+		  we can undefine this config.

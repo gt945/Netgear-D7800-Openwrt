@@ -2,17 +2,18 @@
 
 start()
 {
-	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
-		/usr/sbin/utelnetd -d -i br0
-	else
-		/usr/sbin/telnetenable
-	fi
+	/usr/etc/functions/telnetenable-control start
 }
 
 stop()
 {
-	killall utelnetd
-	killall telnetenable
+	/usr/etc/functions/telnetenable-control stop
+}
+
+restart()
+{
+	stop
+	start
 }
 
 boot()

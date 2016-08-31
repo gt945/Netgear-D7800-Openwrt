@@ -14,6 +14,7 @@
 extern void start_route(void);
 extern void stop_route(void);
 
+#if 0
 static char * pap_secrets[2] = {"/etc/ppp/pap-secrets", "/etc/ppp/pap1-secrets"};
 static char * chap_secrets[2] = {"/etc/ppp/chap-secrets", "/etc/ppp/chap1-secrets"};
 						
@@ -43,6 +44,7 @@ static void config_ppp_options(FILE * fp, char * mtu, char * usr, char * unit)
 	fprintf(fp, "user %s\n", usr);
 	fprintf(fp, "unit %s\n", unit);
 }
+#endif
 
 static void config_uptime(int unit)
 {
@@ -78,6 +80,7 @@ static void config_status(int unit, char * status)
 	}
 }
 
+#if 0
 static void config_secret_options(int unit, char *user, char *passwd)
 {
 	FILE * fp;
@@ -92,6 +95,7 @@ static void config_secret_options(int unit, char *user, char *passwd)
 		fclose(fp);
 	}
 }
+#endif
 
 static int kill_pppd_by_pid(int unit)
 {
@@ -180,6 +184,7 @@ static void kill_pppd_by_cmd(int unit)
 	}
 }
 
+#if 0
 static void config_primary_options()
 {
 	FILE *fp;
@@ -225,7 +230,7 @@ static void config_primary_options()
 
 	if ((fp = fopen(ip_up, "w")) != NULL) {
 		fprintf(fp, "#!/bin/sh\n");
-		fprintf(fp, "/www/cgi-bin/firewall.sh start\n");
+		fprintf(fp, "firewall.sh start\n");
 		fprintf(fp, "/usr/sbin/ppp-nas pppoe-session1 up\n");
 		fprintf(fp, "/sbin/ledcontrol -n wan -c green -s on\n");
 		fclose(fp);
@@ -280,7 +285,7 @@ static void config_second_options()
 	
 	if ((fp = fopen(ip_up, "w")) != NULL) {
 		fprintf(fp, "#!/bin/sh\n");
-		fprintf(fp, "/usr/sbin/net-wall start\n");
+		fprintf(fp, "firewall.sh start\n");
 		fprintf(fp, "/usr/sbin/ppp-nas pppoe-session2 up\n");
 		fclose(fp);
 		chmod(ip_up, 0731);
@@ -295,6 +300,7 @@ static void config_second_options()
 
 	config_secret_options(1, user, passwd);
 }
+#endif
 
 static void primary_session_up(void)
 {
@@ -336,7 +342,9 @@ static void start_primary_session(void)
 		fclose(fp);
 	}
 
+	/* We use setup script to generate the options we need
 	config_primary_options();
+	*/
 
 	system("/usr/sbin/pppd call pppoe-session1 updetach");
 }
@@ -388,8 +396,10 @@ static void start_second_session(void)
 {
 	FILE *fp;
 	
+	/*
 	if (strcmp(nvram_get("wan_enable_session2"), "0") == 0)
 		return;
+		*/
 	
 	if ((fp = fopen("/var/run/ppp0.pid", "r")) == NULL) {
 		if((fp = fopen("/tmp/resolv.conf", "w")) != NULL) {
@@ -400,7 +410,9 @@ static void start_second_session(void)
 		fclose(fp);
 	}
 
+	/*
 	config_second_options();
+	*/
 	
 	system("/usr/sbin/pppd call pppoe-session2 updetach");
 }

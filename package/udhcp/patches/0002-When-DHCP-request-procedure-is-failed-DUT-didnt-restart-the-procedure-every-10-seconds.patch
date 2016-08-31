@@ -1,0 +1,16 @@
+diff -Nurp udhcp-old/dhcpc.c udhcp/dhcpc.c
+--- udhcp-old/dhcpc.c	2016-07-07 06:16:20.308548831 -0400
++++ udhcp/dhcpc.c	2016-07-07 06:37:09.238547919 -0400
+@@ -543,8 +543,10 @@ int main(int argc, char *argv[])
+ 						xid = random_xid();
+ 
+ 					/* send discover packet */
+-					if ( client_config.apmode != 1 )
+-						sleep(5);
++				
++					/* Bug-61771: Should not sleep */
++					//	if ( client_config.apmode != 1 )
++					//		sleep(5);
+ 
+ 					send_discover(xid, requested_ip); /* broadcast */
+ 					

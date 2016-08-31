@@ -29,11 +29,11 @@ function change_select()
 {
 	form=document.forms[0];
 
-        if( form.lang_avi.value == lang_select && !(lang_select == "Auto" && browser_lang != gui_region))
+        if( form.language.value == lang_select && !(lang_select == "Auto" && browser_lang != gui_region))
         {
-                if(jp_multiPPPoE == "1" && form.lang_avi.value != "Japanese")
+                if(jp_multiPPPoE == "1" && form.language.value != "Japanese")
                 {
-                        form.hidden_lang_avi.value=form.lang_avi.value;
+                        form.hidden_lang_avi.value=form.language.value;
                         form.action="/apply.cgi?/index.htm timestamp="+ts;
                         form.submit_flag.value="change_multiPPPoE_status";
                         form.submit();
@@ -46,11 +46,11 @@ function change_select()
 		{
 			alert("$pr_wps_support_wpa_others_not");
 			goto_formframe('WLG_wireless.htm');
-			document.forms[0].lang_avi.value = lang_select;
+			document.forms[0].language.value = lang_select;
 			return false;
 		}
-                form.lang_avi.disabled=true;
-                form.hidden_lang_avi.value=form.lang_avi.value;
+                form.language.disabled=true;
+                form.hidden_lang_avi.value=form.language.value;
 		form.target="formframe";
                 form.submit();
         }
@@ -63,7 +63,7 @@ function firmwareUpgrade()
 
 function do_search()
 {
-	var key = top.document.getElementsByTagName("input")[0].value;
+	var key = top.document.getElementsByTagName("input")[0].value.replace(/\'/g, "&apos;");
 	var winoptions = "width=960,height=800,menubar=yes,scrollbars=yes,toolbar=yes,status=yes,location=yes,resizable=yes";
 	var url="";
 	if(key == "" || key == "$ent_srh_item") {
@@ -117,8 +117,8 @@ function load_top_value()
 			upgrade_div.style.display = "none";
 	}
 	
-	var basic_label = document.getElementById("basic_label");
-	var advanced_label = document.getElementById("advanced_label");
+	var basic_label = document.getElementById("basic_lab");
+	var advanced_label = document.getElementById("advanced_lab");
 
 	if(parent.type == "basic")
 	{

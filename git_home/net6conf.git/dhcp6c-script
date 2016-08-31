@@ -73,11 +73,10 @@ write_ra_tmp_dns(){
 local conn_type=`$CONFIG get ipv6_type`
 local PPPOEv6_WAY=`$CONFIG get ipv6_pppoe_way`
 if [ "x$REASON" = "xra_dns" ]; then
-      if [ "x$conn_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$conn_type" = "xautoConfig" ] ; then
-              echo "write ra_dns..."  > /dev/console
-              write_ra_tmp_dns
-      fi
-
+	if [ "x$conn_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$conn_type" = "xautoConfig" ] ; then
+		echo "write ra_dns..."  > /dev/console
+		write_ra_tmp_dns
+	fi
 fi
 
 lease_changed()
@@ -121,9 +120,9 @@ EOF
 }
 
 # if dhcp6c lease is not changed, don't need to do anything.
-if ! lease_changed
-then
-	echo "dhcp6c lease is not changed !" > /dev/console
+# let radvd know prefix lifetime is available
+if ! lease_changed ; then
+	killall -SIGUSR1 radvd
 	exit 0
 fi
 
@@ -174,10 +173,10 @@ local dns_type=`$CONFIG get ipv6_${conn_type}_dns_assign`
 	if [ "x$dns_type" != "x1" -a "x$conn_type" != "xfixed" ] ;then
 		del_dns6
 		for loop in $new_domain_name_servers
-		do
+		do 
 			echo "nameserver $loop" >> $IPV6_DNS
 		done
-		if [ "x$conn_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$conn_type" = "xautoConfig" ] ; then 
+		if [ "x$conn_type" = "xpppoe" -a "$PPPOEv6_WAY" = "1" ] || [ "x$conn_type" = "xautoConfig" ] ; then
 			write_ra_dns $RA_DNS_FILE  /tmp/resolv.conf
 		fi
 		write_ra_dns $IPV6_DNS  /tmp/resolv.conf

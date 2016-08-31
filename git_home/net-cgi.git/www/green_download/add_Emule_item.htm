@@ -77,14 +77,14 @@ function loadvalue()
 		cf.enable_green_download.disabled=true;
 		document.getElementById("download_save_path").style.color="gray";
 		cf.green_link_basic.disabled=true;
-		cf.green_link_basic.className="edit_gray_bt";
+		cf.green_link_basic.className="long_edit_gray_bt";
 		document.getElementById("type").style.color="gray";
 		cf.download_type_1.disabled=true;
 		cf.download_url.disabled=true;
 		cf.Add.disabled=true;
 		cf.reset.disabled=true;
 		cf.Add.className = "add_gray_bt";
-		cf.reset.className = "delete_gray_bt";
+		cf.reset.className = "long_delete_gray_bt";
 	}
 	else if(disk_num !=0 && green_download_enable == "0")
 	{
@@ -96,14 +96,14 @@ function loadvalue()
 		cf.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		cf.green_link_basic.disabled=false;
-		cf.green_link_basic.className="edit_bt";
+		cf.green_link_basic.className="long_edit_bt";
 		document.getElementById("type").style.color="gray";
 		cf.download_type_1.disabled=true;
 		cf.download_url.disabled=true;
 		cf.Add.disabled=true;
 		cf.reset.disabled=true;
 		cf.Add.className = "add_gray_bt";
-		cf.reset.className = "delete_gray_bt";
+		cf.reset.className = "long_delete_gray_bt";
 	}
 	else
 	{
@@ -115,14 +115,14 @@ function loadvalue()
 		cf.enable_green_download.disabled=false;
 		document.getElementById("download_save_path").style.color="black";
 		cf.green_link_basic.disabled=false;
-		cf.green_link_basic.className="edit_bt";
+		cf.green_link_basic.className="long_edit_bt";
 		document.getElementById("type").style.color="black";
 		cf.download_type_1.disabled=false;
 		cf.download_url.disabled=false;
 		cf.Add.disabled=false;
 		cf.reset.disabled=false;
 		cf.Add.className = "add_bt";
-		cf.reset.className = "cancel_bt";
+		cf.reset.className = "long_delete_bt";
 	}
 }
 var this_download_type = "emule";
@@ -157,7 +157,7 @@ function change_downlaod_type(obj)
 		</script>
 	</TD>
 	<TD nowrap align="center">
-		<input class="edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
+		<input class="long_edit_bt" type="button" name="green_link_basic" value="$greendl_manager_config_set_mark" onClick="redirect_config_download();">
 	</TD>
 </TR>
 $bluebar
@@ -181,7 +181,7 @@ $bluebar
 <TR>
 	<TD nowrap colspan=2 align=center>
 	<input class="add_bt" type="submit" name="Add" value="$add_mark" onClick="return add_item();">&nbsp;&nbsp;
-	<input class="cancel_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_Emule_item.htm";'>
+	<input class="long_delete_bt" type='button' name='reset' value='$green_qos_reset' onClick='location.href="add_Emule_item.htm";'>
 	</TD>
 </TR>
 </TABLE>

@@ -932,7 +932,7 @@ process_file(char *file, time_t mtime, off_t size, int type, int flags)
   switch (file_type_get(file))
     {
       case FILE_REGULAR:
-	DPRINTF(E_LOG, L_SCAN, "process media file %s ...\n", file);
+	DPRINTF(E_INFO, L_SCAN, "process media file %s ...\n", file);
 	filescanner_process_media(file, mtime, size, type, NULL);
 
 	cache_artwork_ping(file, mtime, !is_bulkscan);
@@ -941,9 +941,9 @@ process_file(char *file, time_t mtime, off_t size, int type, int flags)
 	counter++;
 
 	/* When in bulk mode, split transaction in pieces of 200 */
-	if ((flags & F_SCAN_BULK) && (counter % 200 == 0))
+	if ((flags & F_SCAN_BULK) && (counter % 5 == 0))
 	  {
-	    DPRINTF(E_LOG, L_SCAN, "Scanned %d files...\n", counter);
+	    DPRINTF(E_INFO, L_SCAN, "Scanned %d files...\n", counter);
 	    db_transaction_end();
 	    db_transaction_begin();
 	  }

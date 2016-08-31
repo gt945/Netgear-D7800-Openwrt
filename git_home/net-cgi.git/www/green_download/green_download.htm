@@ -1,17 +1,19 @@
 <% http_header("style/form.css", "/funcs.js", "/green_download.js") %>
 <% body_header("_green_download", "green_download.htm", "green_download") %>
 <div class="page_title">$greendl_common_title</div>
-<div class="fix_button">
+<div id="main" class="main">
 <TABLE width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
         <TD nowrap colspan=2 align=center>
+	<div id="msg_line_1" class="msg_nousb" style="display:none"><b>$greendl_common_plug_usb</b></div>
+	<div id="msg_line_2" class="msg_nousb" style="display:none"><b>$greendl_common_usb_removed</b></div>
+	<div class="download_bts">
 	<input class="cancel_bt" type='button' name="Cancel" value='$cancel_mark' onClick='location.href="green_download.htm";'>&nbsp;&nbsp;
 	<input class="apply_bt" type='submit' name="Apply" value='$apply_mark' onclick='return click_basic_green();'>
-        </TD>
+        </div>
+	</TD>
 </TR>
 </TABLE>
-</div>
-<div id="main" class="main_top_button">
 <% table_header() %> 
 
 <script>
@@ -26,9 +28,18 @@ var greendl_open = 0;
 var refresh_time="<% cfg_get("green_download_refresh_time")%>";
 <% show_devices() %>
 <% usb_initTree() %>
+<% green_download_changed() %>
 
 function loadvalue()
 {
+	if(disk_num == 0)
+	{
+		if( green_download_changed == "1")
+			document.getElementById("msg_line_2").style.display="";
+		else
+			document.getElementById("msg_line_1").style.display="";
+	}
+	
 	var cf = document.forms[0];
 
 	cf.max_tasks.value = max_concurrent_tasks;
@@ -144,7 +155,7 @@ $bluebar
 
 <TR><TD colspan=2>&nbsp;</TD></TR>
 <TR><TD colspan=2>
-	<input class="edit_bt" type="submit" name="edit" value="$greendl_basic_config_email_mark" onClick='email_redirect();'>
+	<input class="long_edit_bt" type="submit" name="edit" value="$greendl_basic_config_email_mark" onClick='email_redirect();'>
 </TD></TR>
 <script>
 function email_redirect()

@@ -1,0 +1,82 @@
+#!/bin/sh /etc/rc.common
+
+START=23
+
+CONFIG_FILE="/tmp/net-cgi.conf"
+
+config()
+{
+	ap_mode_detection="1"
+
+	case "${DGC_PRODUCT_NAME}" in
+		"R7500v2")
+			router_type="Nighthawk X4"
+			;;
+		"D7800")
+			router_type="Nighthawk X4S "
+			addon="nc_dsl_wizard ON"
+			erase_size="126976"	
+			super_wifi="1"
+			ap_mode_detection="0"
+			;;
+	esac
+
+	printf "### GENERATED AUTOMATICALLY, PLEASE DON'T EDIT MANUALLY\n"
+
+	printf "%s\n" \
+		"nc_host_name \"${DGC_PRODUCT_NAME}\"" \
+		"nc_ctl_mod \"${DGC_product_name}\"" \
+		"nc_title_name \"${DGC_PRODUCT_NAME}\"" \
+		"nc_router_type \"${router_type}\"" \
+		"nc_image_mtd \"/dev/$(awk -F: '/"firmware"/ {print $1}' /proc/mtd)\"" \
+		"nc_lang_flash_part \"/dev/$(awk -F: '/"language_volume"/ {print $1}' /proc/mtd)\"" \
+		"nc_pot_mtd \"/dev/$(awk -F: '/"pot"/ {print $1}' /proc/mtd)\"" \
+		"nc_lan_wired_ifname \"${DGC_LAN_ETH_IF}\"" \
+		"nc_net_ifname \"${DGC_WAN_BR_IF}\"" \
+		"nc_ipv6_lan_ifname \"${DGC_LAN_BR_IF}\"" \
+		"nc_wlan24_ifname ath1" \
+		"nc_wlan24_gus1_ifname ath11" \
+		"nc_wlan5_ifname ath0" \
+		"nc_wlan5_gus1_ifname ath01" \
+		"nc_spec_version 13.0" \
+		"nc_ap_mode_detection ${ap_mode_detection}" \
+		"nc_have_old_ap 1" \
+		"nc_enterprise 1" \
+		"nc_have_advanced_qos 1" \
+		"nc_readycloud 1" \
+		"nc_geniecloud 1" \
+		"nc_guest_manage 1" \
+		"nc_have_greendownload 1" \
+		"nc_ipv6_6rd 1" \
+		"nc_have_vlan 1" \
+		"nc_single_device_name 1" \
+		"nc_ip_mac 1" \
+		"nc_have_bt_igmp 1" \
+		"nc_erase_size ${erase_size}"\
+		"nc_lang_size 204800"\
+		"nc_ipv6_dns_manual 1"\
+		"nc_have_vpn_smartphone 1"\
+		"nc_solve_soap_vulnerability 1"\
+		"nc_super_wifi ${super_wifi}"\
+		"$addon"
+}
+
+start()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+stop()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+restart()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+boot()
+{
+	config > $CONFIG_FILE
+}

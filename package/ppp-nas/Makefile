@@ -14,19 +14,14 @@ PKG_BUILD_DEPENDS:=ipp
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/ppp-nas
+define Package/$(PKG_NAME)
 	SECTION:=utils
 	CATEGORY:=Network
-	DEPENDS:=@TARGET_d7800
 	TITLE:=PPP tools for controlling Multi-PPPoE
+	MENU:=1
 endef
 
-define Package/ppp-nas/config
-	menu "Configuration"
-		depends on PACKAGE_ppp-nas
-		source "$(SOURCE)/Config.in"
-	endmenu
-endef
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/ppp-nas.git/* $(PKG_BUILD_DIR)/
@@ -40,11 +35,12 @@ define Build/Compile
 		ARCH="$(ARCH)"
 endef
 
-define Package/ppp-nas/install
-	install -d -m0755 $(1)/usr/sbin
-	install -d -m0755 $(1)/sbin
-	install -m0755 $(PKG_BUILD_DIR)/ppp-nas $(1)/usr/sbin/
-	install -m0755 ./files/check_route $(1)/sbin
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ppp-nas $(1)/usr/sbin/
+	$(INSTALL_BIN) ./files/check_route $(1)/sbin
+	$(INSTALL_BIN) ./files/mulpppoe.sh $(1)/usr/sbin/
 endef
 
-$(eval $(call BuildPackage,ppp-nas))
+$(eval $(call BuildPackage,$(PKG_NAME)))

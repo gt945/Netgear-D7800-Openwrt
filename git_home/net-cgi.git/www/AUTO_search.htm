@@ -29,9 +29,15 @@ function detec_status()
 		else
 			status = top.formframe.auto_search_frame.status;
 		if (status == 9999)
+		{
 			location.href="UPG_check_version.htm";
+			top.topframe.location.href="top.html";	
+		}
 		else if (status >= 10000)
+		{
 			location.href="AUTO_upgrade_noversion.htm";
+			top.topframe.location.href="top.html";
+		}
 		else
 		{
 			//document.write("$wizard_pls_wait");
@@ -46,8 +52,6 @@ function detec_status()
 		else
 			location.href="AUTO_upgrade_no_internet.htm";
 	}
-	if(!is_in_cd_less)
-		top.topframe.location.href="top.html";
 }
 function click_cancel()
 {
@@ -62,7 +66,7 @@ $bluebar
 	<TD nowrap align=center> 
 	<script>
 		var cancel_mark = getText(bh_cancel_mark, "$cancel_mark");
-		document.write("<input class='short_common_bt' type='button' name='cancel' value='"+cancel_mark+"' onclick='click_cancel();'>");
+		document.write("<input class='short_common_bt' type='button' name='Cancel' id=\"cancel\" value='"+cancel_mark+"' onclick='click_cancel();'>");
 	</script>
 	</TD>
 </TR>

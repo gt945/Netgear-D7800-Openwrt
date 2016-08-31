@@ -6,9 +6,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="reset" name="Cancel" value="$cancel_mark" onClick="location.href=\'traffic.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="cmd" value="$apply_mark" onclick="return check_traffic_apply(document.forms[0]);"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'traffic.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="apply" id="apply" value="$apply_mark" onclick="return check_traffic_apply(document.forms[0]);"></TD></TR>');
 else
-	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="reset" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" value="$apply_mark" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </table>
 </div>
@@ -56,25 +56,34 @@ function set_gray()
     var cf=document.forms[0];
     var dflag;
     dflag=(!(cf.checkTraffic.checked));
-    setDisabled ( dflag, cf.tm_type[0], cf.tm_type[1], cf.traff_dir, cf.volume_monthly_limit, cf.round_up_volume, cf.conntime_monthly_limit, cf.hour, cf.minute,  cf.day,  cf.waterMark, cf.checkLed, cf.checkBlock, cf.ampm,cf.restartCounter, cf.refresh, cf.trafficStatus, cf.wan_interface);    //cf.restartCounter, cf.refresh, cf.trafficStatus,
+    setDisabled ( dflag, cf.tm_type[0], cf.tm_type[1], cf.traff_dir, cf.volume_monthly_limit, cf.round_up_volume, cf.conntime_monthly_limit, cf.hour, cf.minute,  cf.day,  cf.waterMark, cf.checkLed, cf.checkBlock, cf.ampm, cf.refresh, cf.wan_interface);    //cf.restartCounter, cf.refresh, cf.trafficStatus,
     if( basic_type == 1)
         setDisabled ( true, cf.round_up_volume, cf.tm_type[1], cf.conntime_monthly_limit);
     if(cf.checkTraffic.checked == true)
     {
 	if(master == "admin")
-		document.getElementById("restart").className  = "long_common_bt";
+	{
+		document.getElementById("restart_counter").className  = "long_common_bt";
+		document.getElementById("restart_counter").disabled = false;
+	}
 	else
-		document.getElementById("restart").className  = "long_common_gray_bt";
+	{
+		document.getElementById("restart_counter").className  = "long_common_gray_bt";
+		document.getElementById("restart_counter").disabled = true;
+	}
     document.getElementById("refresh").className  = "common_key_bt";
-    document.getElementById("status").className  = "common_key_bt";
+    document.getElementById("traffic_status").className  = "common_key_bt";
+    document.getElementById("traffic_status").disabled = false;
     change_volumn_time();
     check_limit();
     }
     else
     {
-    document.getElementById("restart").className  = "long_common_gray_bt";
+    document.getElementById("restart_counter").className  = "long_common_gray_bt";
     document.getElementById("refresh").className  = "common_key_gray_bt";
-    document.getElementById("status").className  = "common_key_gray_bt";
+    document.getElementById("traffic_status").className  = "common_key_gray_bt";
+    document.getElementById("restart_counter").disabled = true;
+    document.getElementById("traffic_status").disabled = true;
     }
 
 }
@@ -129,7 +138,7 @@ current_days = getDaysInMonth(current_year, current_month);
 function check_limit()
 {
 	var cf=document.forms[0];
-	if(cf.traff_dir.value == "0")
+	if(cf.traff_dir.value == "No limit")
 	{
 		cf.volume_monthly_limit.disabled = true;
 		cf.round_up_volume.disabled = true;
@@ -193,7 +202,12 @@ function loadvalue()
 			cf.tm_type[0].checked =true;
 		else
 			cf.tm_type[1].checked = true;
-		cf.traff_dir.value=limit;
+		if(limit == "0")
+			cf.traff_dir.value="No limit";
+		else if(limit == "1")
+			cf.traff_dir.value="Download only";
+		else
+			cf.traff_dir.value="Both directions";
 		if ( traffic_led == "0")
 			cf.checkLed.checked = false;
 		else
@@ -226,9 +240,11 @@ function loadvalue()
 <input type="hidden" name="traffic_block_all">
 <input type="hidden" name="restart_counter_time">
 <input type="hidden" name="hidden_round_up">
+<input type="hidden" name="hidden_traff_dir">
+<input type="hidden" name="hidden_tm_type">
 	<tr><td nowrap colspan=2><A tabindex=-1 href="javascript:loadhelp('_traffic','internet')"><b>$traffic_int</b></A></td></tr>
 	<tr><td nowrap colspan=2>
-			<input type="checkbox" name="checkTraffic" value="1" onclick="set_gray();"><A tabindex=-1 href="javascript:loadhelp('_traffic','meter')">$traffic_endis</A>
+		<input type="checkbox" name="checkTraffic" id="check_traffic" value="1" onclick="set_gray();"><A tabindex=-1 href="javascript:loadhelp('_traffic','meter')">$traffic_endis</A>
 		</td>
 	</tr>
 	<tr id=wan_inter style="display:none">
@@ -242,37 +258,37 @@ function loadvalue()
 	</tr>
 	<tr>
 		<td nowrap colspan=2>
-			<input type="radio" name="tm_type" value="0" onclick="change_volumn_time()">$traffic_volumn_ctrl
+			<input type="radio" name="tm_type" id="tm_tvolume" value="tvolume" onclick="change_volumn_time()">$traffic_volumn_ctrl
 		<!--</td>	
 		<td nowrap> -->	
-			<SELECT name="traff_dir" onChange="check_limit();">
-				<OPTION value="0" selected >$traffic_nolimit</OPTION>
-				<OPTION value="1" >$traffic_download</OPTION>
-				<OPTION value="2" >$traffic_dir</OPTION>
+			<SELECT name="traff_dir" id="traff_dir" onChange="check_limit();">
+				<OPTION value="No limit" selected >$traffic_nolimit</OPTION>
+				<OPTION value="Download only" >$traffic_download</OPTION>
+				<OPTION value="Both directions" >$traffic_dir</OPTION>
 			</SELECT>
 		</td>
 	</tr>
 	<tr>
 		<td nowrap> <img src=/spacer.gif width=20 height=12 border=0>$traffic_mon_limit</td>
 		<td nowrap> 
-			<input type="text" name="volume_monthly_limit" maxlength="6" size="16" onKeyPress="return getkey('num', event)">&#40;$mbytes_mark&#41;
+			<input type="text" name="volume_monthly_limit" id="volume_monthly_limit" maxlength="6" size="16" onKeyPress="return getkey('num', event)">&#40;$mbytes_mark&#41;
 		</td>
 	</tr>
 	<tr>	
 		<td nowrap> <img src=/spacer.gif width=20 height=12 border=0>$traffic_round_up</td>
 		<td nowrap> 
-			<input type="text" name="round_up_volume" maxlength="16" value="$round_up" size="16" onKeyPress="return getkey('num', event)">&#40;$mbytes_mark&#41;
+			<input type="text" name="round_up_volume" id="round_up_volume" maxlength="16" value="$round_up" size="16" onKeyPress="return getkey('num', event)">&#40;$mbytes_mark&#41;
 		</td>
 	</tr>
 	<tr>
 		<td nowrap colspan=2>
-			<input type="radio" name="tm_type" value="1" onclick="change_volumn_time()" >$traffic_time_ctrl
+			<input type="radio" name="tm_type" id="tm_conntime" value="conntime" onclick="change_volumn_time()" >$traffic_time_ctrl
 		</td>
 	</tr>
 	<tr>	
 		<td nowrap> <img src=/spacer.gif width=20 height=12 border=0>$traffic_mon_limit</td>
 		<td nowrap> 
-			<input type="text" name="conntime_monthly_limit" maxlength="5" size="16" onKeyPress="return getkey('num', event)">&#40;$hours_mark&#41;
+			<input type="text" name="conntime_monthly_limit" id="conntime_monthly_limit" maxlength="5" size="16" onKeyPress="return getkey('num', event)">&#40;$hours_mark&#41;
 		</td>
 	</tr>
 $bluebar
@@ -281,13 +297,13 @@ $bluebar
 	</tr>
 	<tr>
 		<td nowrap colspan=2>$traffic_counter_restart
-			<input type="text" name="hour" maxlength=2 size=2>:<input type="text" name="minute" maxlength=2 size=2>
-			<select name="ampm">
+			<input type="text" name="hour" id="hour" maxlength=2 size=2>:<input type="text" name="minute" id="minute" maxlength=2 size=2>
+			<select name="ampm" id="ampm">
 				<option value="0" selected>am</option>
 				<option value="1">pm</option>
 			</select> 
 			$traffic_onthe
-			<select name="day">
+			<select name="day" id="day">
 				<option value="1" selected>1st</option>
 				<option value="2">2nd</option>
 				<option value="3">3rd</option>
@@ -323,33 +339,33 @@ $bluebar
 	</tr>
 <script>
 if( master == "admin" )
-    document.write('<TR><TD nowrap colspan=2 align=right><input id="restart" class="long_common_bt" type="button" name="restartCounter" value="$traffic_btn_counter" onclick="click_restart();"></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=right><input id="restart_counter" class="long_common_bt" type="button" name="Restart Counter Now" value="$traffic_btn_counter" onclick="click_restart();"></TD></TR>');
 else
-    document.write('<TR><TD nowrap colspan=2 align=right><input id="restart" class="long_common_gray_bt" type="button" name="restartCounter" value="$traffic_btn_counter" disabled></TD></TR>');
+	document.write('<TR><TD nowrap colspan=2 align=right><input id="restart_counter" class="long_common_gray_bt" type="button" name="Restart Counter Now" value="$traffic_btn_counter" disabled></TD></TR>');
 </script>
 $bluebar
 	<tr><td nowrap colspan=2><A href="javascript:loadhelp('_traffic', 'reached')"><b>$traffic_ctrl</b></A></td></tr>
 	<tr><td nowrap colspan=2>$traffic_popup</td></tr>
 	<tr>
 		<td nowrap colspan=2>
-			<input type="text" maxlength="16" size="16" name="waterMark" onKeyPress="return getkey('num', event)">$traffic_before
+			<input type="text" maxlength="16" size="16" name="waterMark" id="water_mark" onKeyPress="return getkey('num', event)">$traffic_before
 		</td>	
 	</tr>
 	<tr><td nowrap colspan=2>$traffic_when</td></tr>
 	<tr>
-		<td nowrap colspan=2><input type="checkbox" name="checkLed" value=1>$traffic_turn_led</td>	
+		<td nowrap colspan=2><input type="checkbox" name="checkLed" id="check_led" value=1>$traffic_turn_led</td>
 	</tr>
 	<tr>
-		<td nowrap colspan=2><input type="checkbox" name="checkBlock" value=1>$traffic_block</td>	
+		<td nowrap colspan=2><input type="checkbox" name="checkBlock" id="check_block" value=1>$traffic_block</td>
 	</tr>
 $bluebar
 	<tr><td nowrap colspan=2><A href="javascript:loadhelp('_traffic', 'statistics')"><b>$traffic_statistics</b></A></td></tr>
-	<tr><td nowrap colspan=2><script>document.write(traffic_startday)</script></td></tr>
-	<tr><td nowrap colspan=2><script>document.write(traffic_currentdate)</script></td></tr>
-	<tr><td nowrap colspan=2><script>document.write(traffic_volumnleft)</script></td></tr>
+	<tr><td nowrap colspan=2 id="start_time"><script>document.write(traffic_startday)</script></td></tr>
+	<tr><td nowrap colspan=2 id="current_time"><script>document.write(traffic_currentdate)</script></td></tr>
+	<tr><td nowrap colspan=2 id="left_traffic"><script>document.write(traffic_volumnleft)</script></td></tr>
 	<tr>
 		<td nowrap colspan=2 align=center>
-			<table border=1 cellpadding=2 cellspacing=0 width=100%>
+			<table id=traffic_statistics border=1 cellpadding=2 cellspacing=0 width=100%>
 				<tr>
 				<td nowrap rowspan="2" align="center"><span class="subhead">$traffic_period_1</span></td>
 				<script>
@@ -430,8 +446,9 @@ $bluebar
 	</tr>	
 	<tr>
 		<td nowrap colspan=2 align=center>
-		<input id="refresh" class="common_key_bt" type='button' name='refresh' value='$refresh_mark' onclick="click_refresh_2();"> &nbsp;
-		<input id="status" class="common_key_bt" type="button" name="trafficStatus" value="$traffic_status" onclick="click_status();">
+		<input class="common_key_bt" type='button' name='refresh' id='refresh' value='$refresh_mark' onclick="click_refresh_2();"> &nbsp;
+		<input class="common_key_bt" type="button" name="Traffic Status" id="traffic_status" value="$traffic_status" onclick="click_status();">
+		</td>
 	</tr>
 $bluebar
 </table>

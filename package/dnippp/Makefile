@@ -10,14 +10,9 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=dnippp
 PKG_VERSION:=2.4.3
 PKG_RELEASE:=8
-
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-#PKG_SOURCE_URL:=ftp://ftp.samba.org/pub/ppp/
-#PKG_MD5SUM:=848f6c3cafeb6074ffeb293c3af79b7c
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 PKG_BUILD_DEPENDS:=libpcap
-
-PKG_GIT_TREEISH=ppp-v2.4.3-dni29
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/kernel.mk
@@ -30,7 +25,7 @@ endef
 
 define Package/dnippp
 $(call Package/dnippp/Default)
-  DEPENDS:=@TARGET_ipq806x +kmod-ppp
+  DEPENDS:= +kmod-ppp
   TITLE:=PPP daemon
   MENU:=1
 endef
@@ -125,6 +120,8 @@ define Build/Prepare
 	$(CP) $(GIT_HOME)/ppp.git/* $(PKG_BUILD_DIR)/
 endef
 
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
 define Build/Configure
 $(call Build/Configure/Default,, \
 	UNAME_S="Linux" \
@@ -150,6 +147,9 @@ define Package/dnippp/install
 	$(INSTALL_DIR) $(1)/usr/lib/pppd/$(PKG_VERSION)
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/pppd $(1)/usr/sbin/
+ifdef CONFIG_DNI_3G_DONGLE_SUPPORT
+	$(INSTALL_BIN) ./files/do-3g-reconnect.sh $(1)/usr/sbin/
+endif
 	$(INSTALL_DIR) $(1)/lib/network
 	$(INSTALL_BIN) ./files/ppp.sh $(1)/lib/network/
 	$(INSTALL_DIR) $(1)/etc/modules.d
@@ -157,6 +157,9 @@ define Package/dnippp/install
 	$(INSTALL_BIN) ./files/etc/modules.d/60-pppoe-mod $(1)/etc/modules.d/
 	$(INSTALL_BIN) ./files/etc/modules.d/60-pppoa-mod $(1)/etc/modules.d/
 	$(INSTALL_BIN) ./files/etc/modules.d/60-l2tp-mod $(1)/etc/modules.d/
+ifdef CONFIG_DNI_3G_DONGLE_SUPPORT
+	$(INSTALL_BIN) ./files/etc/modules.d/60-3g-mod $(1)/etc/modules.d/
+endif
 	ln -sf /tmp/ppp $(1)/etc/ppp
 endef
 

@@ -1,0 +1,49 @@
+#!/bin/sh
+
+CONFIG=$(which config)
+bin=$(which phddns)
+
+ORAY_SERVER="hphserver.oray.net"
+DDNS_STATUS="/tmp/ez-ipupd.status"
+
+get_wan_ifname() {
+	case "$($CONFIG get wan_proto)" in
+		"pppoe"|"pptp"|"l2tp"|"mulpppoe1"|"pppoa"|"ipoa")
+			printf "ppp0" ;;
+		*)
+			printf "$($CONFIG get wan_ifname)" ;;
+	esac
+}
+
+start()
+{
+	echo "**** run oray ddns *****"
+
+	usr_name=$($CONFIG get sysDNSUser)
+	usr_password=$($CONFIG get sysDNSPassword)
+	host_name=$($CONFIG get sysDNSHost) #XXX: using ???
+
+	$bin $ORAY_SERVER $usr_name $usr_password $(get_wan_ifname) &
+}
+
+stop()
+{
+	killall -9 $bin
+
+	$CONFIG unset oray_serv_type
+	$CONFIG unset oray_host_list
+
+	printf "0" > $DDNS_STATUS
+}
+
+case "$1" in
+	start)
+		start ;;
+	stop)
+		stop ;;
+	restart)
+		stop; start ;;
+	*)
+		echo "Usage $0 {start|stop|restart}"
+		exit 1
+esac

@@ -17,17 +17,15 @@ function initPage()
 	choices_text = document.createTextNode(bh_do_not_know);
 	insertAfter(choices_text, choices[2]);
 	
-	
-	var btns_container_div = document.getElementById("btnsContainer_div");
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
 	if( master == "admin" )
-	btns_container_div.onclick = function() 
+	btn.onclick = function() 
 	{
 		return 	staticIPChoice();
 	}
-	
-	var btn = document.getElementById("btn_div");	
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
+	else
+		btn.className="grey_short_btn";
 	
 	//show firmware version
 	showFirmVersion("");

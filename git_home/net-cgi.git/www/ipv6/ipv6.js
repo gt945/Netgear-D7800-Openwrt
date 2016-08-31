@@ -152,29 +152,28 @@ function ipv6_load_common(cf)
 	/* IP Address Assignment */
         if( ipv6_ip_assign == "1" )
         {
-                cf.ipv6_lan_ip_assign[0].checked = true;
+                cf.IpAssign[0].checked = true;
         }
         else if( ipv6_ip_assign == "0" )
         {
-                cf.ipv6_lan_ip_assign[1].checked = true;
+                cf.IpAssign[1].checked = true;
         }
 
         /* Use This Interface ID  */
         if(ipv6_interface_type == "1")
         {
-                cf.enable_interface.checked = true;
+                cf.useInterfaceId.checked = true;
         }
         else
         {
-                cf.enable_interface.checked = false;
+                cf.useInterfaceId.checked = false;
         }
         set_interface();
         var interface_id_array = ipv6_interface_id.split(':');
-        var i;
-        for( i=0; i<interface_id_array.length; i++ )
-        {
-                cf.IP_interface[i].value = interface_id_array[i];
-        }
+	cf.IPv6_interface_id1.value = interface_id_array[0];
+	cf.IPv6_interface_id2.value = interface_id_array[1];
+	cf.IPv6_interface_id3.value = interface_id_array[2];
+	cf.IPv6_interface_id4.value = interface_id_array[3];
 
 	/* IPv6 Filtering */
 	if(ipv6_cone_fitering == 0)
@@ -190,44 +189,45 @@ function ipv6_load_common(cf)
 function ipv6_save_common(cf)
 {
 	var i;
-        cf.ipv6_hidden_interface_id.value = "";
 
 	/* Use This Interface ID */
-        if(enable_vpn == "1")
+
+	if(cf.IpAssign[0].checked == true)
+		cf.ipv6_hidden_ip_assign.value = "1";
+	else
+		cf.ipv6_hidden_ip_assign.value = "0";
+	if( cf.useInterfaceId.checked == true )
         {
-                alert("$no_enable_ipv6");
-                return false;
-        }
-	if( cf.enable_interface.checked == true )
-        {
-			cf.ipv6_hidden_enable_interface.value = "1";
-			for( i=0; i<cf.IP_interface.length; i++ )
+		cf.ipv6_hidden_enable_interface.value = "1";
+		cf.ipv6_hidden_interface_id.value = "";
+		for( i=1; i<=4; i++ )
+		{
+			var interface_value = eval('document.getElementsByName("IPv6_interface_id'+i+'")[0]').value;
+			if( check_ipv6_IP_address(interface_value) == false )
 			{
-				if( check_ipv6_IP_address(cf.IP_interface[i].value) == false )
+				alert("$ipv6_invalid_interface_id");
+				return false;
+			}
+			if( interface_value == "" )
+			{
+				interface_value = "0";
+			}
+			if( i < 4 )
+			{
+				cf.ipv6_hidden_interface_id.value = cf.ipv6_hidden_interface_id.value + interface_value + ":";
+			}
+			else if( i == 4 )
+			{
+				//to fix bug29794:"interface ID" can be set to "x:x:x:0",and it wi    ll make ipv6 address of lan to be a network segment.
+				if(interface_value == "0")
 				{
 					alert("$ipv6_invalid_interface_id");
 					return false;
 				}
-				if( cf.IP_interface[i].value == "" )
-				{
-					cf.IP_interface[i].value = "0";
-				}
-				if( i < (cf.IP_interface.length-1) )
-				{
-					cf.ipv6_hidden_interface_id.value = cf.ipv6_hidden_interface_id.value + cf.IP_interface[i].value + ":";
-				}
-				else if( i == (cf.IP_interface.length-1) )
-				{
-					//to fix bug29794:"interface ID" can be set to "x:x:x:0",and it wi    ll make ipv6 address of lan to be a network segment.
-					if(cf.IP_interface[i].value == "0")
-					{
-						alert("$ipv6_invalid_interface_id");
-						return false;
-					}
-					else
-						cf.ipv6_hidden_interface_id.value = cf.ipv6_hidden_interface_id.value + cf.IP_interface[i].value;
-                }
-			}
+				else
+					cf.ipv6_hidden_interface_id.value = cf.ipv6_hidden_interface_id.value + interface_value;
+                	}
+		}
         }
         else
         {
@@ -248,18 +248,20 @@ function ipv6_save_common(cf)
 
 function set_interface()
 {
-        var cf = document.forms[0];
-        var i;
-	for( i=0; i<cf.IP_interface.length; i++)
+	var cf = document.forms[0];
+	if( cf.useInterfaceId.checked == true )
 	{
-		if( cf.enable_interface.checked == true )
-        	{
-                	cf.IP_interface[i].disabled = false;
-        	}
-       	 	else if( cf.enable_interface.checked == false )
-        	{	
-                	cf.IP_interface[i].disabled = true;
-        	}
+		cf.IPv6_interface_id1.disabled = false;
+		cf.IPv6_interface_id2.disabled = false;
+		cf.IPv6_interface_id3.disabled = false;
+		cf.IPv6_interface_id4.disabled = false;
+	}
+	else if( cf.useInterfaceId.checked == false )
+	{	
+		cf.IPv6_interface_id1.disabled = true;
+		cf.IPv6_interface_id2.disabled = true;
+		cf.IPv6_interface_id3.disabled = true;
+		cf.IPv6_interface_id4.disabled = true;
 	}
 }
 //bug 26966 dns server ipv6 address should be able to leave these fields unspecified
@@ -330,11 +332,11 @@ function change_conn_type_name(conn_type)
 
 function setIPv6DNS(cf)
 {
-        var dflag = cf.IPv6DNSAssign[0].checked;
-	for(i=0; i< cf.IPv6_Pri_DNS.length ; i++)
+        var dflag = cf.DNSAssign[0].checked;
+	for(i=1; i<=8 ; i++)
 	{
-		cf.IPv6_Pri_DNS[i].disabled = dflag;
-		cf.IPv6_Sec_DNS[i].disabled = dflag;
+		eval('document.getElementsByName("PDAddr'+i+'")[0]').disabled = dflag;
+		eval('document.getElementsByName("SDAddr'+i+'")[0]').disabled = dflag;
 	}
 }
 
@@ -351,7 +353,7 @@ function check_addr_legality(value)
 
 function checkIPv6DNS(cf)
 {
-	if(cf.IPv6DNSAssign[1].checked)
+	if(cf.DNSAssign[1].checked)
 	{
 		cf.ipv6_hidden_primary_dns.value = "";
 		cf.ipv6_hidden_second_dns.value = "";
@@ -360,10 +362,10 @@ function checkIPv6DNS(cf)
 		var pri_dns = "";
 		var sec_dns = "";
 
-		for( i=0; i<cf.IPv6_Pri_DNS.length; i++ )
+		for( i=1; i<=8; i++ )
 		{
-			pri_dns = pri_dns + cf.IPv6_Pri_DNS[i].value;
-			sec_dns = sec_dns + cf.IPv6_Sec_DNS[i].value;
+			pri_dns = pri_dns + eval('document.getElementsByName("PDAddr'+i+'")[0]').value;
+			sec_dns = sec_dns + eval('document.getElementsByName("SDAddr'+i+'")[0]').value;
 		}
 		if( pri_dns == "" )
 			check_pri_dns = 0;
@@ -376,40 +378,42 @@ function checkIPv6DNS(cf)
 			return false;
 		}
 
-		for( i=0; i<cf.IPv6_Pri_DNS.length; i++ )
+		for( i=1; i<=8; i++ )
 		{
 			if( check_pri_dns )
 			{
-				if(check_ipv6_DNS_address(cf.IPv6_Pri_DNS[i].value) == false)
+				var pri_dns_value = eval('document.getElementsByName("PDAddr'+i+'")[0]').value;				
+				if(check_ipv6_DNS_address(pri_dns_value) == false)
 				{
 					alert("$invalid_ipv6_primary_dns_hex");
 					return false;
 				}
 
-				if(cf.IPv6_Pri_DNS[i].value != "")
-					cf.IPv6_Pri_DNS[i].value = parseInt(cf.IPv6_Pri_DNS[i].value, 16).toString(16);
+				if(pri_dns_value != "")
+					pri_dns_value = parseInt(pri_dns_value, 16).toString(16);
 
-				if(cf.IPv6_Pri_DNS[i].value == "")
+				if(pri_dns_value == "")
 					cf.ipv6_hidden_primary_dns.value = cf.ipv6_hidden_primary_dns.value + "0" + ":";
 				else
-					cf.ipv6_hidden_primary_dns.value = cf.ipv6_hidden_primary_dns.value + cf.IPv6_Pri_DNS[i].value + ":";
+					cf.ipv6_hidden_primary_dns.value = cf.ipv6_hidden_primary_dns.value + pri_dns_value + ":";
 			}
 
 			if( check_sec_dns )
 			{
-				if(check_ipv6_DNS_address(cf.IPv6_Sec_DNS[i].value) == false)
+				var sec_dns_value = eval('document.getElementsByName("SDAddr'+i+'")[0]').value;
+				if(check_ipv6_DNS_address(sec_dns_value) == false)
 				{
 					alert("$invalid_ipv6_second_dns_hex");
 					return false;
 				}
 
-				if(cf.IPv6_Sec_DNS[i].value != "")
-					cf.IPv6_Sec_DNS[i].value = parseInt(cf.IPv6_Sec_DNS[i].value, 16).toString(16);
+				if(sec_dns_value != "")
+					sec_dns_value = parseInt(sec_dns_value, 16).toString(16);
 
-				if(cf.IPv6_Sec_DNS[i].value == "")
+				if(sec_dns_value == "")
 					cf.ipv6_hidden_second_dns.value = cf.ipv6_hidden_second_dns.value + "0" + ":";
 				else
-					cf.ipv6_hidden_second_dns.value = cf.ipv6_hidden_second_dns.value + cf.IPv6_Sec_DNS[i].value + ":";
+					cf.ipv6_hidden_second_dns.value = cf.ipv6_hidden_second_dns.value + sec_dns_value + ":";
 			}
 		}
 
@@ -462,33 +466,33 @@ function checkIPv6DNS(cf)
 function load_ipv6_dns(cf)
 {
 	if (get_dns_assign == '0')
-		cf.IPv6DNSAssign[0].checked = true;
+		cf.DNSAssign[0].checked = true;
 	else
-		cf.IPv6DNSAssign[1].checked = true;
+		cf.DNSAssign[1].checked = true;
 
 	setIPv6DNS(cf);
 
 	if(ipv6_get_dns1 !="")
 	{
 		var ipv6_primary_dns = ipv6_get_dns1.split(":");
-		for( i=0; i<ipv6_primary_dns.length; i++ )
+		for( i=1; i<=ipv6_primary_dns.length; i++ )
 		{
-			if(ipv6_primary_dns[i]=="")
-				cf.IPv6_Pri_DNS[i].value = "0";
+			if(ipv6_primary_dns[i-1]=="")
+				eval('document.getElementsByName("PDAddr'+i+'")[0]').value = "0";
 			else
-				cf.IPv6_Pri_DNS[i].value = ipv6_primary_dns[i];
+				eval('document.getElementsByName("PDAddr'+i+'")[0]').value = ipv6_primary_dns[i-1];
 		}
 	}
 
 	if(ipv6_get_dns2 != "")
 	{
 		var ipv6_second_dns = ipv6_get_dns2.split(":");
-		for( i=0; i<ipv6_second_dns.length; i++ )
+		for( i=1; i<=ipv6_second_dns.length; i++ )
 		{
-			if(ipv6_second_dns[i]=="")
-				cf.IPv6_Sec_DNS[i].value = "0";
+			if(ipv6_second_dns[i-1]=="")
+				eval('document.getElementsByName("SDAddr'+i+'")[0]').value = "0";
 			else
-				cf.IPv6_Sec_DNS[i].value = ipv6_second_dns[i];
+				eval('document.getElementsByName("SDAddr'+i+'")[0]').value = ipv6_second_dns[i-1];
 		}
 	}
 }
@@ -614,3 +618,70 @@ function check_mapt(cf)
 	return true;
 }
 
+function abbr_ipv6(ip)
+{
+	var ip_array=ip.split(":");
+	var start=-1, end=-1, abbr="";
+	for(var i=0; i<ip_array.length; i++)
+	{
+		if(ip_array[i] == "0")
+		{
+			if(start == -1 )
+				start = i;
+			else
+				end = i;
+		}
+		else
+		{
+			if(end - start > 0)
+				break;
+			else
+			{
+				start = -1;
+				end = -1;
+			}
+		}
+	}
+	if(end - start > 0)
+	{
+		for(var i=0; i<start; i++)
+			abbr += ip_array[i] + ":";
+		if(start == 0)
+			abbr += "::";
+		else
+			abbr += ":";
+		for(var i=end+1; i<ip_array.length; i++)
+			if(i != ip_array.length -1)
+				abbr += ip_array[i] + ":";
+			else
+				abbr += ip_array[i];
+	}
+	else
+		abbr = ip;
+
+	return abbr;
+}
+
+function login_type_show(cf)
+{
+	var login_type_list = cf.login_type;
+	var ipv6_6rd_flag = top.ipv6_6rd_flag;
+	var ipv6_auto_detect = (typeof(top.ipv6_auto_detect) == "undefined") ? 1 : top.ipv6_auto_detect;
+	var ipv6_dhcp_flag = (typeof(top.ipv6_dhcp_flag) == "undefined") ? 1 : top.ipv6_dhcp_flag;
+	var ipv6_pppoe_flag = (typeof(top.ipv6_pppoe_flag) == "undefined") ? 1 : top.ipv6_pppoe_flag;
+	var ipv6_items = new Array("disabled", "$pppoe2_disable", "autoDetect", "$ipv6_auto_detect", "autoConfig", "$ipv6_auto_config", "6to4", "$ipv6_6to4_tunnel", "6rd", "6rd", "bridge", "$ipv6_pass_through", "fixed", "$ipv6_fixed", "dhcp", "$router_status_dhcp", "pppoe", "$basic_intserv_pppoe");
+	var len = 0;
+	
+	login_type_list.options.length = 20;
+	for(i=0; i<ipv6_items.length; i+=2)
+	{
+		if((ipv6_6rd_flag != 1 && ipv6_items[i] == "6rd") || (ipv6_auto_detect != 1 && ipv6_items[i] == "autoDetect") || (ipv6_dhcp_flag != 1 && ipv6_items[i] == "dhcp") || (ipv6_pppoe_flag != 1 && ipv6_items[i] == "pppoe"))
+			continue;
+		else{
+			login_type_list.options[len].text = ipv6_items[i+1];
+			login_type_list.options[len].value = ipv6_items[i];
+			len++;
+		}
+	}	
+	login_type_list.options.length = len;
+}

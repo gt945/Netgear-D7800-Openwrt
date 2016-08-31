@@ -1,0 +1,193 @@
+comment "Product's information"
+
+config DGC_VENDOR
+	string "Product Vendor name (upper case)"
+	default "NETGEAR"
+	help
+	  Specify product vendor.
+	  e.g. NETGEAR,CISCO
+
+config DGC_PRODUCT_NAME
+	string "product's name (upper case)"
+	default "R7500v2"
+	help
+	  Specify product's name in upper case, some modules would use it as HOST_NAME too.
+	  e.g. "R7500v2"
+
+config DGC_product_name
+	string "product's name (lower case)"
+	default "r7500v2"
+	help
+	  Specify product's name in lower case, some modules would use it as host_name too.
+	  e.g. "r7500v2"
+
+config DGC_PRODUCT_CLASS
+	string "product's class name (upper case)"
+	default "R7500"
+	help
+	  Specify product's class name.
+	  e.g. class name of R7500, R7500v2, R7500v3 are all "R7500"
+
+config DGC_PRODUCT_class
+	string "product's class name (lower case)"
+	default "r7500"
+	help
+	  Specify product's class name.
+	  e.g. class name of R7500, R7500v2, R7500v3 are all "r7500"
+
+config DGC_PRODUCT_VERSION
+	int "product's version number (1 ~ 10)"
+	range 1 10
+	default 2
+	help
+	  Specify product's version number.
+	  e.g. it should be 1 for R7500, and 2 for R7500v2.
+
+config DGC_MODULE_NAME
+	string "product's module name"
+	default DGC_PRODUCT_NAME
+	help
+	  Specify product's module name, it's same as DGC_PRODUCT_NAME in generally.
+	  in target/linux/*/image/Makefile may use this config to generate image.
+
+config DGC_HW_VERSION
+	string "product's hardware version"
+	default DGC_PRODUCT_NAME
+	help
+	  Specify product's hardware name, it's same as DGC_PRODUCT_NAME in generally.
+	  in target/linux/*/image/Makefile may use this config to generate image.
+
+config DGC_HW_ID
+	string "product's hardware id"
+	default ""
+	help
+	  specify product's hardware id, the value should be provided by hardware designed RD.
+	  HW_ID will be used in u-boot and firmware to check image.
+
+comment "Interfaces' information"
+
+config DGC_WAN_RAW_IF
+	string "WAN raw interface name"
+	default "eth0"
+	help
+	  Specify raw interface name of WAN, mostly it's "eth0".
+
+config DGC_WAN_ETH_IF
+	string "WAN ethernet interface name"
+	default "ethwan"
+	help
+	  Specify ethernet interface name of WAN.
+	  e.g. on R7500v2 Stage2, WAN raw interface name is "eth0" created in driver, but the real
+	  ethernet interface name of WAN was changed to "ethwan" during boot, and all application
+	  should use "ethwan" when it want use real ethernet interface.
+	  on R7500v2 Stage1, WAN raw interface and etherent interface are all "eth0".
+
+config DGC_WAN_PPP_IF
+	string "WAN ppp interface name"
+	default "ppp0"
+	help
+	  Specify ppp interface name of WAN.
+
+config DGC_WAN_BR_IF
+	string "WAN bridge interface name"
+	default "brwan"
+	help
+	  Speicify bridge interface name of WAN, not all products would use this config.
+	  e.g. To support VLAN/IPTV on R7500v2 Stage2, we use "brwan" as WAN interface on most modules,
+	  physical WAN interface "ethwan" will be added to bridge "brwan".
+
+config DGC_LAN_RAW_IF
+	string "LAN raw interface name"
+	default "eth1"
+	help
+	  Specify raw interface name of LAN, mostly is't "eth1".
+
+config DGC_LAN_ETH_IF
+	string "LAN ethernet interface name"
+	default "ethlan"
+	help
+	  Specify ethernet interface name of LAN.
+	  e.g. on R7500v2 Stage2, WAN raw interface name is "eth1" created in driver. but the real
+	  ethernet interface name of WAN was changed to "ethlan" during boot, and all application
+	  should use "ethwan" when it want use real ethernet interface.
+	  on R7500v2 Stage1, WAN raw interface and etherent interface are all "eth1".
+
+config DGC_LAN_BR_IF
+	string "LAN bridge interfae name"
+	default "br0"
+	help
+	  Specify bridge interface name of LAN, mostly it's "br0".
+
+comment "Firmware's information"
+
+config DGC_FW_VERSION
+	string "Firmware version"
+	default ""
+	help
+	  Specify firmware version string.
+	  e.g. "V1.0.1.20".
+
+config DGC_LG_VERSION
+	string "Language version"
+	default ""
+	help
+	  Specify language version string.
+	  e.g. "V1.0.0.244".
+
+config DGC_FW_REGION
+	string "Firmware region"
+	default ""
+	help
+	  Specify firmware region string.
+	  e.g. "WW", "NA" etc.
+
+config DGC_CLOUD_VERSION
+	string "ReadyGenieCloud binary version"
+	default ""
+	help
+	  Specify ReadyGenieCloud binary version.
+
+comment "MTD partition's information"
+
+config DGC_MTD_CALDATA
+	string "calibration data partition"
+	default ""
+	help
+	  Calibration data partition, where stores HE_ID and other board information.
+
+config DGC_MTD_LANGUAGE
+	string "language table partition"
+	default ""
+	help
+	  Language table partition, where language strings table would be burned.
+
+config DGC_MTD_DATALIB
+	string "datalib partition"
+	default ""
+	help
+	  Datalib partition, configs of DNI datalib will be stored in.
+
+config DGC_MTD_POT
+	string "POT partition"
+	default ""
+	help
+	  Power On Time (POT) partition.
+
+config DGC_MTD_FIRMWARE
+	string "Firmware partition"
+	default ""
+	help
+	  Firmware partition, GUI or other modules will write updated firmware image
+	  into this partition.
+
+config DGC_MTD_TRAFFICMETER
+	string "Traffic meter partition"
+	default ""
+	help
+	  Traffic meter partition."
+
+config DGC_MTD_TRAFFICMETER_DONGLE
+	string "Traffic meter DONLGE (3G/4G) partition"
+	default ""
+	help
+	  Traffic meter dongle partition."

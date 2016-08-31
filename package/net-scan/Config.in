@@ -1,0 +1,5 @@
+config net-scan_SUPPORT_STREAMBOOST
+	bool "support Streamboost"
+	default y
+	help
+	  If your project doesn't support Streamboost, please disable it.

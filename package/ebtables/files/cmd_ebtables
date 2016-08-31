@@ -3,7 +3,7 @@
 CONFIG="/bin/config"
 
 start() {
-	if [ "$($CONFIG get ap_mode)" = 1 -o "$($CONFIG get bridge_mode)" = 1 -o "$($CONFIG get extender_mode)" = 1 -o "$($CONFIG get device_mode)" = "modem" ]; then
+	if [ "$($CONFIG get ap_mode)" = 1 -o "$($CONFIG get bridge_mode)" = 1 ]; then
 		if [ "$($CONFIG get ParentalControl)" = "0" ]; then
 			# Parental Control disable: only redirect the URLs, such as www.routerlogin.net ..., up to layer 3
 			ebtables -t broute -A BROUTING -p ipv4 --ip-protocol UDP --ip-destination-port 53 --ip-dns-hijack -j redirect --redirect-target ACCEPT

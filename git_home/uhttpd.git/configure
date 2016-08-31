@@ -1,0 +1,121 @@
+#! /bin/bash
+
+print_usage()
+{
+	printf "Usage:  configure [option]...\n\n"
+	printf "  %s\n" \
+		"--help	print this message" \
+		"--lua_support	Support LUA" \
+		"--tls_support	Support HTTPS" \
+		"--tls_source	TLS Source"
+}
+
+#parse arguments
+parse_args()
+{
+	while true
+	do
+		[ $# -eq 0 ] && break
+
+		case "$1" in
+			"--help")
+				print_usage; exit;;
+			"--lua_support")
+				LUA_SUPPORT=1; shift;;
+			"--tls_support")
+				TLS_SUPPORT=1; shift;;
+			"--tls_source")
+				UHTTPD_TLS="$2"; shift 2;;
+			*)
+				print_usage; exit 1;;
+		esac
+	done
+}
+
+INS_DIR_PRE=${INS_DIR_PRE}
+INS_BIN_DIR='$(INS_DIR_PRE)/usr/sbin'
+INS_LIB_DIR='$(INS_DIR_PRE)/usr/lib'
+INS_ETC_DIR='$(INS_DIR_PRE)/etc'
+INS_INIT_DIR='$(INS_ETC_DIR)/init.d'
+INS_CONF_DIR='$(INS_ETC_DIR)/config'
+INS_WWW_DIR='$(INS_DIR_PRE)/www/cgi-bin'
+
+
+generate_makefile()
+{
+	tab=$'\t'
+	cat <<-EOF
+		# GENERATED AUTOMATICALLY BY configure, DON'T EDIT THIS FILE MANUALLY.
+		
+		export INSTALL_DIR:=install -d -m0755
+		export INSTALL_BIN:=install -m0755
+		export INSTALL_CONF:=install -m0600
+		export CP:=cp -fpR
+
+		export INS_BIN_DIR:=$INS_BIN_DIR
+		export INS_LIB_DIR:=$INS_LIB_DIR
+		export INS_ETC_DIR:=$INS_ETC_DIR
+		export INS_INIT_DIR:=$INS_INIT_DIR
+		export INS_CONF_DIR:=$INS_CONF_DIR
+		export INS_WWW_DIR:=$INS_WWW_DIR
+
+		export LUA_SUPPORT:=${LUA_SUPPORT:-0}
+		export TLS_SUPPORT:=${TLS_SUPPORT:-0}
+		export UHTTPD_TLS:=$UHTTPD_TLS
+
+		all %::
+			$tab\$(MAKE) -C src \$@
+			$tab\$(MAKE) -C files \$@
+	EOF
+}
+
+generate_uhttpd_sh()
+{
+	tab=$'\t'
+	if [ "$TLS_SUPPORT" = "1" ]; then
+		HTTPS_ARGS="-C /etc/uhttpd.crt -K /etc/uhttpd.key -s 0.0.0.0:443"
+	fi;
+	cat <<-EOF
+		#!/bin/sh
+
+		REALM=\`/bin/cat /module_name | sed 's/\n//g'\`
+		UHTTPD_BIN="/usr/sbin/uhttpd"
+		FW_CHECK_BIN="/usr/sbin/fw-checking"
+
+		uhttpd_stop()
+		{
+			${tab}kill -9 \$(pidof uhttpd)
+			${tab}kill -9 \$(pidof fw-checking)
+		}
+
+		uhttpd_start()
+		{
+			$tab\$UHTTPD_BIN -h /www -r \$REALM -x /cgi-bin -t 30 -p 0.0.0.0:80 $HTTPS_ARGS
+			$tab\$FW_CHECK_BIN -c "net-cgi -c" -g "net-cgi -s" -s /tmp/Seria_Number -t time_zone
+		}
+
+		case "\$1" in
+			${tab}stop)
+				${tab}${tab}uhttpd_stop
+			${tab};;
+			${tab}start)
+				${tab}${tab}uhttpd_start
+			${tab};;
+			${tab}restart)
+				${tab}${tab}uhttpd_stop
+				${tab}${tab}uhttpd_start
+			${tab};;
+			${tab}*)
+				${tab}${tab}logger -- "usage: \$0 start|stop|restart"
+			${tab};;
+		esac
+	EOF
+}
+
+parse_args $@
+
+#generate uhttp.sh
+generate_uhttpd_sh > files/uhttpd.sh
+
+# top level Makefile
+generate_makefile > Makefile

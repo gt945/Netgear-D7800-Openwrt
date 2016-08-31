@@ -34,12 +34,12 @@ start() {
 
 	# start wan ifname config
 	if [ "$($CONFIG get ap_mode)" = "1" -o "$($CONFIG get bridge_mode)" = "1" ]; then
-		opt_argv="$opt_argv --wan-interface=br0"
+		opt_argv="$opt_argv --wan-interface=$BR_IF"
 #	else
 #		if [ "$($CONFIG get wan_proto)" = "pppoe" -o "$($CONFIG get wan_proto)" = "pptp" -o "$($CONFIG get wan_proto)" = "l2tp" ]; then
 #			opt_argv="$opt_argv --wan-interface=ppp0"
 #		else
-#			opt_argv="$opt_argv --wan-interface=brwan"
+#			opt_argv="$opt_argv --wan-interface=$WAN_IF"
 #		fi
 	fi
 	# end wan ifname config
@@ -51,7 +51,7 @@ start() {
 	[ "$($CONFIG get wan_pptp_wan_assign)" = "1" ] || static_pptp_enable=0
 	[ "$($CONFIG get wan_pptp_dns_assign)" = "1" ] || static_pptp_enable=0
 	if [ "$static_pptp_enable" = "1" ]; then
-		echo "interface brwan" > /tmp/pptp.conf
+		echo "interface $WAN_IF" > /tmp/pptp.conf
 		echo "myip $($CONFIG get wan_pptp_local_ip)" >> /tmp/pptp.conf
 		echo "gateway $($CONFIG get pptp_gw_static_route)" >> /tmp/pptp.conf
 		echo "netmask $($CONFIG get wan_pptp_eth_mask)" >> /tmp/pptp.conf

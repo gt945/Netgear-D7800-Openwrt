@@ -9,6 +9,7 @@ OPENVPN_CONF_DIR=/tmp/openvpn/
 EASY_RSA_DIR=/tmp/etc/easy-rsa
 
 generate_server_conf_file() {
+	if [ "$1" = "tap" ]; then
 	port=$($CONFIG get vpn_serv_port)
 	proto=$($CONFIG get vpn_serv_type)
 	cat <<EOF
@@ -17,7 +18,7 @@ ca /tmp/openvpn/ca.crt
 cert /tmp/openvpn/server.crt
 key /tmp/openvpn/server.key
 dev tap0
-server-bridge
+server-bridge nogw
 proto $proto 
 port $port 
 keepalive 10 120
@@ -25,6 +26,7 @@ verb 5
 mute 5
 log-append /tmp/openvpn_log
 writepid /tmp/openvpnd.pid
+status /tmp/openvpnd.status
 mtu-disc yes
 topology subnet
 script-security 2
@@ -36,8 +38,43 @@ duplicate-cn
 comp-lzo
 fast-io
 daemon
-client-connect /tmp/openvpn/push_routing_rule
+client-connect "/tmp/openvpn/push_routing_rule tap"
 EOF
+	else 
+	port=$($CONFIG get tun_vpn_serv_port)
+	proto=$($CONFIG get tun_vpn_serv_type)
+	lan_netmask=$($CONFIG get lan_netmask)
+	lan_ipaddr=$($CONFIG get lan_ipaddr)
+	subnet=$(tun_net $lan_ipaddr $lan_netmask)
+	cat <<EOF
+dh /tmp/openvpn/dh1024.pem
+ca /tmp/openvpn/ca.crt
+cert /tmp/openvpn/server.crt
+key /tmp/openvpn/server.key
+server $subnet $lan_netmask
+dev tun0
+proto $proto 
+port $port 
+keepalive 10 120
+verb 5
+mute 5
+log-append /tmp/openvpn_tun_log
+writepid /tmp/openvpnd_tun.pid
+status /tmp/openvpnd_tun.status
+mtu-disc yes
+topology subnet
+script-security 2
+cipher AES-128-CBC
+auth sha1
+client-to-client
+duplicate-cn
+comp-lzo
+fast-io
+daemon
+push "dhcp-option DNS $lan_ipaddr"
+client-connect "/tmp/openvpn/push_routing_rule tun"
+EOF
+	fi
 }
 
 set_up_ethernet_bridge() {
@@ -116,25 +153,29 @@ start() {
 	if [ "$($CONFIG get vpn_enable)" = "0" ]; then
 		exit 1
 	fi
-	if [ "$($CONFIG get endis_ddns)" = "0" ] && [ "$($CONFIG get wan_proto)" != "static" ]; then
+	if [ "$($CONFIG get endis_ddns)" = "0" ] && [ "$($CONFIG get wan_proto)" != "static" ] && [ "$($CONFIG get wan_pppoe_wan_assign)" = "0" ]; then
 		exit 1
 	fi
-	if [ "$($CONFIG get ap-mode)" = "1" ]; then
+	if [ "$($CONFIG get ap_mode)" = "1" ]; then
 		exit 1
 	fi
 
 	[ -d /tmp/openvpn ] || extract_cert_file
-	OPENVPN_CONF_FILE=/tmp/openvpn/server.conf
+	OPENVPN_TAP_CONF_FILE=/tmp/openvpn/server_tap.conf
+	OPENVPN_TUN_CONF_FILE=/tmp/openvpn/server_tun.conf
 
-	generate_server_conf_file > $OPENVPN_CONF_FILE
+	generate_server_conf_file tap > $OPENVPN_TAP_CONF_FILE
+	generate_server_conf_file tun > $OPENVPN_TUN_CONF_FILE
 
-    set_up_ethernet_bridge
+    	set_up_ethernet_bridge
 
 	# open the door to let client in 
-	net-wall rule
-	net-wall start
+	firewall.sh restart
 
-	$PROG $OPENVPN_CONF_FILE 
+	$PROG $OPENVPN_TAP_CONF_FILE
+	$PROG $OPENVPN_TUN_CONF_FILE
+
+	/usr/sbin/wget -T 10 http://www.speedtest.net/api/country -O /tmp/openvpn/server_location
 }
 
 stop() {
@@ -143,13 +184,14 @@ stop() {
 
 	kill `cat /tmp/openvpnd.pid` 
 	rm -f /tmp/openvpnd.pid
+	kill `cat /tmp/openvpnd_tun.pid`
+	rm -f /tmp/openvpnd_tun.pid
 
 	brctl delif $br $tap
 	$PROG --rmtun --dev $tap
 
 	#close the door
-	net-wall rule
-	net-wall start
+	firewall.sh restart
 }
 
 restart() {

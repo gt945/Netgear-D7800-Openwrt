@@ -49,7 +49,6 @@ unload_ecm() {
 }
 
 start() {
-	[ "$($CONFIG get i_opmode)" = "apmode" ] && return
 	proto=`/bin/config get wan_proto`
 	if [ "$proto" = "pptp" ] || [ "$proto" = "l2tp" ] || [ "$proto" = "ipoa" ]; then
 		echo "pptp,l2tp,ipoa does not start NSS." > /dev/console

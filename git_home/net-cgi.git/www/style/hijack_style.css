@@ -36,7 +36,7 @@ hr{color:#9D98FF;}
 
 .wizard_words_div .waiting_connect_div { height:30px; width:100%; margin:15% 0 0 0; }
 
-.wizard_words_div h1 { font-family:Arial; font-size:12pt; font-weight:bold; color:#9D98FF; }
+.wizard_words_div h1, .wizard_words_div h2{ font-family:Arial; font-size:12pt; font-weight:bold; color:#9D98FF; }
 
 .wizard_words_div .h1_red { font-family:Arial; font-size:12pt; font-weight:bold; color:#FF0000; }
 
@@ -128,4 +128,10 @@ hr{color:#9D98FF;}
 
 
 
-
+.purple_short_btn, .grey_short_btn, .purple_common_btn, .grey_common_btn, .purple_long_btn, .grey_long_btn{height: 35px; color:#f2f2f2; font-family:Arial; font-size:12pt; font-weight:Bold; background-color: transparent; border:none; cursor: pointer; padding-bottom: 2px;}
+.purple_short_btn{width: 150px; background:url(../image/hijack_buttons.gif) no-repeat 0px 0px}
+.grey_short_btn{width: 150px; background:url(../image/hijack_buttons.gif) no-repeat 0px -35px}
+.purple_common_btn{width: 250px; background:url(../image/hijack_buttons.gif) no-repeat -150px 0px}
+.grey_common_btn{width: 250px; background:url(../image/hijack_buttons.gif) no-repeat -150px -35px}
+.purple_long_btn{width: 500px; background:url(../image/hijack_buttons.gif) no-repeat 0px -70px}
+.grey_long_btn{width: 500px; background:url(../image/hijack_buttons.gif) no-repeat 0px -70px}

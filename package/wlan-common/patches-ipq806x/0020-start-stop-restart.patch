@@ -1,0 +1,34 @@
+--- wlan-common.bak/etc/init.d/wlan-common	2015-03-02 10:52:26.000000000 +0800
++++ wlan-common/etc/init.d/wlan-common	2015-03-02 10:53:13.000000000 +0800
+@@ -1,11 +1,27 @@
+ #!/bin/sh /etc/rc.common
+ START=80
+ boot() {
+-    if [ "$($CONFIG get ap_mode)" = "1" -o "$($CONFIG get bridge_mode)" = "1" ]; then
+-        echo "start wlan in AP/Bridge mode later"
+-        exit 0
+-    fi 
+        wlan updateconf
+        wlan down
+        wlan up
+ }
++
++start()    # don't use this command unless you know what it means
++{
++        wlan updateconf
++        wlan up
++}
++
++stop()    # don't use this command unless you know what it means
++{
++        wlan updateconf
++        wlan down
++}
++
++restart()
++{
++        wlan updateconf
++        wlan down
++        wlan up
++}
++

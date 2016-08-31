@@ -14,7 +14,10 @@
 <body>
 <% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
 <% save_timestamp("wizard_detwan", "hijack_toBasic")%>
-<script language="javascript" type="text/javascript">var ts="<% cfg_get("hijack_toBasic") %>";</script>
+<script language="javascript" type="text/javascript">
+var ts="<% cfg_get("hijack_toBasic") %>";
+var master="<% cfg_get("http_loginname") %>";
+</script>
 
 <div class="wizard_content_div">
 
@@ -25,19 +28,19 @@
 		<div id="choices_div" class="helpChoice_divs">
 			<p><!--want_genie_help--></p>
 			<div class="radio_div">
-				<input type="radio" name="help_choice" value="0" checked="checked" /><!--yes_mark-->
+				<input type="radio" name="WANDetc" id="help_auto_detc" value="AutoDetc" checked="checked" /><!--yes_mark-->
 				<script>
 					document.write(bh_need_genie_help);
 				</script>
 			</div>
 			<div class="radio_div">
-				<input type="radio" name="help_choice" value="1" /><!--no_genie_help-->
+				<input type="radio" name="WANDetc" id="help_my_detc" value="MyDetc" /><!--no_genie_help-->
 				<script>
 					document.write(bh_no_need_genie_help);
 				</script>
 			</div>
 			<div class="radio_div">
-				<input type="radio" name="help_choice" value="2" /><!--have_saved_copy-->
+				<input type="radio" name="WANDetc" id="help_restore" value="Restore" /><!--have_saved_copy-->
 				<script>
 					document.write(bh_have_saved_copy);
 				</script>
@@ -46,17 +49,7 @@
 	</div>
 
 	<div id="buttons_div_02" class="wizard_buttons_div" align="center">
-		<div id="btnsContainer_div" class="buttons_img_div"  align="center">
-		<script>
-			var master="<% cfg_get("http_loginname") %>";
-			if( master == "admin" )
-				document.write('<img src="image/ca-little-purple-button.gif" />');
-			else
-				document.write('<img src="image/ca-little-grey-button.png" />');
-		</script>
-			
-			<div id="btn_div" class="buttons_words_div"><!--next_mark--></div>
-		</div>
+		<input type="button" name="Next" id="next" class="purple_short_btn"><!--next_mark-->
 	</div>
 	
 </div>

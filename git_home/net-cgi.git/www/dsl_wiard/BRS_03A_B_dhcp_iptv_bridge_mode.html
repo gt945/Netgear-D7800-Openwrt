@@ -17,6 +17,7 @@ var lan1_selecte=lan_selecte & 1;
 addLoadEvent(initPage);
 var isp = "<% cfg_get("dsl_wan_isp") %>";
 var wan2_bridge="<% cfg_get("dsl_wan2_bridge_mode") %>";
+var lan_ports_num = (typeof(top.lan_ports_num) == "undefined") ? 4 : top.lan_ports_num;
 function initPage()
 {
 	var btns_container_div = document.getElementById("btnsContainer_div");
@@ -25,7 +26,6 @@ function initPage()
 		cf.bridge_ena.checked = true;
 	else
 		cf.bridge_ena.checked = false;
-	
 	if((lan_selecte & 2) == 2)
 		cf.lan2.checked = true;
 	if((lan_selecte & 4) == 4)
@@ -49,7 +49,7 @@ function checkiptv()
 	var forms = document.getElementsByTagName("form");
     var cf = forms[0];	
 	
-	if((cf.lan2.checked == false) && (cf.lan3.checked == false) && (cf.lan4.checked == false))
+	if((cf.lan2.checked == false) && (cf.lan3.checked == false) && (cf.lan4.checked == false) && lan_ports_num != 1)
 	{
 		alert(dsl_bridge_warning);
 		return false;
@@ -102,12 +102,12 @@ function enable_bridge()
 			<h1><script>document.write(bh_dhcp_head)</script></h1>
 			<p><script>document.write(bh_enter_info_below)</script></p>
 			
-			<div class="wanInput_content_div">
+			<div id="content_div" class="wanInput_content_div">
 				
 				<div id="connection_identi" class="wanInput_left_divdhcp">
 					<input type="checkbox" name="bridge_ena" onclick="enable_bridge();"><span id="bridge"><script>document.write(bh_dsl_bridge)</script></span>
-					<div class="iptvdoc"><script>document.write(bh_dsl_bridge_con);</script></div>
-					<div class="iptvdoc2">
+					<div id="bridge_doc" class="iptvdoc"><script>document.write(bh_dsl_bridge_con);</script></div>
+					<div id="bridge_lans" class="iptvdoc2">
 					<input type="checkbox" name="lan4" value="8"><script>document.write(bh_dsl_bridge_lan4)</script>
 					<br>
 					<input type="checkbox" name="lan3" value="4"><script>document.write(bh_dsl_bridge_lan3)</script>
@@ -118,8 +118,12 @@ function enable_bridge()
 			</div>
 		
 	</div>
-	
-	<div id="allBtns_div" class="wizard_buttons_div" align="right">
+	<script>
+	if(lan_ports_num == 1)
+		document.write('<div id="allBtns_div" class="wizard_buttons_div" align="center">');
+	else
+		document.write('<div id="allBtns_div" class="wizard_buttons_div" align="right">');
+	</script>
 		<div id="btnsContainer_div" class="buttons_img_div">
 			<script>
 			var master="<% cfg_get("http_loginname") %>";
@@ -136,6 +140,9 @@ function enable_bridge()
 </div>
 
 </form>
+<script>
+	control_display("dsl_dhcp");
+</script>
 </body>
 
 </html>

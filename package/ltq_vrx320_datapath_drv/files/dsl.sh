@@ -1,171 +1,243 @@
-#the following line combines the last line to prevent this file from being sourced twice
-if [ "x$dsl_sh" = "x" ]; then dsl_sh="sourced"
-. /lib/cfgmgr/cfgmgr.sh
+#! /bin/sh
 
-#----------------------------------------------------------
+OPTIONS=`for opt in $(grep '^func_.*()' $0 | cut -d_ -f2- | cut -d' ' -f1); do echo $opt; done`;
+CONFIG=/bin/config
 
-dsl_wan_conf="/etc/lantiq_dsl_wan.conf"
-dsl_wan2_conf="/etc/lantiq_dsl_wan2.conf"
-prepare_dsl_wan_conf()
-{
-	local type=$($CONFIG get dsl_wan_type)
-	local wan_mode=vdsl_ptm
-	[ "$type" = "adsl" ] && wan_mode=adsl_atm
+func_switch_wan_vlan_or_normal () { #$1 wan_vid $2 wan_pri
+	local p
+	local wan_vid_enable=$($CONFIG get dsl_wan_enable_vlanidActive)
 
-	echo "cfg_wan_mode=\"$wan_mode\"" > $dsl_wan_conf
-	echo "cfg_wan_mode=\"$wan_mode\"" > $dsl_wan2_conf
-}
+	brctl delif brwan ethwan
+	ifconfig ethwan down
+	vconfig rem ethwan || ip link set dev ethwan name eth0
+	ifconfig eth0 down
 
-#----------------------------------------------------------
-
-print_interop_bits_adjustment() # $1: country, $2: isp, $3: vdsl/adsl
-{
-	if [ "$3" = "vdsl" ]; then
-		case "$1/$2" in
-		UK/*)
-			echo -e "\tdms 1562 0 1 8"						# All UK ISPs need these commands
-			echo -e "\tdms 549 0 2 240B 0000"
-			echo -e "\tdmms 1C44 0 1 BFFF 4000"
-			;;
-		Sweden/Telia)
-			echo -e "\tdms 0x1562 0x0 0x1 0x6"             # TELIASONERA Fixes
-			echo -e "\tdms 0xE843 0x2 0x1 0x1"             # TELIASONERA Fixes
-			;;
-		esac
+	. /lib/cfgmgr/enet.sh
+	if [ "x$wan_vid" != "x" -a "x$wan_vid_enable" = "x1" ]; then
+		ifconfig eth0 up
+		vconfig add eth0 $wan_vid
+		ifconfig eth0.$wan_vid down
+		ip link set dev eth0.$wan_vid name ethwan
+		if [ -n "$wan_pri" ]; then
+			for p in 0 1 2 3 4 5 6 7; do
+				vconfig set_ingress_map ethwan $p $p
+				vconfig set_egress_map ethwan $p $wan_pri
+			done
+		fi
+		sw_configvlan "vlan" "start"
+		sw_configvlan "vlan" "add" "br" "$wan_vid" "0" "${wan_pri:-0}"
+		sw_configvlan "vlan" "add" "lan" $(($wan_vid + 1)) "0xf" "0"
+		sw_configvlan "vlan" "end"
 	else
-		case "$1/$2" in
-		France/Orange)
-			echo -e "\tdmms 0x6743 0x1C 0x1 0x200 0x200"   # Improve downstream performance & stability under REIN/Impulse noise
-			echo -e "\tdmms 0x6743 0x1C 0x1 0x100 0x0"     # Improve downstream performance & stability for fixed RFI disturber
-			echo -e "\tdmms 0x6743 0x1 0x1 0x80 0x80"      # FT bit
-			echo -e "\tdmms 0x6743 0x14 0x1 0x40 0x40"     # Favour DS SNRM over DS INP
-			echo -e "\tdmms 0x6743 0x17 0x1 0x20 0x20"     # Eanble the REIN adaptation in training phase.
-			echo -e "\tdmms 0x6743 0x1A 0x1 0x10 0x10"     # DS performance at mid-long loops with BRCM DSLAM in ADSL2+ mode.
-			echo -e "\tdmms 0x549 0x0 0x1 0x49 0x49"       # Reboot Criteria (1) for FT (LOS, LOM & LCD)
-			echo -e "\tdmms 0x549 0x1 0x1 0x3 0x3"         # Reboot Criteria (2) for FT (SES30 & ES90)
-			echo -e "\tdmms 0x6743 0x1D 0x1 0x8000 0x8000" # Avoid declaring LOM from CPE side, in particular when no NearEnd CRCs are observed by removing the ceiling on the 15 bit loaded tones. This is required to avoid second retrain in FT evoultive test cases as well unnecessary LOM reboot
-			;;
-		Spain/Telefonica*)
-			echo -e "\tdmms 0x6743 0x17 0x1 0x8000 0x8000" # DS LATN reporting gap in Anx-A/M as compared to AR7
-			echo -e "\tdmms 0x6743 0x14 0x1 0x40 0x40"     # Favour DS SNRM over DS INP
-			echo -e "\tdmms 0x6743 0x14 0x1 0x2000 0x2000" # Inproved US performance against GSPN DSLAMs
-			echo -e "\tdmms 0x6743 0x1A 0x1 0x20 0x20"     # Telefonica bit 1
-			echo -e "\tdmms 0x6743 0x17 0x1 0x8000 0x8000" # Telefonica bit 3
-			echo -e "\tdmms 0x6743 0x1C 0x1 0x4000 0x4000" # Telefonica bit 4
-			echo -e "\tdmms 0x6743 0x1A 0x1 0x10 0x10"     # DS performance at mid-long loops with BRCM DSLAM in ADSL2+ mode.
-			;;
-		Greece/OTE)
-			echo -e "\tdmms 0x6743 0x14 0x1 0x2000 0x2000" # Inproved US performance against GSPN DSLAMs
-			;;
-		Norway/Comlabs)
-			echo -e "\tdmms 0x6743 0x0 0x1 0x100 0x100"   # Comlabs (Norway) bit
-			;;
-		UK/*)
-			echo -e "\tdms 549 0 2 204B 0000"				# All UK ISPs need this command
-			;;
-		esac
+		ip link set dev eth0 name ethwan
+		sw_configvlan normal
 	fi
+	brctl addif brwan ethwan
 }
 
-print_scr_WaitForConfiguration()
-{
-	cat <<EOF
-[WaitForConfiguration]={
-}
+# switch wan cable type
+func_reset_wan_dsl_or_eth () {
+	local nif vid pri opmode_tmp brx br_s
+	opmode_tmp=$($CONFIG get i_opmode)
+	echo "switch to `[ "x$WanIndepPhy" = "x1" ] && echo xdsl || echo ether` #################" > /dev/console
 
-EOF
-}
+	sleep 2 #give time to httpd return web page
+	ifconfig br0 down
+	for nif in $(br_allnifs br0); do
+		case "$nif" in
+			ethwan)
+				ifconfig $nif down
+				brctl delif br0 $nif
+				vconfig rem ethwan || ip link set dev ethwan name $RawEthWan
+				ifconfig $RawEthWan down
+				;;
+			ethlan)
+				ifconfig $nif down
+				brctl delif br0 $nif
+				vconfig rem ethlan || ip link set dev ethlan name $RawEthLan
+				ifconfig $RawEthLan down
+				;;
+		esac
+	done
 
-print_scr_WaitForLinkActivate() # $1: country, $2: isp, $3: vdsl/adsl
-{
-	cat <<EOF
-[WaitForLinkActivate]={
-EOF
+	br_s=`awk '/br[1-9w]|brwan2/ {print $1}' /proc/net/dev |sed 's/://g'` #brwan2 is for WAN2 IPTV that have no vid
+	for brx in $br_s; do
+		ifconfig $brx down
+		for nif in $(br_allnifs $brx); do
+			ifconfig $nif down
+			brctl delif $brx $nif
+			case "$nif" in
+				ethwan)
+					vconfig rem ethwan || ip link set dev ethwan name $RawEthWan
+					ifconfig $RawEthWan down
+					;;
+				eth*|ptm*|nas*)
+					vconfig rem $nif
+					;;
+			esac
+		done
+		[ "$brx" != "brwan" ] && brctl delbr $brx
+	done
 
-	print_interop_bits_adjustment "$1" "$2" "$3"
+	/etc/init.d/ntpclient stop
+	case "$opmode_tmp" in
+		normal|factory)
+			[ "$opmode_tmp" = "factory" ] && /etc/init.d/net-br stop
+			ip link set dev $RawEthLan name ethlan
+			ip link set dev $RawEthWan name ethwan
+			if [ "$WanIndepPhy" = "1" ]; then
+				[ "$opmode_tmp" = "normal" -a "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				brctl addif brwan $RawDslWan
+				ifconfig $RawDslWan up
+			else
+				[ "$opmode_tmp" = "normal" ] && brctl addif brwan ethwan
+				$CONFIG set vlan_tag_1="1 Internet 10 0 0 0"
+			fi
+			brctl addif br0 ethlan
+			sw_configvlan "$opmode_tmp"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			[ "$opmode_tmp" = "factory" ] && /etc/init.d/net-br start
+			;;
+		iptv)
+			/etc/init.d/init6 stop
+			/etc/init.d/net-lan stop
+			if [ "$WanIndepPhy" = "0" ]; then
+				ip link set dev $RawEthLan name ethlan
+				ip link set dev $RawEthWan name ethwan
+				brctl addif brwan ethwan
+				$CONFIG set vlan_tag_1="1 Internet 10 0 0 0"
+			else
+				ifconfig $RawEthLan up
+				vconfig add $RawEthLan 1 && ifconfig $RawEthLan.1 down
+				vconfig add $RawEthLan 2 && ifconfig $RawEthLan.2 up
+				brctl addif brwan $RawEthLan.2
+				ip link set dev $RawEthLan.1 name ethlan
+				ip link set dev $RawEthWan name ethwan
+				[ "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				ifconfig $RawDslWan up
+				brctl addif brwan $RawDslWan
+			fi
+			brctl addif br0 ethlan
+			sw_configvlan "iptv" $($CONFIG get iptv_mask)
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			/etc/init.d/net-lan start
+			/etc/init.d/init6 start
+			;;
+		vlan)
+			/etc/init.d/init6 stop
+			/etc/init.d/net-lan stop
+			local lanvid=$(vlan_get_lanvid)
+			local used_wports=0
+			if [ "$WanIndepPhy" = "0" ]; then
+				ip link set dev $RawEthLan name ethlan
+				ifconfig $RawEthWan up
+			else
+				ifconfig $RawEthLan up
+				vconfig add $RawEthLan $lanvid && ifconfig $RawEthLan.$lanvid down
+				ip link set dev $RawEthLan.$lanvid name ethlan
+				ip link set dev $RawEthWan name ethwan
+				[ "x$ethwan_as_lanport" = "x1" ] && brctl addif br0 ethwan
+				ifconfig ethwan up
+			fi
+			brctl addif br0 ethlan
 
-	cat <<EOF
-}
+			sw_configvlan "vlan" "start"
+			for i in 1 2 3 4 5 6 7 8 9 10; do
+				tv=$($CONFIG get vlan_tag_$i)
+				[ -n "$tv" ] || continue
+				set - $(echo $tv)
+				# $1: enable, $2: name, $3: vid, $4: pri, $5:wports, $6:wlports
+				[ "$1" = "1" ] || continue
+				if [ "$2" = "Internet" ]; then
+					vid=$3
+					pri=$4
+				else
+					used_wports=$(($used_wports | $5))
+					if [ "$WanIndepPhy" = "1" ] && [ "$dsl_video_vid" = "$3" ]; then
+						local iptv_flag=1
+					fi
+					vlan_create_br_and_vif $3 $4 $iptv_flag
+					sw_configvlan "vlan" "add" "br" $3 $5 $4
+				fi
+			done
+			if [ "$WanIndepPhy" = "0" ]; then
+				if [ "$vid" = "0" ]; then
+					vid=$(vlan_get_wanvid) && pri=0
+					vlan_create_internet_vif $vid $pri
+					sw_configvlan "vlan" "add" "wan" "$vid" "0" "$pri"
+				else
+					vlan_create_internet_vif $vid $pri
+					sw_configvlan "vlan" "add" "br" "$vid" "0" "$pri"
+				fi
+			else
+				eth_vid=$(vlan_get_wanvid) && eth_pri=0
+				[ "x$ethwan_as_lanport" = "x1" ] && sw_configvlan "vlan" "add" "dsl" "$eth_vid" "0" "$eth_pri"
+				ifconfig $RawDslWan up
+				if [ "x$vid" != "x" ]; then
+					vconfig add $RawDslWan $vid
+					ifconfig $RawDslWan.$vid up
+					vlan_set_vif_pri $RawDslWan.$vid $pri
+					brctl addif brwan $RawDslWan.$vid
+				else
+					brctl addif brwan $RawDslWan
+				fi
+			fi
 
-EOF
-}
-
-print_scr_WaitForRestart()
-{
-	cat <<EOF
-[WaitForRestart]={
-}
-
-EOF
-}
-
-print_scr_Common()
-{
-	cat <<EOF
-[Common]={
-}
-
-EOF
-}
-
-print_dsl_scr() # $1: country, $2: isp, $3: vdsl/adsl
-{
-	print_scr_WaitForConfiguration "$1" "$2" "$3"
-	print_scr_WaitForLinkActivate "$1" "$2" "$3"
-	print_scr_WaitForRestart "$1" "$2" "$3"
-	print_scr_Common "$1" "$2" "$3"
-}
-
-vdsl_scr_file=/opt/lantiq/bin/vdsl.scr
-adsl_scr_file=/opt/lantiq/bin/adsl.scr
-prepare_dsl_scr()
-{
-	local country=$($CONFIG get dsl_wan_country)
-	local isp=$($CONFIG get dsl_wan_isp)
-
-	print_dsl_scr "$country" "$isp" "vdsl" > $vdsl_scr_file
-	print_dsl_scr "$country" "$isp" "adsl" > $adsl_scr_file
-}
-
-prepare_dsl_scr_and_restart_dsl_link()
-{
-	prepare_dsl_scr
-	/opt/lantiq/bin/dsl_cpe_pipe.sh acs 2
-	sleep 1
-}
-
-derive_dsl_iop_type()
-{
-	local type=$($CONFIG get dsl_wan_type)
-	local country=$($CONFIG get dsl_wan_country)
-	local isp=$($CONFIG get dsl_wan_isp)
-
-	case "$type/$country/$isp" in
-	vdsl/UK/*|vdsl/Sweden/Telia|adsl/France/Orange|adsl/Greece/OTE|adsl/Norway/Comlabs|adsl/UK/*)
-		echo "$type/$country/$isp"
-		;;
-	adsl/Spain/Telefonica*)
-		echo "$type/$country/Telefonica"
-		;;
-	*) echo "$type/normal" ;;
+			sw_configvlan "vlan" "add" "lan" "$lanvid" $(($used_wports ^ 0xf)) "0"
+			sw_configvlan "vlan" "end"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig brwan up
+			ifconfig br0 up
+			/etc/init.d/net-lan start
+			/etc/init.d/init6 start
+			;;
+		*)
+			/etc/init.d/net-br stop
+			ip link set dev $RawEthLan name ethlan
+			ip link set dev $RawEthWan name ethwan
+			brctl addif br0 ethlan
+			brctl addif br0 ethwan
+			sw_configvlan "$opmode_tmp"
+			ifconfig ethlan up
+			ifconfig ethwan up
+			ifconfig br0 up
+			/etc/init.d/net-br start
+			;;
 	esac
+	/etc/init.d/ntpclient start
 }
 
-set_dsl_iop_type()
-{
-	local dsl_iop_type="$(derive_dsl_iop_type)"
-	[ "$($CONFIG get i_dsl_iop_type)" = "$dsl_iop_type" ] && return 1
-	$CONFIG set i_dsl_iop_type="$dsl_iop_type" && return 0
+func_dsl_net_wan () {
+	[ "x$ctl_cmd" = "xstart" ] && dni_dsl_net_wan.sh $ctl_cmd $ctl_opt
+	[ "x$ctl_cmd" = "xstop" ] && dni_dsl_net_wan.sh $ctl_cmd $ctl_opt
 }
 
-prepare_dsl_scr_and_restart_dsl_link_if_needed()
-{
-	set_dsl_iop_type && prepare_dsl_scr_and_restart_dsl_link
+func_help () {
+	echo "Usage: $0 <option> [ARGS=XXX]"
+	echo "  Options:"
+	for opt in $OPTIONS; do
+		echo "     $opt"
+	done
+	exit 1
 }
 
-dsl_set_induced_configs()
-{
-	$CONFIG set i_dsl_iop_type="$(derive_dsl_iop_type)"
-}
-
-fi #-------------------- this must be the last line -----------------------------
+for opt in $OPTIONS; do
+	if [ -n "$1" ] && [ "$1" = "$opt" ]; then
+		if [ "$2" = "help" -o "$2" = "-h" ]; then
+			func_$opt help;
+		else
+			shift
+			eval $@
+			func_$opt $1
+		fi
+		exit 0;
+	fi
+done
+func_help

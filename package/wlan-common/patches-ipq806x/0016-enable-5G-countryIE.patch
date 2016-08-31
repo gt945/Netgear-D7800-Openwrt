@@ -1,0 +1,10 @@
+--- a/etc/dni-wifi-config
++++ b/etc/dni-wifi-config
+@@ -277,6 +277,7 @@ if [ -n "$DNI_CONFIG" ]; then
+         wla_bridge=`dniconfig get i_wla_br`
+         wla_priority=`dniconfig get i_wla_pri`
+         [ -z "$wla_bridge" ] && wla_bridge=$lan_ifname
++        [ "$wla_country_ie_onoff" != "on" ] && wla_country_ie_onoff="on"
+     fi
+ 
+     if [ "$wl_cb_if_onoff" = "on" ]; then

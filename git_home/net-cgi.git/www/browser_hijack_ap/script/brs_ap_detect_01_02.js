@@ -2,29 +2,26 @@ function initPage()
 {
 
 	//button back
-	var btns_div1 = document.getElementById("btnsContainer_div1");
+	var btns1 = document.getElementById("back");
+	btns1.value = bh_back_mark;
 	if( master == "admin" )
-	btns_div1.onclick = function()
+	btns1.onclick = function()
 	{
 		return goback();
 	}
-	
-	var btn = btns_div1.getElementsByTagName("div");
-	var btn_text = document.createTextNode(bh_back_mark);
-	btn[0].appendChild(btn_text);
-	
+	else
+		btns1.className="grey_short_btn";
 	
 	//button next
-	var btns_div2 = document.getElementById("btnsContainer_div2");
+	var btns2 = document.getElementById("next");
+	btns2.value = bh_next_mark;
 	if( master == "admin" )
-	btns_div2.onclick = function()
+	btns2.onclick = function()
 	{
 		return help_choose_mode();
 	}
-	
-	btn = btns_div2.getElementsByTagName("div");
-	btn_text = document.createTextNode(bh_next_mark);
-	btn[0].appendChild(btn_text);
+	else
+		btns2.className="grey_short_btn";
 }
 
 function help_choose_mode()
@@ -39,7 +36,7 @@ function help_choose_mode()
 		this.location.href = "BRS_ap_detect_01_03.html";
 	else
 	{
-		alert("You must select the Yes or No radio button.");
+		alert(bh_select_yes_or_no);
 		return false;
 	}
 		

@@ -363,6 +363,8 @@ func_vdsl_quick_scan () {
 	local country=$($CONFIG get dsl_wan_country)
 	local isp=$($CONFIG get dsl_wan_isp)
 
+	/etc/init.d/opmode reset_wan_dsl_or_eth
+
 	local loop_time=0
 	local loop_num=3
 	while [ $loop_time -lt $loop_num ]
@@ -527,6 +529,8 @@ func_vdsl_full_scan () {
 
 	echo "############################VDSL i am in FullScan process..." > /dev/console
 	echo "############################VDSL i am in FullScan process..." >> $LOG
+
+	/etc/init.d/opmode reset_wan_dsl_or_eth
 	
 	local loop_time=0
 

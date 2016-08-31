@@ -1,10 +1,3 @@
-config DNSMASQ_GIT_TREEISH
-	string
-	prompt "treeish of dnsmasq git repository"
-	default "HEAD"
-	help
-	  input the treeish of dnsmasq git repository which you want to build
-
 config DNSMASQ_SUP_PARENTAL_CTL
 	bool "support Parental Control feature"
 	default n

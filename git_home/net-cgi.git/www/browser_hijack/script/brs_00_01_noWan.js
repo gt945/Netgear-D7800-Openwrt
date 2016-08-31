@@ -25,6 +25,7 @@ function initPage()
 }
 function genienowanChecking()
 {
+	var cf = document.forms[0];
 	var choices_div = document.getElementById("choices_div");
 	var choices = choices_div.getElementsByTagName("input");
 	if(choices[0].checked)
@@ -32,7 +33,10 @@ function genienowanChecking()
 		this.location.href = "BRS_00_01_check_ap_wait.html";
 	}
 	else{
-		top.location.href = "index.htm";
+		cf.action = "/apply.cgi?/index.htm timestamp="+ts;
+		cf.target = "_top";
+		cf.submit_flag.value = "hijack_toBasic";
+		cf.submit();
 	}
 }
 function clickRetry()

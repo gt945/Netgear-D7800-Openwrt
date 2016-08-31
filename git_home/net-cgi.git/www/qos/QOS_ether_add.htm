@@ -29,12 +29,12 @@
 	<TR><TD nowrap colspan=2><b>$qos_priority</b> </TD></TR>
 	<TR>
 		<TD nowrap>$qos_policy_for</TD>
-		<TD nowrap> <INPUT type="text" name="name" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
+		<TD nowrap> <INPUT type="text" name="name" id="name" maxLength="60" size="16" onKeyPress="return getkey('ssid', event)" value=""></TD>
 	</TR>
 	<TR>
 		<TD nowrap>$qos_priority_category</TD>
 		<TD nowrap> 
-			<SELECT name="category" onChange="change_priority()">
+			<SELECT name="category" id="category" onChange="change_priority()">
 				<OPTION value="0" >$qos_application</OPTION>
 				<OPTION value="1" >$qos_online</OPTION>
 				<OPTION value="2" selected>$qos_ether</OPTION>
@@ -45,7 +45,7 @@
 	<TR>
 		<TD nowrap>$qos_ether</TD>
 		<TD nowrap> 
-			<SELECT name="port_num" onChange="change_serv_ether()">
+			<SELECT name="port_num" id="port_num" onChange="change_serv_ether()">
 				<OPTION value="1" >1</OPTION>
 				<OPTION value="2" >2</OPTION>
 				<OPTION value="3" >3</OPTION>
@@ -56,7 +56,7 @@
 	<TR>
 		<TD nowrap>$qos_priority</TD>
 		<TD nowrap> 
-			<SELECT name="priority">
+			<SELECT name="priority" id="priority">
 				<OPTION value="0" >$qos_highest</OPTION>
 				<OPTION value="1" selected>$qos_high</OPTION>			
 				<OPTION value="2" >$qos_normal</OPTION>

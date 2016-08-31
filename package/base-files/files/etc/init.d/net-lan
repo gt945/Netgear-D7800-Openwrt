@@ -40,15 +40,12 @@ EOF
 start_dhcpd_if_needed()
 {
 	[ "$($CONFIG get lan_dhcp)" = "0" ] && return
-	[ "$($CONFIG get device_mode)" = "modem" ] && return #in modem mode, no need dhcpd
 	print_dhcpd_conf > /tmp/udhcpd.conf
 	udhcpd /tmp/udhcpd.conf
 }
 
 for_ipv6logo_test()
 {
-	[ "$($CONFIG get device_mode)" = "modem" ] && return
-
 	local wan6_type=`$CONFIG get ipv6_type`
 	local logo_test=`$CONFIG get endis_ipv6_logo_test`
 
@@ -84,18 +81,18 @@ start0() # $1: boot/start
 
 	ifconfig ethlan up
 	ifconfig br0 ${lan_ip:-192.168.1.1} netmask ${lan_mask:-255.255.255.0}
-	for_ipv6logo_test
-
+	# Don't need run for_ipv6logo_test when in DSL modem mode.
+	[ "x$DSL_SUPPORT" = "x1" -a "$($CONFIG get device_mode)" = "modem" ] || for_ipv6logo_test
+	cmdroute start        # Apply static route
 	# Start dlna
-	/sbin/cmddlna ip_restart &
-
-	/sbin/cmdroute start        # Apply static route
-
-	start_dhcpd_if_needed       # dhcpd daemon
+	cmddlna ip_restart &
+	ip_mac start          # Apply lan static arp.
 
 	# Set Hairpin mode on br0:ethlan
 	brctl hairpin br0 ethlan on
 
+	# Don't need run dhcpd when in DSL modem mode.
+	[ "x$DSL_SUPPORT" = "x1" -a "$($CONFIG get device_mode)" = "modem" ] || start_dhcpd_if_needed       # dhcpd daemon
 	# PHY link will be pulled low some seconds to force transition to reboot state 
 	# and generating DHCP request and Discovery protocol and address refresh in the 
 	# devices connected to the NETGEAR Local Area Network ports.
@@ -104,29 +101,34 @@ start0() # $1: boot/start
 	# should wait for LAN physical signal bring up, and then execute subsequence actions
 	# as below.
 	echo -n 9 > /proc/switch_phy && sleep 10
-	
-	[ "$($CONFIG get device_mode)" = "modem" ] && /sbin/cmd_ebtables start #modem mode just like ap mode
-	/etc/init.d/net-scan $1        # daemon for getting attached devices
+
+	# DSL modem mode just like ap mode.
+	[ "x$DSL_SUPPORT" = "x1" -a "$($CONFIG get device_mode)" = "modem" ] && cmd_ebtables start
+	/etc/init.d/net-scan $1      # daemon for getting attached devices
 	/etc/init.d/lltd $1          # Link Layer Topology Discovery Daemon
 	/etc/init.d/telnet $1        # telnet daemon for Router Debugging Mode ...
 	/etc/init.d/samba $1         # samba daemon
-
-	    # when the user changes "Device Name" in LAN Setup page, make sure the new name shows up on ReadyCLOUD.
-    if [ "$($CONFIG get readycloud_enable)" = "1" ]; then
-        local name=$($CONFIG get netbiosname)
-        if [ "x$name" != "x" ]; then
-            /opt/rcagent/script/alish.sh $name
-        else
-            name=$($CONFIG get Device_name)
-            /opt/rcagent/script/alish.sh $name
-        fi
-    fi
 }
 
 start()
 {
 	start0 start
-	/sbin/cmdupnp start          # in booting, upnpd is started by net-wan
+	cmdupnp start          # in booting, upnpd is started by net-wan
+
+	# Fix bug 55649, should restart net6conf when net-lan restart if ipv6 type
+	# is 6to4 tunnel.
+	[ "x$($CONFIG get ipv6_type)" = "x6to4" ] && /etc/net6conf/net6conf start
+
+	# when the user changes "Device Name" in LAN Setup page, make sure the new name shows up on ReadyCLOUD.
+	if [ "$($CONFIG get readycloud_enable)" = "1" ]; then
+		local name=$($CONFIG get netbiosname)
+		if [ "x$name" != "x" ]; then
+			/opt/rcagent/script/alish.sh $name
+		else
+			name=$($CONFIG get Device_name)
+			/opt/rcagent/script/alish.sh $name
+		fi
+	fi
 }
 
 stop()
@@ -137,17 +139,20 @@ stop()
 	# the device don't change .
 	# Reason:stop miniupnpd when br0 would stop.Thus,it will send bye-bye
 	# packets to 239.255.255.0 to inform client it would be down.
-	/sbin/cmdupnp stop
+	cmdupnp stop
 
 	/etc/init.d/samba stop
 	/etc/init.d/telnet stop
 	/etc/init.d/lltd stop
 	/etc/init.d/net-scan stop
-	[ "$($CONFIG get device_mode)" = "modem" ] && /sbin/cmd_ebtables stop
+	# DSL modem mode just like ap mode
+	[ "x$DSL_SUPPORT" = "x1" -a "$($CONFIG get device_mode)" = "modem" ] && cmd_ebtables stop
 
 	killall udhcpd
 
-	/sbin/cmdroute stop
+	[ "x$($CONFIG get ipv6_type)" = "x6to4" ] && /etc/net6conf/net6conf stop
+
+	cmdroute stop
 	ifconfig br0 down
 	ifconfig ethlan down
 }

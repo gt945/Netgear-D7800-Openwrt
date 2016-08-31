@@ -6,8 +6,7 @@ START=10
 STOP=98
 
 start() {
-	local commit_flag=0
-	[ -f /proc/mounts ] || /sbin/mount_root
+	[ -f /proc/mounts ] || mount_root
 	[ -f /proc/jffs2_bbc ] && echo "S" > /proc/jffs2_bbc
 	[ -f /proc/net/vlan/config ] && vconfig set_name_type DEV_PLUS_VID_NO_PAD
 
@@ -29,23 +28,22 @@ start() {
 	klogd
 	#syslogd -m 0
 	ifconfig lo up
-	/bin/datalib
-        echo "$(/bin/config get netbiosname)" > /proc/sys/kernel/hostname
-	/sbin/printhosts
-
-	# generate the firewall rule file after loading the configuration data.
-	/usr/sbin/net-wall rule
+	/etc/init.d/datalib boot
+        echo "$($CONFIG get netbiosname)" > /proc/sys/kernel/hostname
+	printhosts
 
 	# start SIP ALG module
-	/sbin/cmd_sipalg
+	cmd_sipalg
 
+	# If D7800, enable dsl_support
+	[ "x$DGC_PRODUCT_NAME" = "xD7800" ] && $CONFIG set dsl_support=1
 
 	#Do delete overlay for the first factory mode.
-	if [ "$(/bin/config get factory_mode)" = "1" ] && [ "$(/bin/config get faccalibra)" != "1" ]; then 
+	if [ "$($CONFIG get factory_mode)" = "1" ] && [ "$($CONFIG get faccalibra)" != "1" ]; then 
 		rm /overlay/* -rf
 		sync
 		insmod qca-ssdk
-		/bin/config set faccalibra=1
+		$CONFIG set faccalibra=1
 	fi
 	if [ ! -s /etc/config/nowan  -o ! -s /etc/config/lanwan ]; then
 		cp /rom/etc/config/* /etc/config
@@ -55,10 +53,10 @@ start() {
 	insmod /lib/ufsd/ufsd.ko
 
 	# disable wifi under factory_mode
-	[ "x$(/bin/config get factory_mode)" = "x1" ] && /bin/config set wl_hw_btn_state="off"
+	[ "x$($CONFIG get factory_mode)" = "x1" ] && $CONFIG set wl_hw_btn_state="off"
 
 	# indicate the system first boot for first log
-	/bin/config set syslog_up_first=0
+	$CONFIG set syslog_up_first=0
 
 	mknod /dev/r7500_gpio c 240 0
 
@@ -74,10 +72,9 @@ start() {
 		/sbin/wlan detect > /etc/config/wireless
 	fi
 
-	/etc/init.d/kcode boot
 	mkdir /tmp/mnt
 	killall -q hotplug2
-	[ -x /sbin/hotplug2 ] && /sbin/hotplug2 --override --persistent \
+	[ -x $(which hotplug2) ] && hotplug2 --override --persistent \
 			--set-rules-file /etc/hotplug2.rules \
 			--set-coldplug-cmd /sbin/udevtrigger \
 			--max-children 4 >/dev/null 2>&1 &
@@ -88,224 +85,14 @@ start() {
 		[ -n "$rootdev" ] && ln -s "$rootdev" /dev/root
 	}
 
-	# Load Default QoS rules if needed.
-	qos_dft="$(/bin/config get qos_list_default)"
-	if [ "$qos_dft" = "1" ]; then
-		count=1
-		while :
-		do
-			qos_rule="$(/bin/config get qos_dft_list$count)"
-			if [ "x$qos_rule" = "x" ]; then
-				break;
-			fi
-			/bin/config set qos_list$count="$qos_rule"
 
-			count=`expr $count + 1`
-		done
+	# get hw_id, wan_mac, sn and other information from flash.
+	[ -f /etc/init.d/artmtd ] && /etc/init.d/artmtd boot
 
-		count=`expr $count - 1`
-		echo "$count QoS default rules are Loaded!"
-
-		/bin/config set qos_list_default="0"
-		commit_flag=1
-	fi
-
-	#read wpspin from flash to /tmp/wpspin
-	/sbin/artmtd -r wpspin
-	#read serial number from flash to /tmp/Seria_Number
-	/sbin/artmtd -r sn
-	#read wan mac from flash to /tmp/wan_mac
-	/sbin/artmtd -r mac
-	#read hw id from flash to /tmp/board_hw_id
-	/sbin/artmtd -r board_hw_id | cut -f 2 -d ':' > /tmp/board_hw_id
-	#read model id from flash to /tmp/board_model_id
-	/sbin/artmtd -r board_model_id | cut -f 2 -d ":" > /tmp/board_model_id
-	#if restore the factory default read region from flash
-	if [ "x$(/bin/config get board_region_default)" = "x1" ]; then
-		region="$(/sbin/artmtd -r region | grep REGION | awk '{print $2}')"
-
-		#when region setting on flash's board data area is RU
-		if [ "$region" = "RU" ];then
-			/bin/config set wla_country="19"
-			/bin/config set wl_country="19"
-			/bin/config set ntp_server="GMT-4"
-			/bin/config set ntpserver_select="GMT-4"
-			/bin/config set ntp_hidden_select="27"
-			/bin/config set time_zone="GMT-4"
-			/bin/config set email_ntpserver="GMT-4"
-			/bin/config set region_flag="DISABLED"
-			/bin/config set dsl_wan_country="Russia"
-			/bin/config set dsl_wan_isp="Rostelecom"
-			/bin/config set wla_simple_mode="8"
-		fi
-
-		#when region setting on flash's board data area is GR
-		if [ "$region" = "GR" ];then
-			/bin/config set wla_country="4"
-			/bin/config set wl_country="4"
-			/bin/config set ntp_server="GMT-1"
-			/bin/config set ntpserver_select="GMT-1"
-			/bin/config set ntp_hidden_select="19"
-			/bin/config set time_zone="GMT-1"
-			/bin/config set email_ntpserver="GMT-1"
-			/bin/config set dsl_wan_country="Germany"
-			/bin/config set dsl_wan_isp="Deutsche Telekom"
-		fi
-
-		#when region setting on flash's board data area is PR
-		if [ "$region" = "PR" ];then
-			/bin/config set wla_country="11"
-			/bin/config set wl_country="11"
-			/bin/config set ntp_server="GMT-8"
-			/bin/config set ntpserver_select="GMT-8"
-			/bin/config set ntp_hidden_select="33"
-			/bin/config set time_zone="GMT-8"
-			/bin/config set email_ntpserver="GMT-8"
-			/bin/config set dsl_wan_country="China"
-			/bin/config set dsl_wan_isp="China Telecom"
-		fi
-
-		#when region setting on flash's board data area is BZ
-		if [ "$region" = "BZ" ];then
-			/bin/config set wla_country="9"
-			/bin/config set wl_country="9"
-			/bin/config set ntp_server="GMT+3"
-			/bin/config set ntpserver_select="GMT+3"
-			/bin/config set ntp_hidden_select="13"
-			/bin/config set time_zone="GMT+3"
-			/bin/config set email_ntpserver="GMT+3"
-			/bin/config set dsl_wan_country="Brazil"
-			/bin/config set dsl_wan_isp="Gvt-Global Village Telecom"
-		fi
-
-		#when region setting on flash's board data area is IN
-		if [ "$region" = "IN" ];then
-			/bin/config set wla_country="12"
-			/bin/config set wl_country="12"
-			/bin/config set ntp_server="GMT-5:30"
-			/bin/config set ntpserver_select="GMT-5:30"
-			/bin/config set ntp_hidden_select="30"
-			/bin/config set time_zone="GMT-5:30"
-			/bin/config set email_ntpserver="GMT-5:30"
-			/bin/config set dsl_wan_country="India"
-			/bin/config set dsl_wan_isp="MTNL"
-		fi
-
-		#when region setting on flash's board data area is KO
-		if [ "$region" = "KO" ];then
-			/bin/config set wla_country="7"
-			/bin/config set wl_country="7"
-			/bin/config set ntp_server="GMT-9"
-			/bin/config set ntpserver_select="GMT-9"
-			/bin/config set ntp_hidden_select="35"
-			/bin/config set time_zone="GMT-9"
-			/bin/config set email_ntpserver="GMT-9"
-		fi
-
-		#when region setting on flash's board data area is JP
-		if [ "$region" = "JP" ];then
-			/bin/config set wla_country="6"
-			/bin/config set wl_country="6"
-			/bin/config set ntp_server="GMT-9"
-			/bin/config set ntpserver_select="GMT-9"
-			/bin/config set ntp_hidden_select="35"
-			/bin/config set time_zone="GMT-9"
-			/bin/config set email_ntpserver="GMT-9"
-			/bin/config set region_flag="DISABLED"
-		fi
-
-		#when region setting on flash's board data area is NA
-		if [ "$region" = "NA" -o "$region" = "US" ];then
-			/bin/config set wla_country="10"
-			/bin/config set wl_country="10"
-			/bin/config set wla_hidden_channel="153"
-			/bin/config set region_flag="DISABLED"
-			/bin/config set ntp_server="GMT+8"
-			/bin/config set ntpserver_select="GMT+8"
-			/bin/config set ntp_hidden_select="4"
-			/bin/config set time_zone="GMT+8"
-			/bin/config set email_ntpserver="GMT+8"
-			/bin/config set dsl_wan_country="USA"
-			/bin/config set dsl_wan_isp="CenturyLink"
-		fi
-		#when region setting on flash's board data area is AU
-		if [ "$region" = "AU" ];then
-			/bin/config set wla_country="2"
-			/bin/config set wl_country="2"
-			/bin/config set ntp_server="GMT-10"
-			/bin/config set ntpserver_select="GMT-10"
-			/bin/config set ntp_hidden_select="36"
-			/bin/config set time_zone="GMT-10"
-			/bin/config set email_ntpserver="GMT-10"
-			/bin/config set dsl_wan_country="Australia"
-			/bin/config set dsl_wan_isp="Telstra"
-		fi
-		#when region setting on flash's board data area is CA
-		if [ "$region" = "CA" ];then
-			/bin/config set wla_country="3"
-			/bin/config set wl_country="3"
-			/bin/config set ntp_server="GMT+5"
-			/bin/config set ntpserver_select="GMT+5"
-			/bin/config set ntp_hidden_select="9"
-			/bin/config set time_zone="GMT+5"
-			/bin/config set email_ntpserver="GMT+5"
-		fi
-		#when region setting on flash's board data area is PE
-		if [ "$region" = "PE" ];then
-			/bin/config set dsl_wan_country="Switzerland"
-			/bin/config set dsl_wan_isp="Sunrise"
-		fi
-		#when region setting on flash's board data area is UK
-		if [ "$region" = "UK" ];then
-			/bin/config set dsl_wan_country="UK"
-			/bin/config set dsl_wan_isp="BT"
-		fi
-		#when region setting on flash's board data area is EE
-		if [ "$region" = "EE" ];then
-			/bin/config set dsl_wan_country="Poland"
-			/bin/config set dsl_wan_isp="Orange"
-		fi
-		#when region setting on flash's board data area is GE
-		if [ "$region" = "GE" ];then
-			/bin/config set dsl_wan_country="Switzerland"
-			/bin/config set dsl_wan_isp="Sunrise"
-		fi
-
-		/bin/config set board_region_default="0"
-		commit_flag=1
-	fi
-
-	# Wireless security pre-set
-	id_dft="$(/bin/config get default_ssphrase)"
-	if [ "$id_dft" = "1" ]; then
-		/sbin/artmtd -r ssid
-		/sbin/artmtd -r passphrase
-
-		if [ -s /tmp/ssid-setted ] && [ -s /tmp/passphrase-setted ]; then
-			id_set=$(awk '{print $1}' /tmp/ssid-setted)
-			ps_set=$(awk '{print $1}' /tmp/passphrase-setted)
-
-			/bin/config set wl_ssid="$id_set"
-			/bin/config set wla_ssid="$id_set-5G"
-			/bin/config set wl_wpa2_psk="$ps_set"
-			/bin/config set wla_wpa2_psk="$ps_set"
-			/bin/config set wl_sectype="4"
-			/bin/config set wla_sectype="4"
-			/bin/config set wps_status="5"
-			/bin/config set wla_wps_status="5"
-
-			# set SSID of guest netwroks according to Home Router GUI Redesign Specification Rev10 section 6.3
-			/bin/config set wlg1_ssid="NETGEAR-Guest"
-			/bin/config set wla1_ssid="NETGEAR-5G-Guest"
-		fi
-		/bin/config set default_ssphrase="0"
-		commit_flag=1
-	fi
-	# need to update Streamboost database after upgrade firmwrare
-	[ -f /tmp/new_firmware ] && /bin/config set new_firmware=1 && commit_flag=1
-	[ "$commit_flag" = "1" ] && /bin/config commit
+	[ -f /etc/preconfig.sh ] && sh /etc/preconfig.sh
 
 	cloud checkversion
+	firewall.sh boot
 }
 
 stop() {

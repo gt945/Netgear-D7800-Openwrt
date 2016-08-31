@@ -18,6 +18,7 @@ var netgear_region="<% get_firmware_region() %>";
 .wanInput_content_div .wanInput_left_div {  width:40%;}
 .wanInput_content_div .wanInput_Img_div { width:45%; }
 </style>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 </head>
 

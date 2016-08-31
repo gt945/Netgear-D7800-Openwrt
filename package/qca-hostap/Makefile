@@ -114,12 +114,6 @@ define ConfigAthrHostap
 
 endef
 
-define ConfigDNIHostap
-	config QCA_$(2)_USE_DNI_GIT
-		bool "Fetch source from DNI git repository for package $(1)"
-		default n
-endef
-
 ifneq ($(CONFIG_QCA_ATHR_HOSTAP_USE_DNI_GIT),)
 PKG_GIT_DIR=hostap.git
 QCA_HOSTAP_GIT_TREEISH=hostap-10.4-2.4.3.1008.168-dni3
@@ -137,10 +131,12 @@ $(call Package/$(PKG_NAME)/override_source_path,$(PKG_NAME))
 $(call Package/$(PKG_NAME)/override_version,$(PKG_NAME),$(PKG_SUPPORTED_VERSION))
 $(call ConfigAthrHostap,hostap,ATHR_HOSTAP_HOSTAPD)
 $(call ConfigDNIHostap,hostap,ATHR_HOSTAP)
+  source "$(SOURCE)/Config.in.hostap"
 endef
 
 define Package/qca-wpa-supplicant/config
 $(call ConfigAthrHostap,wpa-supplicant,ATHR_HOSTAP_SUPPLICANT)
+  source "$(SOURCE)/Config.in.wpa-supplicant"
 endef
 
 HOSTAPD_CONFIG_FILE:= \
@@ -180,6 +176,13 @@ define Build/Compile/qca-wpa-supplicant
 endef
 
 define Build/InstallDev
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_BUILD_DIR)/src/common/wpa_ctrl.o $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/drivers/netlink.o $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/utils/eloop.o $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/utils/wpa_debug.o $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/utils/common.o $(1)/usr/lib/
+	$(CP) $(PKG_BUILD_DIR)/src/utils/os_unix.o $(1)/usr/lib/
 endef
 
 

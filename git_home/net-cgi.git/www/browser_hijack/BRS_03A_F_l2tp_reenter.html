@@ -10,6 +10,7 @@
 <script language="javascript" type="text/javascript" src="script/brs_genie_03A_F_l2tp_reenter.js"></script>
 <script language="javascript" type="text/javascript" src="script/funcs.js"></script>
 <% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
 <% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
 <script>
 var hijack_process="<% cfg_get("hijack_process") %>";

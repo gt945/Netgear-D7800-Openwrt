@@ -1,0 +1,27 @@
+From 9608a60d1c39d967babd16968bbcc1af90ace449 Mon Sep 17 00:00:00 2001
+From: figo.yan <figo.yan@dniserver.dnish.net>
+Date: Tue, 5 Apr 2016 12:40:35 -0400
+Subject: [PATCH] stamac adjust args
+
+Signed-off-by: figo.yan <figo.yan@dniserver.dnish.net>
+---
+ src/excmd.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/src/excmd.c b/src/excmd.c
+index 9e488d2..30475f6 100644
+--- a/src/excmd.c
++++ b/src/excmd.c
+@@ -151,7 +151,8 @@ int stamac_func(int argc, char *argv[])
+ 	else
+ 		stamac_usage(argv[0]);
+ 
+-	while ((ch = getopt(argc, argv, "d:")) != -1) {
++	/*skip some args, as getopt remove those invalid ones */
++	while ((ch = getopt(argc-(sign+1), argv+sign+1, "d:")) != -1) {
+ 		switch(ch) {
+ 			case 'd':
+ 				strncpy(mtd, optarg, sizeof(mtd));
+-- 
+1.7.4.1
+

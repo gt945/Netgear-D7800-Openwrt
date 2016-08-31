@@ -11,6 +11,7 @@ lib-$(CONFIG_CRONTAB)     += crontab.o
 lib-$(CONFIG_BBCONFIG)    += bbconfig.o
 lib-$(CONFIG_DC)          += dc.o
 lib-$(CONFIG_DEVFSD)      += devfsd.o
+lib-$(CONFIG_DEVMEM)      += devmem.o
 lib-$(CONFIG_EJECT)       += eject.o
 lib-$(CONFIG_HDPARM)      += hdparm.o
 lib-$(CONFIG_LAST)        += last.o

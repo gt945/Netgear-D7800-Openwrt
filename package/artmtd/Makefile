@@ -31,6 +31,8 @@ endef
 define Package/artmtd/install
 	$(INSTALL_DIR) $(1)/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/artmtd $(1)/sbin/
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/artmtd.init $(1)/etc/init.d/artmtd
 endef
 
 $(eval $(call BuildPackage,artmtd))

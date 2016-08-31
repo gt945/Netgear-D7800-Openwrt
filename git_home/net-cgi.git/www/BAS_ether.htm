@@ -163,12 +163,12 @@ function loadvalue()
 var master="<% cfg_get("http_loginname") %>";
 
 if( master =="admin" ){
-document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="submit" name="Test" value="$test_mark" onClick="return check_ether(document.forms[0],1)">&nbsp;&nbsp;');
-document.write('<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'BAS_ether.htm\';">&nbsp;&nbsp;');
-document.write('<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_ether(document.forms[0],0)"></TD></TR>');
+document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Test" id="test" value="$test_mark" onClick="return check_ether(document.forms[0],1)">&nbsp;&nbsp;');
+document.write('<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'BAS_ether.htm\';">&nbsp;&nbsp;');
+document.write('<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_ether(document.forms[0],0)"></TD></TR>');
 }
 else
-document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" value="$apply_mark" disabled></TD></TR>');
+document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Test" id="test" value="$test_mark" disabled>&nbsp;&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
 </script>
 </TABLE>
 </div><!--button-->
@@ -179,12 +179,12 @@ document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" 
 </TD></TR>
 <TR>
         <TD nowrap>
-        <input onclick='goto_basic_login_page();'  type="radio" name="loginreq" value="pppoe">$yes_mark
+        <input onclick='goto_basic_login_page();'  type="radio" name="loginreq" id="loginreq" value="pppoe">$yes_mark
         </TD>
 </TR>
 <TR>
         <TD nowrap>
-        <input onclick='' type="radio" name="loginreq" value="dhcp" checked="true">$no_mark
+        <input onclick='' type="radio" name="loginreq" id="no_loginreq" value="dhcp" checked="true">$no_mark
         </TD>
 </TR>
 $bluebar
@@ -205,7 +205,7 @@ $bluebar
 		document.write(dev_name);
 		document.write("&nbsp;&nbsp;&nbsp;");
 	}else
-		document.write('<input type="text" name="system_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_hostname"); %>" onKeyPress="return getkey(\'apname\',event)">');
+		document.write('<input type="text" name="system_name" id="system_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_hostname"); %>" onKeyPress="return getkey(\'apname\',event)">');
 	</script>
 	<input class="short_edit_bt" id="edit_devname_bt" type="button" name="edit" value="$edit_mark" onClick="edit_devicename(dev_name)" style="display:none">
 	</TD>
@@ -213,7 +213,7 @@ $bluebar
 <TR>
 	<TD nowrap><A tabindex=-1 href="javascript:loadhelp('_BAS_ether','doname')">$basic_int_doname</A></TD>
 	<TD nowrap align=right>
-	<input type="text" name="domain_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_domain"); %>" onKeyPress="return getkey( 'ddns_hostname',event)">
+	<input type="text" name="domain_name" id="domain_name" size="20" maxlength="60" value="<% cfg_sed_xss("wan_domain"); %>" onKeyPress="return getkey( 'ddns_hostname',event)">
 	</TD>
 </TR>
 $bluebar
@@ -224,39 +224,39 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="WANAssign" value="dhcp" onClick="setIP(document.forms[0])">$basic_int_autoip
+	<input type="radio" name="WANAssign" id="wan_assign_dhcp" value="dhcp" onClick="setIP(document.forms[0])">$basic_int_autoip
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="WANAssign" value="static" onClick="setIP(document.forms[0])">$basic_int_static_ip
+	<input type="radio" name="WANAssign" id="wan_assign_static" value="static" onClick="setIP(document.forms[0])">$basic_int_static_ip
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$lan_mark_ip</TD>
 	<TD nowrap align=right>
-	<input type="text" name="WPethr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="WPethr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WPethr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WPethr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="WPethr1" id="wpethr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="WPethr2" id="wpethr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WPethr3" id="wpethr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WPethr4" id="wpethr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$lan_mark_subnet</TD>
 	<TD nowrap align=right>
-	<input type="text" name="WMask1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="WMask2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WMask3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WMask4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="WMask1" id="wmask1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="WMask2" id="wmask2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WMask3" id="wmask3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WMask4" id="wmask4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD> 
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$lan_mark_gateway</TD>
 	<TD nowrap align=right>
-	<input type="text" name="WGateway1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="WGateway2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WGateway3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="WGateway4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="WGateway1" id="wgateway1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="WGateway2" id="wgateway2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WGateway3" id="wgateway3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="WGateway4" id="wgateway4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 $bluebar
@@ -267,39 +267,39 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
+	<input type="radio" name="DNSAssign" id="dns_assign_auto" value="0" onClick="setDNS(document.forms[0])">$basic_int_autodns
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="DNSAssign" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
+	<input type="radio" name="DNSAssign" id="dns_assign_static" value="1" onClick="setDNS(document.forms[0])">$basic_int_these
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_primary_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="DAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="DAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="DAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	<input type="text" name="DAddr1" id="daddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="DAddr2" id="daddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr3" id="daddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="DAddr4" id="daddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_second_dns</TD>
 	<TD nowrap align=right>
-	<input type="text" name="PDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-	<input type="text" name="PDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-	<input type="text" name="PDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">	
+	<input type="text" name="PDAddr1" id="pdaddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+	<input type="text" name="PDAddr2" id="pdaddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr3" id="pdaddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+	<input type="text" name="PDAddr4" id="pdaddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">	
 	</TD>
 </TR>
 <TR id=third_dns style="display:none">
         <TD nowrap><img src=/spacer.gif width=20 height=12 border=0>$basic_int_third_dns</TD>
         <TD nowrap align=right>
-        <input type="text" name="TDAddr1"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
-        <input type="text" name="TDAddr2"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" name="TDAddr3"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
-        <input type="text" name="TDAddr4"  size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+        <input type="text" name="TDAddr1" id="tdaddr1" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" >.
+        <input type="text" name="TDAddr2" id="tdaddr2" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" name="TDAddr3" id="tdaddr3" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">.
+        <input type="text" name="TDAddr4" id="tdaddr4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
         </TD>
 </TR>
 $bluebar
@@ -310,20 +310,20 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="MACAssign" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
+	<input type="radio" name="MACAssign" id="mac_assign_default" value="0" onClick="setMAC(document.forms[0], wan_factory_mac)">$basic_int_default_mac
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" name="MACAssign" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
+	<input type="radio" name="MACAssign" id="mac_assign_computer" value="1" onClick="setMAC(document.forms[0], wan_remote_mac)">$basic_int_computer_mac
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>
-	<input type="radio" name="MACAssign" value="2" onClick="setMAC(document.forms[0], ether_get_this_mac)">$basic_int_this_mac
+	<input type="radio" name="MACAssign" id="mac_assign_define" value="2" onClick="setMAC(document.forms[0], ether_get_this_mac)">$basic_int_this_mac
 	</TD>
 	<TD nowrap align=right>
-	<input type="text" value="" name="Spoofmac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+	<input type="text" value="" name="Spoofmac" id="spoof_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
 	</TD>
 </TR>
 $bluebar

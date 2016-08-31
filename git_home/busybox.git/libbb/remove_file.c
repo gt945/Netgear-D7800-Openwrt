@@ -63,23 +63,16 @@ int remove_file(const char *path, int flags)
 			return -1;
 		}
 
-		int unlinked_files;
-		do {
-			unlinked_files = 0;
-			while ((d = readdir(dp)) != NULL) {
-				char *new_path;
-				new_path = concat_subpath_file(path, d->d_name);
-				if (new_path == NULL)
-					continue;
-				if (remove_file(new_path, flags) < 0)
-					status = -1;
-				free(new_path);
-				unlinked_files = 1;
-			}
-			if (unlinked_files) {
-				rewinddir(dp);
-			}
-		} while (unlinked_files);
+		while ((d = readdir(dp)) != NULL) {
+			char *new_path;
+
+			new_path = concat_subpath_file(path, d->d_name);
+			if(new_path == NULL)
+				continue;
+			if (remove_file(new_path, flags) < 0)
+				status = -1;
+			free(new_path);
+		}
 
 		if (closedir(dp) < 0) {
 			bb_perror_msg("cannot close '%s'", path);

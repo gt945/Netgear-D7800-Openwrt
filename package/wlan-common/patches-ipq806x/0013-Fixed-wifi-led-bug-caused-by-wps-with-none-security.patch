@@ -1,0 +1,14 @@
+diff --git a/sbin/wpsled b/sbin/wpsled
+index 432e165..18b7490 100755
+--- a/sbin/wpsled
++++ b/sbin/wpsled
+@@ -38,8 +38,7 @@ set_wifiled(){
+     a_enabled=`/bin/config get endis_wla_radio`
+     g_sectype=`/bin/config get wl_sectype`
+     a_sectype=`/bin/config get wla_sectype`
+-    if [ "$g_enabled" = "1" -a "$g_sectype" != "1" ] ||
+-        [ "$a_enabled" = "1" -a "$a_sectype" != "1" ]; then
++    if [ "$g_enabled" = "1" ] || [ "$a_enabled" = "1" ]; then
+         eval $wifiled_on
+     else
+         eval $wifiled_off

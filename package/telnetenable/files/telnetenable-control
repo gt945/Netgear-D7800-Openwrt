@@ -1,0 +1,38 @@
+#!/bin/sh 
+
+start()
+{
+    local gui_region=`/bin/config get GUI_Region`
+    local http_passwd=`/bin/config get http_passwd`
+    local lan_ifname=`/bin/config get lan_ifname`
+	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		/usr/sbin/utelnetd -d -i $lan_ifname
+	else
+		/usr/sbin/telnetenable -r $gui_region -p $http_passwd -i $lan_ifname
+	fi
+}
+
+stop()
+{
+	killall utelnetd
+	killall telnetenable
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit 0
+

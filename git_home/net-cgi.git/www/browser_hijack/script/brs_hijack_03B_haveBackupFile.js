@@ -7,34 +7,32 @@ function initPage()
 	
 	//paragrah
 	var paragraph = document.getElementsByTagName("p");
-	//var paragraph_text = document.createTextNode(bh_browser_file);
-	//paragraph[0].appendChild(paragraph_text);
 	
+	document.getElementById("browse").value = bh_browse_mark;
 	
 	//buttons left
-	var btns_div1 = document.getElementById("btnsContainer_div1");
+	var btns_div1 = document.getElementById("back");
+	btns_div1.value = bh_back_mark;
+
 	if( master == "admin" )
 	btns_div1.onclick = function()
 	{
 		return goBack();
 	}
-	
-	var btn = btns_div1.getElementsByTagName("div");
-	var btn_text = document.createTextNode(bh_back_mark);
-	btn[0].appendChild(btn_text);
+	else
+		btns_div1.className = "grey_short_btn";
 	
 	
 	//buttons right
-	var btns_div2 = document.getElementById("btnsContainer_div2");
+	var btns_div2 = document.getElementById("next");
+	btns_div2.value = bh_next_mark;
 	if( master == "admin" )
 	btns_div2.onclick = function()
 	{
 		return retoreSettings();
 	}
-	
-	btn = btns_div2.getElementsByTagName("div");
-	btn_text = document.createTextNode(bh_next_mark);
-	btn[0].appendChild(btn_text);
+	else
+		btns_div2.className = "grey_short_btn";
 }
 
 function goBack()
@@ -78,6 +76,26 @@ function retoreSettings()
 	}
 	else
 		return false;
+}
+
+function IE_version()
+{
+	var Sys = {};
+	var ua = navigator.userAgent.toLowerCase();
+	var s;
+	(s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :0;
+	if(Sys.ie == '6.0')
+		return 6;
+	else if(Sys.ie == '7.0')
+		return 7;
+	else if(Sys.ie == '8.0')
+		return 8;
+	else if(Sys.ie == '9.0')
+		return 9;
+	else if(Sys.ie == '10.0')
+		return 10;
+	else
+		return 11;
 }
 
 addLoadEvent(initPage);

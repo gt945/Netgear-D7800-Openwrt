@@ -2,7 +2,6 @@
 
 . /etc/net6conf/6data.conf
 
-WLAN="ath0"
 EBTABLES="/usr/sbin/ebtables"
 CONFIG="/bin/config"
 IPV6_TYPE=`$CONFIG get ipv6_type`

@@ -48,15 +48,15 @@ function click_next()
 <TR><TD nowrap><B>$wizard_setup_info1</B></TD></TR>
 <TR><TD nowrap><B>$wizard_setup_info2</B></TD></TR>
 
-<TR><TD nowrap><INPUT type="radio"  checked name="WANDetc" value="AutoDetc" onclick='ckeck_gray()'>$yes_mark</TD></TR>
-<TR><TD nowrap><INPUT type="radio" name="WANDetc" value="MyDetc" onclick='ckeck_gray1()'>$wizard_setup_no</TD></TR>
+<TR><TD nowrap><INPUT type="radio"  checked name="WANDetc" id="wan_detect_type" value="AutoDetc" onclick='ckeck_gray()'>$yes_mark</TD></TR>
+<TR><TD nowrap><INPUT type="radio" name="WANDetc" id="wan_detect_type2" value="MyDetc" onclick='ckeck_gray1()'>$wizard_setup_no</TD></TR>
 $bluebar
 <TR id=ma><TD nowrap align=center>
-<INPUT class="short_common_bt" type='button' name="Next" value='$next_mark' onClick='click_next()'>
+<INPUT class="short_common_bt" type='button' name="Next" id="next" value='$next_mark' onClick='click_next()'>
 </TD></TR>
 <TR id=ma1>
 <TD nowrap align=center>
-<INPUT class="short_common1_bt" type='button' name="Next" value='$next_mark' disabled>
+<INPUT class="short_common1_bt" type='button' name="Next" id="next" value='$next_mark' disabled>
 </TD></TR>
 <script>
 var master="<% cfg_get("http_loginname") %>";

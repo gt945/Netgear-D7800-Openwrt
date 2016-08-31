@@ -1,0 +1,18 @@
+forked-daapd
+
+*.tokens
+*Lexer.[ch]
+*Parser.[ch]
+DAAP2SQL.[ch]
+RSP2SQL.[ch]
+SMARTPL2SQL.[ch]
+
+*.u
+
+# Preserve pre-generated ANTLR3 parsers
+!/pregen/*
+
+daap_query_hash.c
+rsp_query_hash.c
+dacp_prop_hash.c
+dmap_fields_hash.c

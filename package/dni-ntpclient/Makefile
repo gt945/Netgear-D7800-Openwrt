@@ -10,21 +10,18 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ntpclient
 PKG_RELEASE:=4
-PKG_BUILD_DEPENDS:=datalib
 PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
-
-PKG_GIT_TREEISH=ntpclient_2003_194-dni33
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/dni-ntpclient
+define Package/$(PKG_NAME)
   SECTION:=utils
   CATEGORY:=Base system
-  DEPENDS:=@TARGET_d7800
   TITLE:=The CGI interface
+  MENU:=1
 endef
 
-define Package/dni-ntpclient/description
+define Package/$(PKG_NAME)/description
 	The CGI interface
 endef
 
@@ -32,11 +29,14 @@ define Build/Prepare
 	$(CP) $(GIT_HOME)/ntpclient.git/* $(PKG_BUILD_DIR)/
 endef
 
-define Package/dni-ntpclient/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/ntpclient $(1)/usr/sbin/
-	install -d -m0755 $(1)/etc/init.d
-	install -m0755 ./files/ntpclient.init $(1)/etc/init.d/ntpclient
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/install
+	PREFIX=$(1) $(MAKE) -C $(PKG_BUILD_DIR) install
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) ./files/ntpclient.init $(1)/etc/init.d/ntpclient
+	$(INSTALL_BIN) ./files/ntp_updated.sh $(1)/usr/sbin/ntp_updated
 endef
 
-$(eval $(call BuildPackage,dni-ntpclient))
+$(eval $(call BuildPackage,$(PKG_NAME)))

@@ -7,7 +7,7 @@
 # $Id: Makefile 5196 2006-10-17 20:52:40Z nbd $
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
-PKG_NAME:=nat2.5
+PKG_NAME:=kmod-nat2.5
 PKG_VERSION:=
 PKG_RELEASE:=1
 
@@ -16,10 +16,7 @@ PKG_SOURCE_URL:=
 PKG_MD5SUM:=
 PKG_CAT:=zcat
 
-PKG_GIT_TREEISH=6d52a453b80c4db5d37f93b131a917b598ab886f
-GIT_REPOSITORY=dni-nat2.5.git
-
-PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/nat2.5
+PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -29,11 +26,14 @@ define KernelPackage/nat2.5
   VERSION:=none
   FILES:= $(PKG_BUILD_DIR)/clbr.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,15,clbr)
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/dni-nat2.5.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 NAT2_5_MAKEOPTS= \
 		ARCH="$(LINUX_KARCH)" \
@@ -46,6 +46,8 @@ define Build/Compile
 endef
 
 define Build/InstallDev
+	$(CP) $(PKG_BUILD_DIR)/if_ath_clbr.h $(LINUX_DIR)/include/net
+	$(CP) $(PKG_BUILD_DIR)/clbr_queue.h $(LINUX_DIR)/include/net
 endef
 
 define Build/UninstallDev

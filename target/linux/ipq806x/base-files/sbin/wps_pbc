@@ -4,7 +4,7 @@ if [ "$(config get endis_wl_wps)" -eq "1" -a "$(config get endis_wla_wps)" -eq "
 	echo "wps enabled!"
 	if [ "$1" = "pressed" ]; then
 		echo "start" > /tmp/wps_process_state
-		/sbin/wlan wps --pbc_start
+		wlan wps --pbc_start
 	fi
 	exit 0
 fi
@@ -73,10 +73,10 @@ case "$1" in
 	;;
 esac
 
-ENABLE_11G=`/bin/config get endis_wl_radio`
-ENABLE_11A=`/bin/config get endis_wla_radio`
-SECURITY_TYPE_11G=`/bin/config get wl_sectype`
-SECURITY_TYPE_11A=`/bin/config get wla_sectype`
+ENABLE_11G=`config get endis_wl_radio`
+ENABLE_11A=`config get endis_wla_radio`
+SECURITY_TYPE_11G=`config get wl_sectype`
+SECURITY_TYPE_11A=`config get wla_sectype`
 [ "${SECURITY_TYPE_11G}" -gt "1" -a "${ENABLE_11G}" -eq "1" -o "${SECURITY_TYPE_11A}" -gt "1" -a "${ENABLE_11A}" -eq "1" ] && eval ${LED_on} || eval ${LED_off}
 
 rm -f $PID_file

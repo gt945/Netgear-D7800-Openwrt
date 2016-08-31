@@ -5,7 +5,7 @@ NET6CONF="/etc/net6conf/net6conf"
 
 start_netwall()
 {
-	/usr/sbin/net-wall -6 restart
+	firewall.sh restart ipv6
 
 	local ip6_cmd="/usr/sbin/ip6tables"
 	#delete INPUT chain "IPv6-CONE"
@@ -65,22 +65,11 @@ start_radvd()
 start() {
 	local wan6_type=`$CONFIG get ipv6_type`
 	local logo_test=`$CONFIG get endis_ipv6_logo_test`
-	local dsl_wan_prefer=`$CONFIG get dsl_wan_preference`
-	local dsl_wan_type=`$CONFIG get dsl_wan_type`
-	local wan_ifname
 
-	if [ "X$dsl_wan_prefer" = "X1" ]; then
-		[ "X$dsl_wan_type" = "Xvdsl" ] && wan_ifname=ptm0
-		[ "X$dsl_wan_type" = "Xadsl" ] && wan_ifname=nas0
-	elif [ "X$dsl_wan_prefer" = "X2" ]; then
-		wan_ifname=ethwan
+	#For common buildroot, modify /etc/dhcp6c.conf when boot up.
+	if [ -f "/etc/dhcp6c.conf" ]; then 
+		sed -i "s/wanifname/$($CONFIG get wan_ifname)/g" /etc/dhcp6c.conf
 	fi
-	
-	[ "X$wan_ifname" != "X" ] && {
-		ifconfig $wan_ifname down
-		ifconfig $wan_ifname up
-		sleep 2
-	}
 
 	# init the interface id old enable.
 	$CONFIG set ipv6_dhcps_interface_id_oldenable=0

@@ -9,7 +9,7 @@
 #define _DNI_CONFIG_H
 
 /* Define the hostname for PPTP control connection request, e.g. "WNDR3700" */
-#define PPTP_HOSTNAME			"D7800"
+#define PPTP_HOSTNAME			"R7500v2"
 
 /* Define the vendor for PPTP control connection request, e.g. "NETGEAR" */
 #define PPTP_VENDOR			"NETGEAR"
@@ -20,7 +20,7 @@
 /* The util to detect WAN/LAN IP conflicting, in DNI, it is provide by 'net-util' package */
 #define IP_CONFLICT_CMD		"/sbin/ipconflict"
 
-#define FIREWALL_START_CMD	"/usr/sbin/net-wall start"
+#define FIREWALL_START_CMD	"firewall.sh start"
 #define DNS_SETUP_CMD		"/bin/echo \"nameserver 10.112.112.112\" > /tmp/resolv.conf"
 
 #define IPV6_SCRIPT
@@ -32,9 +32,6 @@
 
 /* Define the wan ethernet interface name */
 #define WAN_ETH_NAME           "brwan"
-
-/* Enable ppp detect for pppoa */
-#define DNI_DETECT_PPP
 
 #endif
 

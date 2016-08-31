@@ -1,4 +1,4 @@
-<% http_header("add_download_item.js") %>
+<% http_header("style/form.css", "add_download_item.js") %>
 <script>
 var file_num = 0;
 var autorefresh_onoff="<% cfg_get("green_enable_autorefresh_status") %>";
@@ -33,7 +33,7 @@ function loadvalue()
 		cf.remove.disabled=true;
 		cf.remove.className = "common_gray_bt";
 		cf.rm_history.disabled=true;
-		cf.rm_history.className = "common_gray_bt";
+		cf.rm_history.className = "common_big_gray_bt";
 	}
 	else
 	{
@@ -48,7 +48,7 @@ function loadvalue()
                 cf.remove.disabled=false;
                 cf.remove.className = "common_bt";
 		cf.rm_history.disabled=false;
-		cf.rm_history.className = "common_bt";
+		cf.rm_history.className = "common_big_bt";
 	}
 	refresh_content();
 }
@@ -220,7 +220,7 @@ $bluebar
 $bluebar
 <TR>
     <TD nowrap colspan=2 align=center>
-    <input type="button" class="common_bt"  name="rm_history" value="$greendl_common_button_removeHistory" onClick='remove_history(document.forms[0]);'>&nbsp;&nbsp;
+    <input type="button" class="common_big_bt"  name="rm_history" value="$greendl_common_button_removeHistory" onClick='remove_history(document.forms[0]);'>&nbsp;&nbsp;
     </TD>
 </TR>
 </TABLE>

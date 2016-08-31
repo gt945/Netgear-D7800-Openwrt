@@ -5,9 +5,9 @@ START=97
 
 start() {
 	[ -c /dev/watchdog ] || return 1
-	[ -x /sbin/watchdog ] || return 1
-	service_start /sbin/watchdog -t 5 /dev/watchdog
+	[ -x $(which watchdog) ] || return 1
+	service_start watchdog -t 5 /dev/watchdog
 }
 stop() {
-	service_stop /sbin/watchdog
+	service_stop watchdog
 }

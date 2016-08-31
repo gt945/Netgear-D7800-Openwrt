@@ -8,6 +8,14 @@ function check_vlan_input(cf,flag)
 			alert("$vlan_error11");
 			return false;
 		}
+		for(i=0; i<cf.vlan_name.value.length; i++)
+		{
+			if(isValidChar_space(cf.vlan_name.value.charCodeAt(i)) == false)
+			{
+				alert("$vlan_error11");
+				return false;
+			}
+		}
 		for(i=1;i<=array_num;i++)
 		{
 			var str=eval( 'vlanArray' + i )
@@ -17,6 +25,11 @@ function check_vlan_input(cf,flag)
 				alert("$vlan_error4_1 " +cf.vlan_name.value +" $vlan_error4_2");
 				return false;
 			}
+		}
+		if(!_isNumeric(cf.vlan_id.value))
+		{
+			alert("$vlan_error3");
+			return false;
 		}
 		var str_tmp=parseInt(cf.vlan_id.value,10);
 		if(str_tmp <1 || str_tmp >4094)
@@ -32,11 +45,50 @@ function check_vlan_input(cf,flag)
 	}
 	if(cf.vlan_priority.value=="")
 		cf.vlan_priority.value="0";
+	if(!_isNumeric(cf.vlan_priority.value))
+	{
+		alert("$vlan_error2");
+		return false;
+	}
 	str_tmp=parseInt(cf.vlan_priority.value,10);
 	if(str_tmp >7)
 	{
 		alert("$vlan_error2");
 		return false;
+	}
+
+	if(!(flag=='edit' && default_internet ==1))
+	{
+		var wired=0;
+		var wireless=0;
+		if(cf.iptv_ports_3.checked==true)
+			wired += 8;
+		if(cf.iptv_ports_2.checked==true)
+			wired += 4;
+		if(cf.iptv_ports_1.checked==true)
+			wired += 2;
+		if(cf.iptv_ports_0.checked==true)
+			wired += 1;
+		if(cf.iptv_ports_10.checked==true)
+			wireless += 1;
+		if(cf.iptv_ports_12.checked==true)
+			wireless += 4;
+		if(cf.iptv_ports_11.checked==true)
+			wireless += 2;
+		if(cf.iptv_ports_13.checked==true)
+			wireless += 8;
+		if(wired==15 && wireless==3)
+		{
+			alert("$vlan_error6");
+			return false;
+		}
+		if(wired==0 && wireless==0)
+		{
+			alert("$vlan_error5");
+			return false;
+		}
+		cf.hid_wired_port.value=wired;
+		cf.hid_wireless_port.value=wireless;
 	}
 
 	var wifi_port_flag=0;
@@ -102,40 +154,6 @@ function check_vlan_input(cf,flag)
 		}			
 	}
 
-	if(!(flag=='edit' && default_internet ==1))
-	{
-		var wired=0;
-		var wireless=0;
-		if(cf.vlan_port4.checked==true)
-			wired += 8;
-		if(cf.vlan_port3.checked==true)
-			wired += 4;
-		if(cf.vlan_port2.checked==true)
-			wired += 2;
-		if(cf.vlan_port1.checked==true)
-			wired += 1;
-		if(cf.vlan_bgn_wlan.checked==true)
-			wireless += 1;
-		if(cf.vlan_bgn_guest.checked==true)
-			wireless += 4;
-		if(cf.vlan_an_wlan.checked==true)
-			wireless += 2;
-		if(cf.vlan_an_guest.checked==true)
-			wireless += 8;
-		if(wired==15 && wireless==3)
-		{
-			alert("$vlan_error6");
-			return false;
-		}
-		if(wired==0 && wireless==0)
-		{
-			alert("$vlan_error5");
-			return false;
-		}
-		cf.hid_wired_port.value=wired;
-		cf.hid_wireless_port.value=wireless;
-	}
-
 	if(flag=='edit')
 	{
 		if(default_internet ==1)
@@ -167,68 +185,65 @@ function click_add_btn(cf)
 	}
 	else
 	{
-		cf.hid_enable_vlan.value="1";
-		cf.hid_vlan_type.value="1";
-		cf.action="/apply.cgi?/VLAN_add.htm timestamp="+ts;
+		location.href="VLAN_add.htm";
+		return true;
 	}
-	cf.submit_flag.value="vlan_add";
-	return true;
 }
 
 function check_iptv_input(cf)
 {
 	var wired=0;
 	var wireless=0;
-	if(cf.vlan_port4.checked==true)
+	if(cf.iptv_ports_3.checked==true)
 	{
 		wired += 8;
 		cf.hid_bri_lan4.value="1";
 	}
 	else
 		cf.hid_bri_lan4.value="0";
-	if(cf.vlan_port3.checked==true)
+	if(cf.iptv_ports_2.checked==true)
 	{
 		wired += 4;
 		cf.hid_bri_lan3.value="1";
 	}
 	else
 		cf.hid_bri_lan3.value="0";
-	if(cf.vlan_port2.checked==true)
+	if(cf.iptv_ports_1.checked==true)
 	{
 		wired += 2;
 		cf.hid_bri_lan2.value="1";
 	}
 	else
 		cf.hid_bri_lan2.value="0";
-	if(cf.vlan_port1.checked==true)
+	if(cf.iptv_ports_0.checked==true)
 	{
 		wired += 1;
 		cf.hid_bri_lan1.value="1";
 	}
 	else
 		cf.hid_bri_lan1.value="0";
-	if(cf.vlan_bgn_wlan.checked==true)
+	if(cf.iptv_ports_10.checked==true)
 	{
 		wireless += 1;
 		cf.hid_brig_ssid1.value="1";
 	}
 	else
 		cf.hid_brig_ssid1.value="0";
-	if(cf.vlan_bgn_guest.checked==true)
+	if(cf.iptv_ports_12.checked==true)
 	{
 		wireless += 4;
 		cf.hid_brig_guest_ssid1.value="1";
 	}
 	else
 		cf.hid_brig_guest_ssid1.value="0";
-	if(cf.vlan_an_wlan.checked==true)
+	if(cf.iptv_ports_11.checked==true)
 	{
 		wireless += 2;
 		cf.hid_brig_ssid2.value="1";
 	}
 	else
 		cf.hid_brig_ssid2.value="0";
-	if(cf.vlan_an_guest.checked==true)
+	if(cf.iptv_ports_13.checked==true)
 	{
 		wireless += 8;
 		cf.hid_brig_guest_ssid2.value="1";
@@ -253,22 +268,22 @@ function click_edit_btn(cf)
 {
 	var select_num;
 	var count_select=0;
-	if (array_num == 1)
+	if (array_num == 1 && is_for_RU != 1)
 	{
-		if(cf.vlanSelect.checked == true)
+		if(cf.ruleSelect.checked == true)
 		{
 			count_select++;
-			select_num=parseInt(cf.vlanSelect.value);
+			select_num=parseInt(cf.ruleSelect.value);
 		}
 	}
 	else
 	{
-		for(i=0;i<array_num;i++)
+		for(i=0; (is_for_RU == 1)? i<=array_num : i<array_num; i++)
 		{
-			if(cf.vlanSelect[i].checked == true)
+			if(cf.ruleSelect[i].checked == true)
 			{
 				count_select++;
-				select_num=parseInt(cf.vlanSelect[i].value);
+				select_num=parseInt(cf.ruleSelect[i].value);
 			}
 		}
 	}
@@ -279,12 +294,11 @@ function click_edit_btn(cf)
 	}
 	else
 	{
-		cf.hid_enable_vlan.value="1";
-		cf.hid_vlan_type.value="1";
 		cf.select_edit_num.value =select_num;
 		cf.submit_flag.value="vlan_edit";
 		cf.action="/apply.cgi?/VLAN_edit.htm timestamp="+ts;
 	}
+	cf.submit();
 	return true;
 }
 
@@ -292,22 +306,22 @@ function click_delete_btn(cf)
 {
 	var count_select=0;
 	var select_num;
-	if (array_num == 1)
+	if (array_num == 1 && is_for_RU != 1)
 	{
-		if(cf.vlanSelect.checked == true)
+		if(cf.ruleSelect.checked == true)
 		{
 			count_select++;
-			select_num=parseInt(cf.vlanSelect.value);
+			select_num=parseInt(cf.ruleSelect.value);
 		}
 	}
 	else
 	{
-		for(i=0;i<array_num;i++)
+		for(i=0; (is_for_RU == 1)? i<=array_num : i<array_num; i++)
 		{
-			if(cf.vlanSelect[i].checked == true)
+			if(cf.ruleSelect[i].checked == true)
 			{
 				count_select++;
-				select_num=parseInt(cf.vlanSelect[i].value);
+				select_num=parseInt(cf.ruleSelect[i].value);
 			}
 		}
 	}
@@ -328,20 +342,18 @@ function click_delete_btn(cf)
 			alert(sel_info[1]+" $vlan_port_del_msg");
 			return false;
 		}
-		cf.hid_enable_vlan.value="1";
-		cf.hid_vlan_type.value="1";
 		cf.select_del_num.value =select_num;
 		cf.submit_flag.value="vlan_delete";
 	}
-
+	cf.submit();
 	return true;
 }
 
 function click_apply(cf)
 {
-	if(cf.vlan_enable.checked==true)
+	if(cf.vlan_iptv_enable.checked==true)
 	{
-		if(cf.vlan_iptv_type[1].checked==true)
+		if(cf.vlan_iptv_select[1].checked==true)
 		{					
 			var count_enable=0;
 			var sel_list="";

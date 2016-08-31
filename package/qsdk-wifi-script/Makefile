@@ -8,14 +8,18 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/qsdk-wifi-script
+define Package/$(PKG_NAME)
   SECTION:=net
+  CATEGORY:=Network
   TITLE:=qca-wifi scripts
   MAINTAINER:=Matthew McClintock <mmcclint@qca.qualcomm.com>
+  MENU:=1
 endef
 
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
 define Build/Prepare
-	$(CP) $(GIT_HOME)/qsdk-wifi-script.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
@@ -32,4 +36,4 @@ define Package/$(PKG_NAME)/install
 
 endef
 
-$(eval $(call BuildPackage,qsdk-wifi-script))
+$(eval $(call BuildPackage,$(PKG_NAME)))

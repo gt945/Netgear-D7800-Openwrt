@@ -14,31 +14,17 @@ function initPage()
 	paragraph[1].appendChild(paragraph_text);
 	
 	
-	
-/*	var choices_div = document.getElementById("choices_div");
-	var choices = choices_div.getElementsByTagName("input");
-	
-	var choices_text = document.createTextNode(bh_yes_mark);
-	insertAfter(choices_text, choices[0]);
-	
-	choices_text = document.createTextNode(bh_no_genie_help);
-	insertAfter(choices_text, choices[1]);
-	
-	choices_text = document.createTextNode(bh_have_saved_copy);
-	insertAfter(choices_text, choices[2]);
-*/
-	
-	var btns_container_div = document.getElementById("btnsContainer_div");
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
 	if( master == "admin" )
 	{
-		btns_container_div.onclick = function() 
+		btn.onclick = function() 
 		{
 			return genieHelpChecking();
 		}
 	}
-	var btn = document.getElementById("btn_div");	
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
+	else
+		btn.className="grey_short_btn";
 
 	//show firmware version
         showFirmVersion("none");

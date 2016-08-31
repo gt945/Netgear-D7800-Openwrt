@@ -1,0 +1,12 @@
+#!/bin/sh /etc/rc.common
+
+bin=$(which artmtd)
+
+boot()
+{
+	$bin -r wpspin		# wps pin number, write to /tmp/wpspin
+	$bin -r sn		# serial number, write to /tmp/Seria_Number
+	$bin -r mac		# wan mac, write to /tmp/wan_mac
+	$bin -r board_hw_id | cut -f 2 -d ':' > /tmp/board_hw_id
+	$bin -r board_model_id | cut -f 2 -d ':' > /tmp/board_model_id
+}

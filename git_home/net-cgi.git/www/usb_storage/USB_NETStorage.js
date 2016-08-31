@@ -72,19 +72,31 @@ function clickadvanced()
 	var space_flag=0;
 	
 
-	if( form.enableNet.checked == true)
+	if( form.enable_samba.checked == true)
 		form.enableNet_value.value = '0';
 	else
 		form.enableNet_value.value = '1';
-	if( form.enableHTTP.checked == true)
+	if( form.enable_http.checked == true)
 		form.enableHTTP_value.value = '0';
 	else
 		form.enableHTTP_value.value = '1';
-	if( form.enableHvia.checked == true )
+	if( form.enable_wan_http.checked == true )
 		form.enableHvia_value.value = '0';
 	else
 		form.enableHvia_value.value = '1';
-
+	
+	if(form.passwd_samba.checked == true)
+		form.passwdNet.value = "1";
+	else
+		form.passwdNet.value = "0";
+	if(form.passwd_http.checked == true)
+		form.passwdHttp.value = "1";
+	else
+		form.passwdHttp.value = "0";
+	if(form.passwd_http_via.checked == true)
+		form.passwdHvia.value = "1";
+	else
+		form.passwdHvia.value = "0";
 
 	if(form.workGroup.value == ""){
 		alert("$workGroup_NULL");
@@ -103,26 +115,35 @@ function clickadvanced()
 		return false;
 	}
 */
-	portvalue1=parseInt(form.HTTP_via_port.value,10);
+	portvalue1=parseInt(form.http_via_port.value,10);
 	if( isNaN(portvalue1) || portvalue1 < 443 || (portvalue1 > 443 && portvalue1 < 1024) || portvalue1 > 65534)
 	{
 		alert("$usb_httpvia_port");
 		return false;
 	}
-	form.HTTP_via_port.value=portvalue1;
+	form.http_via_port.value=portvalue1;
    if(is_ftp == 1)
    {	
-        if( form.enableFTP.checked == true )
+        if( form.enable_ftp.checked == true )
                 form.enableFTP_value.value = '0';
         else
                 form.enableFTP_value.value = '1';
 
-        if( form.enableFvia.checked == true )
+        if( form.enable_wan_ftp.checked == true )
                 form.enableFvia_value.value = '0';
         else
                 form.enableFvia_value.value = '1';
+			
+		if(form.passwd_ftp.checked == true)
+			form.passwdFtp.value = "1";
+		else
+			form.passwdFtp.value = "0";
+		if(form.passwd_ftp_via.checked == true)
+			form.passwdFvia.value = "1";
+		else
+			form.passwdFvia.value = "0";
 
-	portvalue2=parseInt(form.FTP_via_port.value,10);
+	portvalue2=parseInt(form.ftp_via_port.value,10);
 	if( isNaN(portvalue2) || portvalue2 < 21 || (portvalue2 > 21 & portvalue2 < 1024) || portvalue2 > 65534)
 	{
 		alert("$usb_ftpvia_port");
@@ -134,7 +155,7 @@ function clickadvanced()
 		alert("$invalid_port_used");
 		return false;
 	}
-	form.FTP_via_port.value=portvalue2;
+	form.ftp_via_port.value=portvalue2;
    }
 	
 	if(check_all_port() == false)
@@ -142,12 +163,13 @@ function clickadvanced()
 		alert("$invalid_port_used");
 		return false;
 	}
-        form.HTTP_via_port.value=port_range_interception(form.HTTP_via_port.value);
-        form.FTP_via_port.value=port_range_interception(form.FTP_via_port.value);
+        form.http_via_port.value=port_range_interception(form.http_via_port.value);
+        form.ftp_via_port.value=port_range_interception(form.ftp_via_port.value);
 	/* to fix bug 31198
 	if(shared_folder_num != 0 && nopassword_num == 0)
 		alert("$usb_nopassward_msg");
 	*/
+	form.submit();
 	return true;
 }
 
@@ -219,24 +241,24 @@ function check_all_port()
 {
 	var ret=true;	
 
-	if(form.enableHvia.checked == true)
+	if(form.enable_wan_http.checked == true)
 	{
-		if(check_port_range("forwardingArray", forward_array_num, form.HTTP_via_port.value) == false)
+		if(check_port_range("forwardingArray", forward_array_num, form.http_via_port.value) == false)
 			ret = false;
 	
-		if(check_port_range("triggeringArray", trigger_array_num, form.HTTP_via_port.value) == false)
+		if(check_port_range("triggeringArray", trigger_array_num, form.http_via_port.value) == false)
 			ret = false;
 
-		if(check_port_range("upnpArray", upnp_array_num, form.HTTP_via_port.value) == false)
+		if(check_port_range("upnpArray", upnp_array_num, form.http_via_port.value) == false)
 			ret = false;
 
-		if(check_single_port(form.HTTP_via_port.value) == false)
+		if(check_single_port(form.http_via_port.value) == false)
 			ret = false;
 	}
 
 	if(is_ftp == 1)
 	{
-		if(form.enableFTP.checked == true)
+		if(form.enable_ftp.checked == true)
 		{
 			if(check_port_range("forwardingArray", forward_array_num, 21) == false)
 				ret = false;
@@ -250,18 +272,18 @@ function check_all_port()
 			if(check_single_port(21) == false)
 				ret = false;
 		}
-		if(form.enableFvia.checked == true)
+		if(form.enable_wan_ftp.checked == true)
 		{
-			if(check_port_range("forwardingArray", forward_array_num, form.FTP_via_port.value) == false)
+			if(check_port_range("forwardingArray", forward_array_num, form.ftp_via_port.value) == false)
 				ret = false;
 
-			if(check_port_range("triggeringArray", trigger_array_num, form.FTP_via_port.value) == false)
+			if(check_port_range("triggeringArray", trigger_array_num, form.ftp_via_port.value) == false)
 				ret = false;
 
-			if(check_port_range("upnpArray", upnp_array_num, form.FTP_via_port.value) == false)
+			if(check_port_range("upnpArray", upnp_array_num, form.ftp_via_port.value) == false)
 				ret = false;
 
-			if(check_single_port(form.FTP_via_port.value) == false)
+			if(check_single_port(form.ftp_via_port.value) == false)
 				ret = false;
 		}
 	}

@@ -2,6 +2,7 @@ function refresh_log(form)
 {
 	form.action="/apply.cgi?/FW_log.htm timestamp="+ts;
 	form.submit_flag.value="logs_refresh";
+	form.submit();
 	return true;
 }
 
@@ -9,6 +10,7 @@ function check_logs_clear(form)
 {
 	form.action="/func.cgi?/FW_log.htm timestamp="+ts;
 	form.submit_flag.value="logs_clear";
+	form.submit();
 	return true;
 }
 
@@ -18,6 +20,7 @@ function check_logs_send(form)
 	{
 		form.action="/apply.cgi?/FW_log.htm timestamp="+ts;
 		form.submit_flag.value="logs_send";
+		form.submit();
 		return true;
 	}
 	else
@@ -78,5 +81,6 @@ function check_log_apply(form)
 		cf.hidden_log_vpn_head.value="1";
 	else
 		cf.hidden_log_vpn_head.value="0";
+	cf.submit();
 	return true;
 }

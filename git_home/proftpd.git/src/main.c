@@ -86,6 +86,7 @@ session_t session;
 unsigned char is_master = TRUE;
 
 pid_t mpid = 0;				/* Master pid */
+char  *lan_ifname = NULL;   /* Lan interface name */
 
 uid_t daemon_uid;
 gid_t daemon_gid;
@@ -2735,6 +2736,9 @@ static struct option_help {
   { "--config", "-c [config-file]",
     "Specify alternate configuration file" },
 
+  { "--interface", "-i [lan_ifname]",
+    "Lan interface name" },
+
   { "--persistent", "-p [0|1]",
     "Enable/disable default persistent passwd support" },
 
@@ -2783,7 +2787,7 @@ static void show_usage(int exit_code) {
 
 int main(int argc, char *argv[], char **envp) {
   int optc, show_version = 0;
-  const char *cmdopts = "D:NVc:d:hlnp:qS:tv46";
+  const char *cmdopts = "D:NVc:i:d:hlnp:qS:tv46";
   mode_t *main_umask = NULL;
   socklen_t peerlen;
   struct sockaddr peer;
@@ -2825,6 +2829,8 @@ int main(int argc, char *argv[], char **envp) {
    * --settings         report compile-time settings
    * -c path            set the configuration path
    * --config path
+   * -i lan_ifname      set the lan interface name
+   * --interface lan_ifname
    * -d n               set the debug level
    * --debug n
    * -q                 quiet mode; don't log to stderr when not daemonized
@@ -2905,6 +2911,14 @@ int main(int argc, char *argv[], char **envp) {
       config_filename = strdup(optarg);
       break;
 
+    case 'i':
+      if (!optarg) {
+        pr_log_pri(PR_LOG_ERR, "Fatal: -i requires configuration lan_ifname argument.");
+        exit(1);
+      }
+      lan_ifname = strdup(optarg);
+      break;
+
     case 'l':
       modules_list(PR_MODULES_LIST_FL_SHOW_STATIC);
       exit(0);
@@ -2971,6 +2985,11 @@ int main(int argc, char *argv[], char **envp) {
   /* If we have any leftover parameters, it's an error. */
   if (argv[optind]) {
     pr_log_pri(PR_LOG_ERR, "unknown parameter: '%s'", argv[optind]);
+    exit(1);
+  }
+
+  if (!lan_ifname) {
+    pr_log_pri(PR_LOG_ERR, "miss parameter: -i lan_ifname");
     exit(1);
   }
 

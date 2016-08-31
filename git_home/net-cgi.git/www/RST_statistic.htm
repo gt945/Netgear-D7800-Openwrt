@@ -5,12 +5,25 @@
 <% dsl_statistic() %>
 <% show_statistic() %>
 var timereset="<% cfg_sed_xss("timereset") %>";
+var clock = 0;
 
 if (timereset == "")
 	timereset="5";
 
-if( timereset != "0")
-	document.write('<META http-equiv="refresh" content="'+timereset+'; url=RST_statistic.htm">');
+function auto_refresh()
+{
+	if( timereset != "0")
+	{
+		if(clock >= timereset)
+		{
+			location.href = "RST_statistic.htm";
+			document.getElementById("set_interval").disabled = true;
+		}
+		else
+			setTimeout("clock = clock + 0.5; auto_refresh();", 500);
+	}
+}
+auto_refresh();
 
 <% web_flag() %>
 var enable_bridge_flag="<% cfg_get("bridge_mode") %>";
@@ -26,7 +39,7 @@ function translate_status(stat)
 		
 }
 </script>
-<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+<TABLE name="statistic_table" id="statistic_table" cellspacing=5 cellPadding=0 width=100% border=0>
 $bluebar
 <TR>
 	<TD nowrap><B>$statistics_sysuptime</B>&nbsp;
@@ -77,7 +90,7 @@ document.write(new_time);
 </script>	
 	</span></TD>
 	</TR>
-	<TR>
+	<TR id=lan1_info>
 	<TD nowrap align=center><span class="thead">$statistics_lan 1</span></TD>
 	<TD nowrap align=center><span class="ttext"><script>
 	if (lan_status0 != "Link down")
@@ -103,7 +116,7 @@ document.write(new_time);
 </script>
 	</span></TD>
 	</TR>
-	<TR>
+	<TR id=lan2_info>
 	<TD nowrap align=center><span class="thead">$statistics_lan 2</span></TD>
 	<TD nowrap align=center><span class="ttext"><script>
 	if (lan_status1 != "Link down")
@@ -124,7 +137,7 @@ document.write(new_time);
 </script>
 	</span></TD>
 	</TR>
-	<TR>
+	<TR id=lan3_info>
 	<TD nowrap align=center><span class="thead">$statistics_lan 3</span></TD>
 	<TD nowrap align=center><span class="ttext"><script>
 	if (lan_status2 != "Link down")
@@ -145,7 +158,7 @@ document.write(new_time);
 </script>		
 	</span></TD>
 	</TR>
-	<TR>
+	<TR id=lan4_info>
 	<TD nowrap align=center><span class="thead">$statistics_lan 4</span></TD>
 	<TD nowrap align=center><span class="ttext"><script>
 	if (lan_status3 != "Link down")
@@ -166,7 +179,15 @@ document.write(new_time);
 </script>	
 	</span></TD>
 	</TR>
-	<TR>
+	<script>
+	if(typeof(lan_ports_num) != "undefined" && lan_ports_num == 1)
+	{
+		document.getElementById("lan2_info").style.display = "none";
+		document.getElementById("lan3_info").style.display = "none";
+		document.getElementById("lan4_info").style.display = "none";
+	}
+	</script>
+	<TR id=wlan_info>
 	<TD nowrap align=center><span class="thead">$statistics_wlan <script>if(an_router_flag == 1) document.write("b/g/n");</script></span></TD>
 	<TD nowrap align=center><span class="ttext"><script>
 	if (bgn_status != "Link down"){
@@ -197,6 +218,8 @@ document.write(new_time);
 	</span></TD>
 	</TR>
 <script>
+if(typeof(have_wifi_flag) != "undefined" && have_wifi_flag == 0)
+	document.getElementById("wlan_info").style.display = "none";
 if(an_router_flag == 1){
 
         document.write('<TR>');
@@ -269,25 +292,25 @@ if(top.dsl_enable_flag == 1)
 	<TD nowrap><B>$statistics_poll :</B>
 <script>
 if (timereset != "0")
-	document.write("<input TYPE=TEXT NAME=timeset SIZE=5 MAXLENGTH=5 VALUE="+timereset+" onKeyPress=\"return getkey('num',event)\"> (secs)");
+	document.write("<input TYPE=TEXT NAME=timeset id=\"timeset\" SIZE=5 MAXLENGTH=5 VALUE="+timereset+" onKeyPress=\"return getkey('num',event)\"> (secs)");
 else
-	document.write("<input TYPE=TEXT NAME=timeset SIZE=5 MAXLENGTH=5 VALUE='' onKeyPress=\"return getkey('num', event)\"> (secs)");
+	document.write("<input TYPE=TEXT NAME=timeset id=\"timeset\" SIZE=5 MAXLENGTH=5 VALUE='' onKeyPress=\"return getkey('num', event)\"> (secs)");
 </script>
 	</TD>
 	<TD nowrap>
 	<script>
 	var master="<% cfg_get("http_loginname") %>";
 	if( master == "admin" )
-		document.write('<input class="common_bt" TYPE="button" NAME="settime" VALUE="$statistics_set" WIDTH="80" onClick="reset_time();">&nbsp;&nbsp;<input class="common_bt" TYPE="button" NAME="stoptime" VALUE="$statistics_stop" WIDTH="80" onClick="stop_time();">');
+		document.write('<input class="common_bt" TYPE="button" NAME="Set Interval" id="set_interval" VALUE="$statistics_set" WIDTH="80" onClick="reset_time(this);">&nbsp;&nbsp;<input class="common_bt" TYPE="button" NAME="Stop" id="stop" VALUE="$statistics_stop" WIDTH="80" onClick="stop_time(this);">');
 	else
-		document.write('<input class="common1_bt" TYPE="button" NAME="settime" VALUE="$statistics_set" WIDTH="80" disabled>&nbsp;&nbsp;<input class="common1_bt" TYPE="button" NAME="stoptime" VALUE="$statistics_stop" WIDTH="80" disabled>');
+		document.write('<input class="common1_bt" TYPE="button" NAME="Set Interval" id="set_interval" VALUE="$statistics_set" WIDTH="80" disabled>&nbsp;&nbsp;<input class="common1_bt" TYPE="button" NAME="Stop" id="stop" VALUE="$statistics_stop" WIDTH="80" disabled>');
 		
 	</script>
 	</TD>
 </TR>
 </TABLE>
 <script>
-function reset_time()
+function reset_time(th)
 {
 	cf=document.forms[0];
 	if( cf.timeset.value == "")
@@ -300,13 +323,15 @@ function reset_time()
 		alert("$rang_pool");
 		return false;
 	}
+	th.disabled = true;
 	cf.submit();
 }
 
-function stop_time()
+function stop_time(th)
 {
 	cf=document.forms[0];
 	cf.timeset.value="0";
+	th.disabled = true;
 	cf.submit();
 }
 </script>

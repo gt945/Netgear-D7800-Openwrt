@@ -167,6 +167,8 @@ static int shmid = -1;   // ipc shared memory id
 static int s_semid = -1; // ipc semaphore id
 static int shm_size = ((CONFIG_FEATURE_IPC_SYSLOG_BUFFER_SIZE)*1024);	// default shm size
 
+static void set_mobile_log(char *src, char *msg, char *time);
+
 static void ipcsyslog_cleanup(void)
 {
 	if (shmid != -1) {
@@ -443,18 +445,18 @@ static int ntp_updated(void)
 
 	return 2;
 }
+
 int find_last_end(char * const msg) {
-    char *p = msg;
-    int offset;
+	char *p = msg;
+	int offset;
 
-    for(int i = 0; *p != '\0'; i++) {
-        if (*p == ']')
-            offset = i;
-        p++;
-    }
+	for(int i = 0; *p != '\0'; i++) {
+		if (*p == ']')
+			offset = i;
+		p++;
+	}
 
-    return offset;
-
+	return offset;
 }
 
 int check_end_num(char * const msg) {
@@ -462,15 +464,16 @@ int check_end_num(char * const msg) {
 	int count;
 
 	for(int i = 0; *p != '\0'; i++) {
-         if (*p == ']')
-             count++;
-         p++;
-    }
+		if (*p == ']')
+			count++;
+		p++;
+	}
 	if (count >= 2)
-	 	return 1;
+		return 1;
 	else
 		return 0;
 }
+
 void cut_log(char * msg, char * cut_str, int max_len)
 {
 	char *log_end;
@@ -487,10 +490,10 @@ void cut_log(char * msg, char * cut_str, int max_len)
 
 	log_end_len = strlen(log_end);
 	if ( strcmp(cut_str, "]") == 0 && check_end_num(msg)) {
-        last_tag = find_last_end(msg);
-        log_end = msg + last_tag;
-        log_end_len = strlen(log_end);
-    }
+		last_tag = find_last_end(msg);
+		log_end = msg + last_tag;
+		log_end_len = strlen(log_end);
+	}
 	log_pre_len = max_len - log_end_len;
 
 	msg[log_pre_len] = '\0';
@@ -542,6 +545,18 @@ void check_log_len(char * msg, int time_len)
 		return;
 	}
 
+	//For the "[3G/4G] ISP connection failed" item is need to cut into 2 line. the second line is no timestamp.
+	if (strncasecmp(msg, "[3G/4G] ISP connection failed -2", strlen("[3G/4G] ISP connection failed -2")) == 0) {
+		msg[log_max_size] = '\0';
+		return;
+	}
+
+	if (strncasecmp(msg, "[3G/4G]", strlen("[3G/4G]")) == 0) {
+		msg[log_max_len] = '\0';
+		return;
+	}
+	msg[log_max_len] = '\0';
+
 	return;
 }
 
@@ -559,7 +574,8 @@ struct log_category {
  * Port Forwarding/Port Triggering                              6
  * Wireless access                                              7
  * Automatic Internet connection reset                          8
- * Turn off wireless signal by schedule                         9
+ * ReadyShare							9
+ * ReadyShare Mobile Connect					10
  * Client connect to dut first time or change its status.       10
  */
 struct log_category reg_logs[] = {
@@ -588,17 +604,20 @@ struct log_category reg_logs[] = {
 	{"Traffic Meter",                                       4},     /* 21, 22. Router operation */
 	{"trafficmeter",                                        4},     /* 21, 22. Router operation */
 	{"Internet disconnected",				8},	/* 27. Automatic Internet connection reset */
-	{"Wireless signal schedule",				9},	/* 28. Turn off wireless signal by schedule */
+	{"Wireless signal schedule",				           12},     /* 24. Wireless signal schedule */	
 	{"Log Cleared",                                         4},     /* Should have a log to note "log clear" opration */
-	{"USB device attached",                                 4},     /* 23. Router operation */
-	{"USB device detached",                                 4},     /* 24. Router operation */
+	{"USB device attached",                                 9},     /* 23. ReadyShare */
+	{"USB device detached",                                 9},     /* 24. ReadyShare */
 	{"USB remote access",                                   6},     /* 25. Port Forwarding/Port Triggering */
 	{"USB remote access rejected",                          6},     /* 26. Port Forwarding/Port Triggering */
 	{"FAN FAULT",                                           4},     /* 27. Router operation */
-	{"HDD ERROR",						4},	/* 28, Router operation */
-	{"One Touch Backup",					4},	/* 29, Router operation */
-	{"ACCESS CONTROL",                                      4},    /* 29.  Router operation */
-	{"OpenVPN",												11},     /* 30. VPN */
+	{"HDD ERROR",                                           4},     /* 28, Router operation */
+	{"One Touch Backup",					9},     /* 29. ReadyShare */
+	{"OpenVPN",                                             11},    /* 30. VPN */
+	{"3G/4G",						10},	/* 30,31,32,33,34. ReadyShare Mobile Connect */
+	{"Internal HDD detection",				9},	/* 35,36. ReadyShare */
+	{"SD card attached",					10},	/* 37. ReadyShare */
+	{"Access Control",                                      4},     /* 38. Router operation */
 	{NULL,                                                  0},
 };
 
@@ -625,7 +644,9 @@ void get_log_category(int logmsg, int msg[])
 	msg[6] = (logmsg >> 6) & 0x01;
 	msg[7] = (logmsg >> 7) & 0x01;
 	msg[8] = (logmsg >> 8) & 0x01;
+	msg[9] = (logmsg >> 9) & 0x01;
 	msg[10] = (logmsg >> 10) & 0x01;
+	msg[11] = (logmsg >> 11) & 0x01;
 
 	return;
 }
@@ -712,7 +733,7 @@ int generate_log_message(int flag, int info)
 	char loc_tm[128];
 	char buffer[LOG_LEN];
 	char log_message[LOG_LEN];
-	int log_info[9];
+	int log_info[12];
 
 	time(&now);
 	systime = uptime();
@@ -745,8 +766,12 @@ int generate_log_message(int flag, int info)
 			strftime(loc_tm, sizeof(loc_tm), "%A, %B %d, %Y %T", localtime(&logtime));
 			/* why +1? because it have a space in front of time */
 			check_log_len(log_message, strlen(loc_tm)+1);
-			syslog_edit_comma(log_message, flag, strlen(loc_tm)+1);
-			sprintf(log_message, "%s %s", log_message, loc_tm);
+			if(!strncmp("[3G", log_message, 3)) {
+				set_mobile_log(log_message, log_message, loc_tm);
+			} else {
+				syslog_edit_comma(log_message, flag, strlen(loc_tm)+1);
+				sprintf(log_message, "%s %s", log_message, loc_tm);
+			}
 		} 
 		/*Fix bug Bug 29005 - [Log]There is a extra comma on Internet connected log when no NTP time */
 		/* Delet unwanted comma when no time */
@@ -794,7 +819,7 @@ void update_log(int loginfo)
 /* decide the log should or not display in the UI */
 int check_log_message(char *msg, int loginfo)
 {
-	int log_msg[11];
+	int log_msg[12];
 
 	/* get the log category information */
 	get_log_category(loginfo, log_msg);
@@ -830,9 +855,9 @@ int record_log_messages(char *msg, time_t log_uptime)
 int not_supress_msg(char *msg)
 {
 	#define LOG_ITEM_SIZE 128
-	char excep[][LOG_ITEM_SIZE + 1] = {
+	char excep[][LOG_ITEM_SIZE + 1] = { 
 	"[One Touch Backup]",
-	"[HDD ERROR]", 
+	"[HDD ERROR]",
 	"[FAN FAULT]",
 	"[admin login]",
 	"[admin login failure]",
@@ -892,7 +917,32 @@ void syslog_edit_comma(char *msg, int flag, int time_len)
 	strncpy(msg,tmp_msg,LOG_ITEM_SIZE);
 }
 
+/* For 3G/4G log's time stamp is at the middle. So here do this special operate. */
+static void set_mobile_log(char *src, char *msg, char *time)
+{
+	char prefix[256], buffer[256];
+	char *ptr;
 
+        if(time == NULL){
+                sprintf(src, "%s\n", msg);
+                return;
+        }
+
+        strcpy(prefix, msg);
+	strcpy(buffer, msg);
+	
+	// The timestamp always is before the "VID".
+        ptr = strcasestr(prefix, "VID");
+	if(ptr)	
+		*ptr = '\0';
+
+        ptr = strcasestr(buffer, "VID");
+
+	if(!ptr)
+		sprintf(src, "%s\n", msg);
+	else
+		sprintf(src, "%s %s, %s\n", prefix, time, ptr);
+}
 
 /* len parameter is used only for "is there a timestamp?" check.
  * NB: some callers cheat and supply 0 when they know
@@ -900,6 +950,7 @@ void syslog_edit_comma(char *msg, int flag, int time_len)
 static void timestamp_and_log(int pri, char *msg, int len)
 {
 	char *timestamp;
+	int mobile_log = 0;
 
 #if ENABLE_FEATURE_VENDOR_FORMAT_LOG
 	char *skip;
@@ -946,8 +997,11 @@ static void timestamp_and_log(int pri, char *msg, int len)
 			skip++;
 		msg = skip;
 
+		if (!strncmp("[3G", msg, 3))
+			mobile_log = 1;
+	
 		/* Only messages start with '[' will be logged */
-		if ((msg[0] != '[') || (msg[1] >= '0' && msg[1] <= '9'))
+		if ((msg[0] != '[') ||  ((msg[1] >= '0' && msg[1] <= '9') && (mobile_log != 1)))
 			return;
 
 		/* supress duplicates */
@@ -986,8 +1040,12 @@ static void timestamp_and_log(int pri, char *msg, int len)
 
 				if (ntp_flag == 1) {
 					check_log_len(msg, strlen(loc_tm) + 1);
-					syslog_edit_comma(msg, ntp_flag, strlen(loc_tm) + 1);
-					sprintf(PRINTBUF, "%s %s\n", msg, loc_tm);
+					if(mobile_log) {
+						set_mobile_log(PRINTBUF, msg, loc_tm);
+					} else {
+						syslog_edit_comma(msg, ntp_flag, strlen(loc_tm) + 1);
+						sprintf(PRINTBUF, "%s %s\n", msg, loc_tm);
+					}
 				}
 				/*	the ntp is update first time, and the function generate_log_message refreshed the 
 				 *	logs recorded in log_message with given format, including the log a moment ago. in 
@@ -1001,8 +1059,12 @@ static void timestamp_and_log(int pri, char *msg, int len)
 				else if(ntp_flag == 0){
 					/* Delet unwanted comma when no time */
 					check_log_len(msg, 0);
-					syslog_edit_comma(msg, ntp_flag, strlen(loc_tm) + 1);
-					sprintf(PRINTBUF,"%s\n",msg);
+					if(mobile_log) {
+						set_mobile_log(PRINTBUF, msg, NULL);
+					} else {
+						syslog_edit_comma(msg, ntp_flag, strlen(loc_tm) + 1);
+						sprintf(PRINTBUF,"%s\n",msg);
+					}
 				}
 
 				/* wait the ntpupdate run ..., because this log may be not should display,

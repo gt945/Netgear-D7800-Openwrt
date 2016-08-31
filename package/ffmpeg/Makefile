@@ -11,9 +11,9 @@ PKG_NAME:=ffmpeg
 PKG_VERSION:=0.11.2
 PKG_RELEASE:=2
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=http://ffmpeg.org/releases/
-PKG_MD5SUM:=93c1908022567b321df74db7214da6ac
+#PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+#PKG_SOURCE_URL:=http://ffmpeg.org/releases/
+#PKG_MD5SUM:=93c1908022567b321df74db7214da6ac
 
 PKG_LICENSE:=LGPLv2.1+ GPLv2+ LGPLv3
 PKG_LICENSE_FILES:=COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv2.1 COPYING.LGPLv3
@@ -231,9 +231,9 @@ $(call Package/libffmpeg/Default)
  MENU:=1
 endef
 
-define Package/libffmpeg-custom/config
-source "$(SOURCE)/Config.in"
-endef
+#define Package/libffmpeg-custom/config
+#source "$(SOURCE)/Config.in"
+#endef
 
 define Package/libffmpeg-custom/description
 $(call Package/ffmpeg/Default/description)
@@ -247,6 +247,7 @@ $(call Package/libffmpeg/Default)
  TITLE+= (full)
  DEPENDS+= @BUILD_PATENTED +alsa-lib
  VARIANT:=full
+ MENU:=1
 endef
 
 define Package/libffmpeg-full/description
@@ -449,6 +450,12 @@ endif
 ifneq ($(CONFIG_TARGET_x86),)
   TARGET_CFLAGS += -fomit-frame-pointer
 endif
+
+define Build/Prepare
+	$(CP) $(GIT_HOME)/ffmpeg.git/* $(PKG_BUILD_DIR)/
+endef
+
+$(eval $(call PKG/config/CommonModule,libffmpeg-full))
 
 define Build/Configure
 	( cd $(PKG_BUILD_DIR); $(FFMPEG_CONFIGURE) )

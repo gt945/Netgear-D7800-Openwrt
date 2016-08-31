@@ -12,27 +12,27 @@ if(parent.type == "basic")
 		document.write("<div class=\"fix_adv_button\">");
 	}
 </script>
-<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TABLE id=fix_button_table width=100% border=0 cellpadding=0 cellspacing=2>
 <TR>
 	<TD nowrap colspan=2 align=center>
 	<script>
 		var master="<% cfg_get("http_loginname") %>";
 		if( master == "admin" )
-			document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" onClick="qos_advanced();"> &nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" type="submit" id="apply" name="apply" value="$apply_mark" onClick="check_qos_apply(document.forms[0]); return false;">');
+			document.write('<input class="new_cancel_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="qos_advanced();"> &nbsp;&nbsp;<input class="new_apply_bt ui-corner-all" type="button" id="apply" name="Apply" value="$apply_mark" onClick="check_qos_apply(document.forms[0]); return false;">');
 		else
-			document.write('<input class="new_greycancel_bt ui-corner-all" type="button" name="Cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="submit" id="apply" name="apply" value="$apply_mark" disabled>');
+			document.write('<input class="new_greycancel_bt ui-corner-all" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled> &nbsp;&nbsp;<input class="new_greyapply_bt ui-corner-all" type="button" id="apply" name="Apply" value="$apply_mark" disabled>');
 	</script>
 	</TD>
 </TR>
 <tr id="labels"><td colspan=2>
         <div id="streamboost_qos" class="label_unclick" onclick="select_lable(0)">
                 <div class="label_left"></div>
-                <div class="label_middle"><b><span>$home_net</span></b></div>
+                <div class="label_middle"><b><span id="Dynamic_qos">$home_net</span></b></div>
                 <div class="label_right"></div>
         </div>
         <div id="wmm" class="label_unclick" onclick="select_lable(1)">
                 <div class="label_left"></div>
-                <div class="label_middle"><b><span>  &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;$wmm_mark  &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</span></b></div>
+                <div class="label_middle"><b><span id="wmm">  &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;$wmm_mark  &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;</span></b></div>
                 <div class="label_right"></div>
         </div>
 
@@ -46,7 +46,7 @@ else if(parent.type == "basic")
 </tr>
 <tr><td style="height:20px"></td></tr>
 <TR class="manual_qos_tr">
-<TD><input type="checkbox" name="qos_enable" checked onClick="location.href='QOS_basic_dynamic.htm'"><b>$enable_qos</b></TD>
+<TD><input type="checkbox" name="qosEnable" id="qos_enable" checked onClick="location.href='QOS_basic_dynamic.htm'"><b>$enable_qos</b></TD>
 </TR>
 <TR class="manual_qos_tr">
 <TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="basic_dynamic_qos" checked="true" >$dynamic_qos_more</TD>
@@ -65,8 +65,8 @@ else if(parent.type == "basic")
 .checkbar {
         font-family:Arial; padding:0px; height: 15px; width: 190px; font-weight: bolder; font-size: 10pt; border: 1px solid; border-color: #09c; color: #0000FF}
 #up_down_img { background-image:url(/image/ookla_speed.jpg);background-repeat:no-repeat; width:300px; height:40px; font-weight:bold; font-size:13px; font-family:arial; }
-#downlink_speed { position:relative; color:#ffffff; z-indent:2; left:75px; top:10px;}
-#uplink_speed { position:relative; color:#ffffff; z-indent:3; left:160px; top:10px;}
+#download_div{ position:relative; color:#ffffff; float:right; top:10px; }
+#uplink_div{ position:relative; color:#ffffff; float:right; top:10px; width:163px; right:3px; text-align:right; }
 </style>
 
 <div id="main" class="main_top_button" >
@@ -156,7 +156,7 @@ function detect_speedtest_value()
                                                 if(detect_enable == "1" && update_agreement =="1" && first_speedtest_only != "1"){
                                                         sAlert("$share_mac_warn",function(){
                                                                 var cf = document.forms[0];
-								cf.detect_database.checked = true;
+								cf.AutoUpdateEnable.checked = true;
                                                                 cf.hid_update_agreement.value = "0";
                                                                 cf.hid_streamboost_enable.value=1;
                                                                 cf.hid_first_flag.value="2";
@@ -164,7 +164,7 @@ function detect_speedtest_value()
                                                         },
                                                         function(){
                                                                 var cf = document.forms[0];
-                                                                cf.detect_database.checked = false;
+                                                                cf.AutoUpdateEnable.checked = false;
                                                                 cf.hid_update_agreement.value = "1";
                                                                 cf.hid_streamboost_enable.value=1;
                                                                 cf.hid_first_flag.value="2";
@@ -223,26 +223,44 @@ function goto_attached()
 function loadvalue()
 {
 	if(master == "guest"){
-                $$("#speedtest_bt").attr("class", "new_greyspeed_test ui-corner-all");
-                $$("#speedtest_bt").attr("disabled", true);
+                $$("#speedtest").attr("class", "new_greyspeed_test ui-corner-all");
+                $$("#speedtest").attr("disabled", true);
         }
 	document.getElementById("wmm").className="label_unclick";
 	document.getElementById("streamboost_qos").className="label_click";
     var cf=document.forms[0];
-	if(parent.type == "advanced")
-		$$(".main_top_button").css("top", "185px");
-	else if(parent.type == "basic")
-		$$(".main_top_button").css("top", "155px");
+	
+	var table1_height = $$("#fix_button_table").height();
+
+	if(parent.type == "advanced"){
+		if(table1_height > 175)
+			$$(".main_top_button").css("top", "195px");
+		else
+			$$(".main_top_button").css("top", "185px");
+	}
+	else if(parent.type == "basic"){
+		if(table1_height > 145)
+			$$(".main_top_button").css("top", "165px");
+		else
+			$$(".main_top_button").css("top", "155px");
+	}
 	if(top.have_advanced_qos == 1){
 		$$(".manual_qos_tr").css("display", "");
 		$$(".dynamic_qos_tr").css("display", "none");
 	}else{
 		$$(".manual_qos_tr").css("display", "none");
 		$$(".dynamic_qos_tr").css("display", "");
-		if(parent.type == "advanced" )
-			$$(".main_top_button").css("top", "155px");
+		if(parent.type == "advanced" ){
+			if(table1_height > 175)
+				$$(".main_top_button").css("top", "165px");	
+			else
+				$$(".main_top_button").css("top", "155px");
+		}
 		if(parent.type == "basic" ){
-			$$(".main_top_button").css("top", "125px");
+			if(table1_height > 145)
+				$$(".main_top_button").css("top", "135px");
+			else
+				$$(".main_top_button").css("top", "125px");
 			$$(".fix_button").css("background-position", "50% 60%");
 		}
 		if(streamboost_enable == "1")
@@ -250,19 +268,19 @@ function loadvalue()
 	}
 	if(streamboost_enable == "1") {
 		document.getElementById("device_app_link").style.display = "";
-		document.getElementById("manual_update").disabled = false;
-		document.getElementById("manual_update").className="new_speed_test ui-corner-all";
+		document.getElementById("updateBtn").disabled = false;
+		document.getElementById("updateBtn").className="new_speed_test ui-corner-all";
 		}
 	 else {
 		document.getElementById("device_app_link").style.display = "none";
-		document.getElementById("manual_update").disabled = true;
-		document.getElementById("manual_update").className="new_greyspeed_test ui-corner-all";
+		document.getElementById("updateBtn").disabled = true;
+		document.getElementById("updateBtn").className="new_greyspeed_test ui-corner-all";
 	}
 
 	if(detect_enable == "1" || (improve_service == "" && netgear_region.toUpperCase() != "WW"))
-		cf.detect_database.checked = true;
+		cf.AutoUpdateEnable.checked = true;
 	else
-		cf.detect_database.checked = false;
+		cf.AutoUpdateEnable.checked = false;
 
 	if(improve_service == "1" || (improve_service == "" && netgear_region.toUpperCase() != "WW"))
 		cf.help_improve.checked = true;
@@ -274,19 +292,19 @@ function loadvalue()
 	{
 		cf.apply.disabled=true;
 		document.getElementById("apply").className="new_greyapply_bt  ui-corner-all";
-		cf.sel_bandwidth[0].checked = true;
-		document.getElementById("speedtest_bt").className="new_greyspeed_test ui-corner-all";
+		cf.qosSetting[0].checked = true;
+		document.getElementById("speedtest").className="new_greyspeed_test ui-corner-all";
 		if(top.is_gr_version == 1)
-			 document.getElementById("speedtest_bt").className = "new_greyspeed_test ui-corner-all";
-                cf.speedtest_bt.disabled = true;
+			 document.getElementById("speedtest").className = "new_greyspeed_test ui-corner-all";
+                cf.speedtest.disabled = true;
 		document.getElementById("speedtest_radio").style.display = "";
 		document.getElementById("speedtest_radbutton").style.display = "";
 		document.getElementById("option1").style.display = "";
 		document.getElementById("option2").style.display = "";
 		document.getElementById("define_radio1").style.display = "none";
 		document.getElementById("define_radio2").style.display = "none";
-		document.getElementById("manual_update").disabled = true;
-		document.getElementById("manual_update").className="new_greyspeed_test ui-corner-all";
+		document.getElementById("updateBtn").disabled = true;
+		document.getElementById("updateBtn").className="new_greyspeed_test ui-corner-all";
 		document.getElementById("check_speed_progress").style.display = "";
 		updateProgress();
 
@@ -296,7 +314,7 @@ function loadvalue()
                 	cf.apply.disabled=false;
                 	document.getElementById("apply").className="new_apply_bt ui-corner-all";
 		}
-                cf.sel_bandwidth[0].checked = true;
+                cf.qosSetting[0].checked = true;
                 document.getElementById("speedtest_radio").style.display = "";
 				document.getElementById("speedtest_radbutton").style.display = "";
                 document.getElementById("option1").style.display = "";
@@ -310,7 +328,7 @@ function loadvalue()
 			document.getElementById("apply").className="new_apply_bt ui-corner-all";
 		}
 		if(bandwidth_type == "0") {
-			cf.sel_bandwidth[0].checked = true;
+			cf.qosSetting[0].checked = true;
 			document.getElementById("speedtest_radio").style.display = "";
 			document.getElementById("speedtest_radbutton").style.display = "";
 			document.getElementById("option1").style.display = "";
@@ -318,7 +336,7 @@ function loadvalue()
 			document.getElementById("define_radio1").style.display = "none";
 			document.getElementById("define_radio2").style.display = "none";
 		} else {
-			cf.sel_bandwidth[1].checked = true;
+			cf.qosSetting[1].checked = true;
 			document.getElementById("speedtest_radio").style.display = "none";
 			document.getElementById("speedtest_radbutton").style.display = "none";
 			document.getElementById("option1").style.display = "none";
@@ -345,7 +363,6 @@ function loadvalue()
 <input type="hidden" name="hid_detect_database">
 <input type="hidden" name="hid_improve_service">
 <input type="hidden" name="hid_update_agreement" value="<% cfg_get("update_agreement") %>">
-
 <TR>
 	<TD width=40% colspan=4>$spacebar
 	<b>$qos_message1</b></TD>
@@ -359,19 +376,19 @@ function loadvalue()
 </TR>
 <TR>
 	<TD width=40% colspan=4>$spacebar&nbsp;$spacebar
-	<input type="radio" name="sel_bandwidth" value="0" checked onClick="setSpeed(0)"><a tabindex=-1 href="javascript:loadhelp('_quality_service','ookla_detect')">$detect_bandwidth</a></TD>
+	<input type="radio" name="qosSetting" id="qos_speedtest" value="1" checked onClick="setSpeed(1)"><a tabindex=-1 href="javascript:loadhelp('_quality_service','ookla_detect')">$detect_bandwidth</a></TD>
 </TR>
 <TR id="speedtest_radio">
 	<TD width=6%>&nbsp;</TD>
 	<TD width=350px id="option1">
-		<TABLE width=350px border=0 cellpadding=0 cellspacing=2>
+		<TABLE width=315px border=0 cellpadding=0 cellspacing=2>
 		<TR id="check_speed_result">
 		<TD id="up_down_img">
 		<script>
 			if(uplink_detect == "" || downlink_detect == "")
-				document.write("<span id=downlink_speed>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mbps</span><span id=uplink_speed>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mbps</span>");
+				document.write("<div id='uplink_div'><span id='uplink_speed'>Mbps</span></div><div id='download_div'><span id='download_speed'>Mbps</span></div>");
 			else
-				document.write("<span id=downlink_speed>"+parseFloat(downlink_detect*8/1000000).toFixed(2)+" Mbps</span><span id=uplink_speed>"+parseFloat(uplink_detect*8/1000000).toFixed(2)+"Mpbs</span>");
+				document.write("<div id='uplink_div'><span id='uplink_speed'>"+parseFloat(uplink_detect*8/1000000).toFixed(2)+"Mpbs</span></div><div id='download_div'><span id='downlink_speed'>"+parseFloat(downlink_detect*8/1000000).toFixed(2)+" Mbps</span></div>");
 		</script></TD>
 		</TR>
 		</TABLE>
@@ -397,9 +414,9 @@ function loadvalue()
 		<TD align="left" >
 			<script>
 				if(master == "admin" )
-					document.write('<input class="new_speed_test ui-corner-all" id="speedtest_bt" type="submit" name="speedtest_bt" value="$speedtest" onClick="return check_ookla_speedtest(document.forms[0])" />');
+					document.write('<input class="new_speed_test ui-corner-all" id="speedtest" type="button" name="Speedtest" value="$speedtest" onClick="return check_ookla_speedtest(document.forms[0])" />');
 				else
-					document.write('<input class="new_greyspeed_test ui-corner-all" id="speedtest_bt" type="submit" name="speedtest_bt" value="$speedtest" disabled />');
+					document.write('<input class="new_greyspeed_test ui-corner-all" id="speedtest" type="button" name="Speedtest" value="$speedtest" disabled />');
 			</script>
 		</TD>
 		</TR>
@@ -410,19 +427,19 @@ function loadvalue()
 </TR>
 <TR>
 	<TD width=40% colspan=4>$spacebar&nbsp;$spacebar
-	<input type="radio" name="sel_bandwidth" value="1" onClick="setSpeed(1)"><a tabindex=-1 href="javascript:loadhelp('_quality_service','manual_define')">$define_bandwidth</a></TD>
+	<input type="radio" name="qosSetting" id="qos_define_bw" value="2" onClick="setSpeed(2)"><a tabindex=-1 href="javascript:loadhelp('_quality_service','manual_define')">$define_bandwidth</a></TD>
 </TR>
 <TR id="define_radio1" style="display:none;">
 	<TD width=8%>&nbsp;</TD>
 	<TD width=32%>
 	<b>$downlink_width</b></TD>
-	<TD colspan=2><input type="text" name="downlink_value" size="7" value="" onKeyPress="return getkey('colon_num',event)" onkeyup="clearNoNum(this)"></TD>
+	<TD colspan=2><input type="text" name="downlink_value" maxlength="7" size="7" value="" onKeyPress="return getkey('colon_num',event)" onkeyup="clearNoNum(this)" onmouseout="clearNoNum(this)"></TD>
 </TR>
 <TR id="define_radio2" style="display:none;">
 	<TD width=8%>&nbsp;</TD>
 	<TD width=32%>
 	<b>$uplink_width</b></TD>
-	<TD colspan=2><input type="text" name="uplink_value" size="7" value="" onKeyPress="return getkey('colon_num',event)" onkeyup="clearNoNum(this)"></TD>
+	<TD colspan=2><input type="text" name="uplink_value" maxlength="7" size="7" value="" onKeyPress="return getkey('colon_num',event)" onkeyup="clearNoNum(this)" onmouseout="clearNoNum(this)"></TD>
 </TR>
 <TR>
 	<TD height=12px colspan=4>&nbsp;</TD>
@@ -432,8 +449,8 @@ function loadvalue()
 </TR>
 <TR>
 	<TD width=40% colspan=4>$spacebar
-	<input type="checkbox" name="detect_database" value="0"/>&nbsp;&nbsp;<a tabindex=-1 href="javascript:loadhelp('_quality_service','auto_update')">$detect_database</a>
-	$spacebar<input class="new_greyspeed_test  ui-corner-all" name="manual_update" type="submit" id="manual_update" value="$manual_update" disabled onClick="return check_manual_update(document.forms[0])"  />
+	<input type="checkbox" name="AutoUpdateEnable" id="autoupdate_enable" value="0"/>&nbsp;&nbsp;<a tabindex=-1 href="javascript:loadhelp('_quality_service','auto_update')">$detect_database</a>
+	$spacebar<input class="new_greyspeed_test  ui-corner-all" name="update_now" type="button" id="updateBtn" value="$manual_update" disabled onClick="return check_manual_update(document.forms[0])"  />
 	</TD>
 </TR>
 <TR>
@@ -456,13 +473,13 @@ function loadvalue()
         <TD height=12px colspan=4>&nbsp;</TD>
 </TR>
 <TR id="analytic_link" class="qos_link">
-        <TD width=40% colspan=4>$spacebar<a class="linktype" href="#" onclick="return confirm_dialox();"><b>$analytic_link</b></a></TD>
+        <TD width=40% colspan=4>$spacebar<a class="linktype linkbold" href="#" onclick="return confirm_dialox();">$analytic_link</a></TD>
 </TR>
 <TR>
 	<TD height=12px colspan=4>&nbsp;</TD>
 </TR>
 <TR id="device_app_link" style="display:none;" class="qos_link">
-	<TD width=40% colspan=4>$spacebar<a class="linktype" href="#" onclick="goto_attached(); return false;"><b>$device_app_link</b></a></TD>
+	<TD width=40% colspan=4>$spacebar<a class="linktype linkbold" href="#" onclick="goto_attached(); return false;">$device_app_link</a></TD>
 </TR>
 </TABLE>
 </div>

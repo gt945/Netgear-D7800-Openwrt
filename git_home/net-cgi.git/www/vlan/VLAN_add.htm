@@ -17,7 +17,11 @@
 </TABLE>
 
 </div>
-<div id="main" class="main_top_button"> 
+<div id="main" class="main_top_button">
+
+<input type="hidden" name="hid_wired_port" value="0" />
+<input type="hidden" name="hid_wireless_port" value="0" />
+
 <% table_header() %>
 
 <script>
@@ -31,51 +35,49 @@ function loadvalue()
 {
 	var cf=document.forms[0];
 	if(con_endis_wl_radio=="1")
-		cf.vlan_bgn_wlan.disabled=false;
+		cf.iptv_ports_10.disabled=false;
 	else
-		cf.vlan_bgn_wlan.disabled=true;
+		cf.iptv_ports_10.disabled=true;
 	if(con_endis_wla_radio=="1")
-		cf.vlan_an_wlan.disabled=false;
+		cf.iptv_ports_11.disabled=false;
 	else
-		cf.vlan_an_wlan.disabled=true;
+		cf.iptv_ports_11.disabled=true;
 	if(get_endis_guestNet=="1")
-		cf.vlan_bgn_guest.disabled=false;
+		cf.iptv_ports_12.disabled=false;
 	else
-		cf.vlan_bgn_guest.disabled=true;
+		cf.iptv_ports_12.disabled=true;
 	if(get_endis_guestNet_an=="1")
-		cf.vlan_an_guest.disabled=false;
+		cf.iptv_ports_13.disabled=false;
 	else
-		cf.vlan_an_guest.disabled=true;
+		cf.iptv_ports_13.disabled=true;
 }
 </script>
-<input type="hidden" name="hid_wired_port" value="0" />
-<input type="hidden" name="hid_wireless_port" value="0" />
 
 <TR>
 	<TD nowrap><B>$sta_routes_name</B></TD>
-	<TD nowrap><input type="text" name="vlan_name" value="" size="20" onKeyPress="return getkey( 'ssid',event)"></TD>
+	<TD nowrap><input type="text" name="vlan_name" value="" size="20" maxlength="10" onKeyPress="return getkey( 'ssid',event)"></TD>
 </TR>
 <TR id="vlanid">
 	<TD nowrap><B>$vlan_id</B></TD>
-	<TD nowrap><input type="text" name="vlan_id" value="" size="20" onKeyPress="return getkey( 'num',event)">(1~4094)</TD>
+	<TD nowrap><input type="text" name="vlan_id" value="" size="20" maxlength="4" onKeyPress="return getkey( 'num',event)">(1~4094)</TD>
 </TR>
 <TR id="vlanpro">
 	<TD nowrap><B>$qos_priority</B></TD>
-	<TD nowrap><input type="text" name="vlan_priority" value="" size="20" onKeyPress="return getkey( 'num',event)">(0~7)</TD>
+	<TD nowrap><input type="text" name="vlan_priority" value="0" maxlength="1" size="20" onKeyPress="return getkey( 'num',event)">(0~7)</TD>
 </TR>
 </table>
 
 <table border="0" cellpadding="0" cellspacing="0">
 <tr>
-	<td align="center"><input type="checkbox" name="vlan_port1">Port1</td>
-	<td align="center"><input type="checkbox" name="vlan_port2">Port2</td>
-	<td align="center"><input type="checkbox" name="vlan_port3">Port3</td>
-	<td align="center"><input type="checkbox" name="vlan_port4">Port4</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_0" name="iptv_ports_0">Port1</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_1" name="iptv_ports_1">Port2</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_2" name="iptv_ports_2">Port3</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_3" name="iptv_ports_3">Port4</td>
 	<td>&nbsp;</td>
-	<td align="center"><input type="checkbox" name="vlan_bgn_wlan">WiFi-2.4G</td>
-	<td align="center"><input type="checkbox" name="vlan_an_wlan">WiFi-5G</td>
-	<td style="display:none" align="center"><input type="checkbox" name="vlan_bgn_guest">Guest-2.4G</td>
-	<td style="display:none" align="center"><input type="checkbox" name="vlan_an_guest">Guest_5G</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_10" name="iptv_ports_10">WiFi-2.4G</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_11" name="iptv_ports_11">WiFi-5G</td>
+	<td style="display:none" align="center"><input type="checkbox" id="iptv_ports_12" name="iptv_ports_12">Guest-2.4G</td>
+	<td style="display:none" align="center"><input type="checkbox" id="iptv_ports_13" name="iptv_ports_13">Guest_5G</td>
 </tr>
 </table>
 

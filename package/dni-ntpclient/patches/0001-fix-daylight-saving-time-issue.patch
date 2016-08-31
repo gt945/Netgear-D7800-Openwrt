@@ -1,0 +1,33 @@
+diff -Nur ntpclient.old//src/ntpclient.c ntpclient/src/ntpclient.c
+--- ntpclient.old//src/ntpclient.c	2016-05-17 03:48:03.010169087 -0400
++++ ntpclient/src/ntpclient.c	2016-05-17 03:59:12.330169008 -0400
+@@ -16,7 +16,7 @@
+ #include <net/if.h>
+ 
+ #define ENABLE_DEBUG
+-
++#define FIX_BUG_28601
+ extern char *optarg;
+ 
+ #ifdef linux
+@@ -393,7 +393,9 @@
+ 
+ 	/* check the daylight saving time*/
+ 	set_flag = 0;
++#ifndef FIX_BUG_28601
+ 	daylight_saving_setting();
++#endif
+ 
+ 	/* do corresponding actions in ntp_updated once updating the time */
+ 	system("ntp_updated");
+@@ -888,7 +890,10 @@
+ 			set_flag = 0;
+ 
+ 	system("[ -f /tmp/ntp_updated ] && rm -f /tmp/ntp_updated");
++#ifndef FIX_BUG_28601
+ 	daylight_saving_setting();
++#endif
++
+ #ifdef ENABLE_BOOT_RELAY
+ 	if (boot_relay == 0){
+ 		//detect whether the router is in the booting process

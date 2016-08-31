@@ -3,7 +3,10 @@
 TMP_UMOUNT_TABLE=/tmp/umounting_table_fgd456
 TMP_DEVICE_NAME=/tmp/mounting_divice_name
 TMP_DATA_XYZ=/tmp/proc_partition_dev
-DISK_FIND_TABLE=/tmp/find_disk_abcxzy
+#DISK_FIND_TABLE=/tmp/find_disk_abcxzy
+
+#include scan_disk
+. /sbin/scan_disk
 
 dev_inproc(){
 	rm -f $TMP_DATA_XYZ
@@ -41,21 +44,13 @@ print_log()
         if [ `length $1` != '4' ];then
                 return
         fi
-#some times the $DISK_FIND_TABLE is NULL, So we need to wait a moment.
-		d_num=0
-		sata_disk_name=`/bin/config get sata_diskname`
 
-        device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
-		while [ !$device_name ];
-		do
-			sleep 1
-			device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
-			let d_num=$d_num+1
-			if [ $d_num -eq 5 ];
-		   	then
-				return
-			fi
-		done
+	sata_disk_name=`/bin/config get sata_diskname`
+	
+	device_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{print $2}'`
+	if [ ! -n "$device_name" ];then
+		return
+	fi
 
 	volume_name=`cat $DISK_FIND_TABLE | grep $1 | awk -F* '{{{i=NF-3; a="*";while(i!=0) {printf $(NF-i); if(i!=1) printf a; i--}}}}'`
 
@@ -174,7 +169,7 @@ umount_part()
 		if dev_inproc "$umount_dir"
 		then
 			exit 1
-		else
+		else 
 			umount "$umount_dir" -f
 		fi
 	fi
@@ -271,12 +266,16 @@ service_stop()
 service_stop
 
 if [ $# -eq 0 ]; then
+	echo "Stop greendownload..." > /dev/console
+	green_download.sh stop
 	ftp_down_upload
 	umount_all "/tmp/ftpadmin/shares"
 #	umount_all "/tmp/ftpguest/shares"
 	umount_all "/tmp/mnt"
 #	logger "[USB device detached] ALL USB storage device is removed from the router"
 else
+	echo "Detect if need to stop greendownload..." > /dev/console
+	green_download.sh stop $1
 	ftp_down_upload
 	umount_part_ftp "$1" "ftpadmin"
 #	umount_part_ftp "$1" "ftpguest"
@@ -289,7 +288,8 @@ fi
 echo `date` stop smbd at hotplug2.umount >> /tmp/debug_smb
 /usr/sbin/update_smb
 /usr/sbin/update_afp
-/sbin/cmdftp start
+cmd_ftp start
+scan_disk_entries
 /sbin/cmddlna start
 # in order to run this after run update_smb, moved it here
 test -f $RESULT || echo 0 > $RESULT

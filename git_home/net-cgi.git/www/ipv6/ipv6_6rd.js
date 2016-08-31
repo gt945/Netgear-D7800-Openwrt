@@ -1,11 +1,6 @@
 
 function check_ipv6_6rd(cf)
 {
-	if(enable_vpn == "1")
-	{
-		alert("$no_enable_ipv6");
-		return false;
-	}
 	var i;
 	
 	cf.ipv6_hidden_6rd_pre.value = "";

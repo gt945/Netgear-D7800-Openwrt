@@ -305,7 +305,7 @@ function ap_notshow()
 <tr><td colspan=3><h1 style="FONT-SIZE: 16px"></h1></td></tr>
 <TR><TD nowrap colspan=3>&nbsp; $lan_mark_name: <% cfg_get("Device_name") %> &nbsp;&nbsp;&nbsp; <input class="new_edit_bt ui-corner-all" type="button" name="Apply" value="$edit_mark" onClick="edit_devicename('<% cfg_get("Device_name") %>')"></TD><TD></td></TR>
 <TR><TD height="10px"></TD></TR>
-<tr><td colspan=3><input class="new_apply_bt ui-corner-all" type="button" name="learn_router" value="$learn_more" onclick="window.open('rae_learn.htm','newwindow','resizable=no,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no,alwaysRaised=yes,z-look=yes,width=800,height=600,left=200,top=100').focus();" ></td></tr>
+<tr><td colspan=3><input class="new_apply_bt2 ui-corner-all" type="button" name="learn_router" value="$learn_more" onclick="window.open('rae_learn.htm','newwindow','resizable=no,scrollbars=yes,toolbar=no,menubar=no,status=no,location=no,alwaysRaised=yes,z-look=yes,width=800,height=600,left=200,top=100').focus();" ></td></tr>
 </table>
 
 <div class="ipbox pop_box" id="iptab" style="display:none">
@@ -658,7 +658,7 @@ else if (wla_sectype == 5)
 </tr>
 <TR><TD height="15px"></TD></TR>
 <TR>
-	<td nowrap colspan="2">$ap_tochange: <input class="wireless_bt ui-corner-all" type="button" name="Apply" value="$wls_setup" onClick="gotto_link('setup', 'wireless');"></td>
+	<td nowrap colspan="2">$ap_tochange: <input class="wireless_bt2 ui-corner-all" type="button" name="Apply" value="$wls_setup" onClick="gotto_link('setup', 'wireless');"></td>
 </TR>
 <tr><td  height="10px" nowrap colspan="2"></td></tr>
 <tr  style="color: black"><td nowrap colspan="2"><b><a tabindex=-1 href="javascript:loadhelp('_rae_extender','ethport')">$rae_ext_ports</a></b></td></tr>

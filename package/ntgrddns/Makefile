@@ -8,31 +8,36 @@ PKG_NAME:=ntgrddns
 PKG_VERSION:=1
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH=3e859af53f590d74665572881ef6d97312877921
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/ntgrddns
+define Package/$(PKG_NAME)
   SECTION:=utils
   CATEGORY:=Network
-  DEPENDS:=@TARGET_ipq806x
   TITLE:=Tiny ddns util for Netgear Home Router
+  MENU:=1
 endef
 
-define Package/ntgrddns/description
+define Package/$(PKG_NAME)/description
 	This package contains a tiny ddns util for Netgear Home Router.
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/ntgrddns.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
 
 define Build/Compile
 endef
 
-define Package/ntgrddns/install
-	install -d -m0755 $(1)/usr/sbin
-	install -m0755 $(PKG_BUILD_DIR)/ntgrddns $(1)/usr/sbin/
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
+
+define Package/$(PKG_NAME)/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ntgrddns $(1)/usr/sbin/
+	$(INSTALL_DIR) $(1)/$(CONFIG_DGC_DNI_CMD_DIR)
+	$(INSTALL_BIN) ./files/cmd_ddns  $(1)/$(CONFIG_DGC_DNI_CMD_DIR)/
+	$(INSTALL_BIN) ./files/ddns.init  $(1)/etc/init.d/ddns
 endef
 
-$(eval $(call BuildPackage,ntgrddns))
+$(eval $(call BuildPackage,$(PKG_NAME)))

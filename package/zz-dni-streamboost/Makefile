@@ -12,7 +12,7 @@ PKG_BUILD_DIR := $(BUILD_DIR)/$(PKG_NAME)
 include $(INCLUDE_DIR)/package.mk
 
 define Package/zz-dni-streamboost
-  CATEGORY:=Bigfoot 
+  CATEGORY:=Bigfoot
   TITLE:=override QCA streamboost configure files instead of DNI's configure files
 endef
 

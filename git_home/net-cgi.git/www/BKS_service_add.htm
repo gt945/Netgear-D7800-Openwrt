@@ -7,9 +7,9 @@
 <script>
 var master="<% cfg_get("http_loginname") %>";
 if( master == "admin" )
-	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" name="Cancel" type="button" value="$cancel_mark" onClick="location.href=\'BKS_service.htm\';">&nbsp;&nbsp;<input class="apply_bt" name="apply" type="submit" value="$add_mark" onClick="return check_block_services_add(document.forms[0],\'add\')"></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" name="cancel" id="cancel" type="button" value="$cancel_mark" onClick="location.href=\'BKS_service.htm\';">&nbsp;&nbsp;<input class="apply_bt" name="add" type="button" id="add" value="$add_mark" onClick="return check_block_services_add(document.forms[0],\'add\')"></TD>');
 else
-	document.write('<TD nowrap colspan=2 align=center><input class="cancel1_bt" name="Cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="apply" type="submit" value="$add_mark" disabled></TD>');
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel1_bt" name="cancel" id="cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="add" type="button" id="add" value="$add_mark" disabled></TD>');
 </script>        
 </TR>
 </TABLE>
@@ -33,7 +33,7 @@ else
 <TR>
 	<TD nowrap>$block_ser_service_type</TD>
 	<TD nowrap>
-	<select name="service_type" size="1" onchange="chg_by_service(0,document.forms[0]);">
+	<select name="service_type" id="service_type" size="1" onchange="chg_by_service(0,document.forms[0]);">
 		<option value="User_Defined">$block_ser_setup_userdefined</option>
 		<option value="Any">$any</option>
 		<option value="Any(TCP)">$block_ser_setup_anyTCP</option>
@@ -85,7 +85,7 @@ else
 <TR>
 	<TD nowrap>$block_ser_setup_pro</TD>	
 	<TD nowrap>
-	<select name="protocol" size="1">
+	<select name="protocol" id="procotol" size="1">
 		<option value="TCP">$block_ser_setup_tcp</option>
 		<option value="UDP">$block_ser_setup_udp</option>
 		<option value="TCP/UDP">$block_ser_setup_tcp_udp</option>
@@ -95,19 +95,19 @@ else
 <TR>
 	<TD nowrap>$block_ser_start_port</TD>
 	<TD nowrap>
-	<input type="text" name="portstart" size="7" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
+	<input type="text" name="portstart" id="portstart" size="7" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$block_ser_end_port</TD>
 	<TD nowrap>
-	<input type="text" name="portend" size="7" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
+	<input type="text" name="portend" id="portend" size="7" maxlength="5" onKeyPress="return getkey('num', event)">(1~65535)
 	</TD>
 </TR>
 <TR>
 	<TD nowrap>$block_ser_setup_type</TD>
 	<TD nowrap>
-	<input type="text" name="userdefined" size="20" maxlength="30">
+	<input type="text" name="userdefined" id="userdefined" size="20" maxlength="30">
 	</TD>
 </TR>
 $bluebar
@@ -118,38 +118,38 @@ $bluebar
 </TR>
 <TR>
 	<TD nowrap>
-	<input type="radio" name="iptype" value="single" onClick="change_radio(0,document.forms[0])">$block_ser_setup_thisip:
+	<input type="radio" name="iptype" id="filter_ip_single" value="single" onClick="change_radio(0,document.forms[0])">$block_ser_setup_thisip:
 	</TD>
 	<TD nowrap>
-	<input type="text" name="f_pcip1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
-	<input type="text" name="f_pcip2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_pcip3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_pcip4"  size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+	<input type="text" name="f_pcip1" id="single_ipaddress1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+	<input type="text" name="f_pcip2" id="single_ipaddress2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_pcip3" id="single_ipaddress3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_pcip4" id="single_ipaddress4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap><BR>
-	<input type="radio" name="iptype" value="range_addr" onClick="change_radio(1,document.forms[0])">$block_ser_setup_iprang:
+	<input type="radio" name="iptype" id="filter_ip_range" value="range_addr" onClick="change_radio(1,document.forms[0])">$block_ser_setup_iprang:
 	</TD>
 	<TD nowrap><BR>
-	<input type="text" name="f_startip1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
-	<input type="text" name="f_startip2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_startip3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_startip4"  size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+	<input type="text" name="f_startip1" id="range_start_ipaddress1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+	<input type="text" name="f_startip2" id="range_start_ipaddress2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_startip3" id="range_start_ipaddress3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_startip4" id="range_start_ipaddress4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap align=right>$block_ser_setup_to&nbsp;</TD>
 	<TD nowrap>
-	<input type="text" name="f_endip1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
-	<input type="text" name="f_endip2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_endip3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
-	<input type="text" name="f_endip4"  size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
+	<input type="text" name="f_endip1" id="range_end_ipaddress1" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)" >.
+	<input type="text" name="f_endip2" id="range_end_ipaddress2" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_endip3" id="range_end_ipaddress3" disabled size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">.
+	<input type="text" name="f_endip4" id="range_end_ipaddress4" size="3" maxlength="3" onFocus="this.select();" onKeyPress="return getkey('num',event)">
 	</TD>
 </TR>
 <TR>
 	<TD nowrap colspan=2>
-	<input type="radio" checked name="iptype" value="all" onClick="change_radio(2,document.forms[0])">$block_ser_setup_allip
+	<input type="radio" checked name="iptype" id="filter_ip_all" value="all" onClick="change_radio(2,document.forms[0])">$block_ser_setup_allip
 	</TD>
 </TR>
 $bluebar

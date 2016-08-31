@@ -33,7 +33,7 @@ extmode_wlg_fixup()
 {
 	oc echo "unable to estabilish extmode 2.4G wireless link !"
 
-	local extchannel=$(/usr/sbin/exist_ap_info.sh | awk -v ssid=$(config get wlg_ext_ssid) '
+	local extchannel=$(extkit 2g scan | awk -v ssid=$($CONFIG get wlg_ext_ssid) '
 	BEGIN {var = "\x22" ssid "\x22"}
 	{ if ($1 == var) { print $2; exit } }
 	')
@@ -45,4 +45,8 @@ extmode_wlg_fixup()
 	}
 }
 
+extmode_wla_linked()
+{
+	[ "$(awk 'NR==3' /proc/sys/net/ath0/status)" = "RUN" ]
+}
 fi #-------------------- this must be the last line -----------------------------

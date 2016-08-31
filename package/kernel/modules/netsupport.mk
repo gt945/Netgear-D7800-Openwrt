@@ -545,16 +545,16 @@ endef
 $(eval $(call KernelPackage,pppoa))
 
 
-define KernelPackage/pptp
-  SUBMENU:=$(NETWORK_SUPPORT_MENU)
-  TITLE:=PPtP support
-  DEPENDS:=kmod-ppp +kmod-gre +kmod-pppox
-  KCONFIG:=CONFIG_PPTP
-  FILES:=$(LINUX_DIR)/drivers/net/ppp/pptp.ko
-  AUTOLOAD:=$(call AutoLoad,41,pptp)
-endef
-
-$(eval $(call KernelPackage,pptp))
+#define KernelPackage/pptp
+#  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+#  TITLE:=PPtP support
+#  DEPENDS:=kmod-ppp +kmod-gre +kmod-pppox
+#  KCONFIG:=CONFIG_PPTP
+#  FILES:=$(LINUX_DIR)/drivers/net/ppp/pptp.ko
+#  AUTOLOAD:=$(call AutoLoad,41,pptp)
+#endef
+#
+#$(eval $(call KernelPackage,pptp))
 
 
 define KernelPackage/pppol2tp

@@ -29,10 +29,29 @@ function initPage()
 
 function goto_url(tag)
 {
+	var pre_url = document.referrer;
 	if(tag == 0)
-		this.location.href = "BRS_ap_detect_01_02.html";
-	else	
-		this.location.href = "BRS_ap_detect_01_ap_02.html";
+	{
+		if(pre_url.indexOf("BRS_ap_detect_01_02.html") != -1)	
+			this.location.href = "BRS_ap_detect_01_02.html";
+		else if(pre_url.indexOf("BRS_ap_detect_01_03.html") != -1)
+			this.location.href = "BRS_ap_detect_01_03.html"
+		else
+		{
+			if(pre_url.indexOf("BRS_ap_detect_01_ap_02.html?id=0") != -1)
+				this.location.href = "BRS_ap_detect_01_02.html";
+			else
+				this.location.href = "BRS_ap_detect_01_03.html"
+		}
+
+	}
+	else
+	{	
+		if(pre_url.indexOf("BRS_ap_detect_01_02.html") != -1)
+			this.location.href = "BRS_ap_detect_01_ap_02.html?id=0";
+		else
+			this.location.href = "BRS_ap_detect_01_ap_02.html?id=1";
+	}
 }
 
 addLoadEvent(initPage);

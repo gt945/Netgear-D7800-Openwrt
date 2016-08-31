@@ -1,4 +1,4 @@
-#
+
 # For a description of the syntax of this configuration file,
 # see scripts/kbuild/config-language.txt.
 #
@@ -125,7 +125,7 @@ config DNIBUSYBOX_CONFIG_IPKG
 	bool "ipkg"
 	default y
 	select DNIBUSYBOX_CONFIG_MD5SUM
-	select DNIBUSYBOX_CONFIG_WGET
+	#select DNIBUSYBOX_CONFIG_WGET
 	help
 	  ipkg is the itsy package management system.
 

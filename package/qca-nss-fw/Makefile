@@ -35,8 +35,8 @@ define NssFirmware
 
   define Package/qca-nss-fw-$(1)/install
 	$(INSTALL_DIR) $$(1)/lib/firmware/qca
-	$(INSTALL_DATA) ./files/qca-nss0.bin $$(1)/lib/firmware/qca-nss0-$(1).bin
-	$(INSTALL_DATA) ./files/qca-nss1.bin $$(1)/lib/firmware/qca-nss1-$(1).bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(2)0.bin $$(1)/lib/firmware/qca-nss0-$(1).bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(2)1.bin $$(1)/lib/firmware/qca-nss1-$(1).bin
   endef
   $$(eval $$(call BuildPackage,qca-nss-fw-$(1)))
 endef

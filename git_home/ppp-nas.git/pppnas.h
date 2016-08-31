@@ -37,8 +37,6 @@ struct net_rule
 	__u32 src;	
 };
 
-extern char * nvram_get(const char * name);
-
 extern void if_fetch(char* ifname, struct net_iface * ife);
 
 extern void iproute_add(struct net_route * rt_info);

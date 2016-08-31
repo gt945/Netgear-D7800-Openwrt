@@ -26,7 +26,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/udev
   SECTION:=utils
   CATEGORY:=Utilities
-  DEPENDS:=@LINUX_2_6_32
+  DEPENDS:=
   TITLE:=Dynamic device management subsystem
   URL:=http://www.kernel.org/pub/linux/utils/kernel/hotplug/udev.html
 endef

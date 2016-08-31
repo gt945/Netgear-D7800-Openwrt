@@ -781,7 +781,7 @@ skip_tm:
 #ifdef CONFIG_PSSTHRGH
                 if(ipv6_pssthrgh_enable){
 			// packet from WAN side && it's ipv6 protocol
-                        if (ntohs(skb->protocol) == 0x86dd &&(!strcmp(skb->dev->name, "eth0"))) {
+                        if (ntohs(skb->protocol) == 0x86dd &&(!strcmp(skb->dev->name, "ethwan"))) {
                                 struct net_device_stats *pstats;
                                 struct net_device *passdev;
 

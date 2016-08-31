@@ -27,6 +27,11 @@ function check_reservation_add(cf,flag)
 		alert("$invalid_ip");
 		return false;
 	}
+	if(rsvipaddr == lanip)
+	{
+		alert("$invalid_ip");
+		return false;
+	}
 	if(cf.rsv_mac.value.length==12 && cf.rsv_mac.value.indexOf(":")==-1)
 	{
 		var mac=cf.rsv_mac.value; 
@@ -107,6 +112,9 @@ function check_reservation_add(cf,flag)
 		}
 	}
 	cf.reservation_ipaddr.value=address_parseInt(rsvipaddr);
+
+	cf.submit();
+
 	return true;
 }
 function check_reservation_del(cf)
@@ -147,6 +155,7 @@ function check_reservation_del(cf)
 	{
 		cf.select_del.value=select_num;
 		cf.submit_flag.value="reservation_del";
+		cf.submit();//add
 		return true;
 	}	
 }
@@ -189,6 +198,7 @@ function check_reservation_editnum(cf)
 		cf.select_edit.value=select_num;
 		cf.submit_flag.value="reservation_editnum";
 		cf.action="/apply.cgi?/reservation_edit.htm timestamp="+ts;
+		cf.submit();//add
 		return true;
 	}	
 }

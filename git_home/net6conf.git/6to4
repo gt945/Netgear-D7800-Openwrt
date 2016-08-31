@@ -37,7 +37,7 @@ start_6to4() {
 	# decide start up ipv4 wan.
 	local proto=$($CONFIG get wan_proto)
 	# we should check the mode of l2tp connection
-	if [ "$proto" = "pptp" -o "$proto" = "pppoe" -o "$proto" = "l2tp" -o "$proto" = "pppoa" ]; then
+	if [ "$proto" = "pptp" -o "$proto" = "pppoe" -o "$proto" = "l2tp" ]; then
 		local wan_ppp_mode=$($CONFIG get wan_pppoe_demand)
 		local wan_end_dod=$($CONFIG get wan_endis_dod)
 		if [ "x$wan_ppp_mode" != "x0" -o "x$wan_end_dod" != "x0" ]; then
@@ -93,17 +93,15 @@ start() {
 
 	# if ipv4 wan type is pppoe(pptp) and the mode is not always on,then change the mode.
 	local proto=$($CONFIG get wan_proto)
-	if [ "$proto" = "pptp" -o "$proto" = "pppoe" -o "$proto" = "l2tp" -o "$proto" = "pppoa" ]; then
+	if [ "$proto" = "pptp" -o "$proto" = "pppoe" -o "$proto" = "l2tp" ]; then
 		local wan_ppp_mode=$($CONFIG get wan_pppoe_demand)
 		local wan_pptp_mode=$($CONFIG get wan_pptp_demand)
 		local wan_l2tp_mode=$($CONFIG get wan_l2tp_demand)
-		local wan_pppoa_mode=$($CONFIG get wan_pppoa_demand)
 		local wan_end_dod=$($CONFIG get wan_endis_dod)
-		if [ "x$wan_ppp_mode" != "x0" -o "x$wan_pptp_mode" != "x0" -o "x$wan_l2tp_mode" != "x0" -o "x$wan_pppoa_mode" != "x0" ]; then
+		if [ "x$wan_ppp_mode" != "x0" -o "x$wan_pptp_mode" != "x0" -o "x$wan_l2tp_mode" != "x0" ]; then
 			$CONFIG set wan_pppoe_demand=0
 			$CONFIG set wan_pptp_demand=0
 			$CONFIG set wan_l2tp_demand=0
-			$CONFIG set wan_pppoa_demand=0
 			$CONFIG set wan_endis_dod=0
 			/etc/init.d/net-wan restart
 			return 0;

@@ -117,7 +117,13 @@ function checkwan()
                 else
                         cf.igmp_value.value = 1;
         }
-
+	if(have_bt_igmp == 1){
+		if ( cf.bt_igmp.checked == true )	
+			cf.bt_igmp_value.value = 1;
+		else
+			cf.bt_igmp_value.value = 0;
+	}
+	cf.submit();//add
 	return true;
 }
 
@@ -140,3 +146,14 @@ function checkdmzip()
 	}
 }
 
+function change_bt_igmp_status()
+{
+	var cf = document.forms[0];
+	if(cf.disable_igmp.checked == true)
+	{
+		cf.bt_igmp.disabled = true;
+		cf.bt_igmp.checked = false;
+	}
+	if(cf.disable_igmp.checked == false)
+		cf.bt_igmp.disabled = false;
+}

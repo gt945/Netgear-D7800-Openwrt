@@ -9,7 +9,15 @@ detect_wan_port_status()
 		echo -n 0 > /tmp/port_status
 	else
 		echo -n 1 > /tmp/port_status
-		[ "x$(config get dsl_wan_preference)" = "x2" ] && ledcontrol -n wan -c amber -s on
+		if [ "x$DSL_SUPPORT" = "x1" ]; then
+			# DSL_SUPPORT=1 means support DSL.
+			# dsl_wan_preference=1 means in DSL WAN mode.
+			# dsl_wan_preference=2 means in Ethernet WAN mode.
+			# We just need control Ethernet WAN mode LED here.
+			[ "x$(config get dsl_wan_preference)" = "x2" ] && ledcontrol -n wan -c amber -s on
+		else
+			ledcontrol -n wan -c amber -s on
+		fi
 	fi
 }
 
@@ -17,5 +25,6 @@ boot()
 {
 	et_init
 	detect_wan_port_status
+	/etc/init.d/qca-nss-ecm start
 }
 

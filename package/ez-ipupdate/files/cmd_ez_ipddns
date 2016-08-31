@@ -1,0 +1,98 @@
+#!/bin/sh
+
+CONFIG=$(which config)
+bin=ez-ipupdate
+
+pid="/var/run/ez-ipupd.pid"
+DDNS_STATUS="/tmp/ez-ipupd.status"
+
+start()
+{
+	local service_type="dyndns"
+	case "$($CONFIG get sysDNSProviderlist)" in
+		"www/var/www.DynDNS.org")
+			service_type="dyndns" ;;
+		"www/var/www.3322.org")
+			service_type="qdns" ;;
+	esac
+
+	local wan_ifname=""
+	case "$($CONFIG get wan_proto)" in
+		"3g"|"pppoe"|"l2tp"|"pptp"|"pppoa"|"ipoa")
+			wan_ifname="ppp0" ;;
+		"wimax")
+			wan_ifname=$($CONFIG get wan_ifname_wimax) ;;
+		*)
+			wan_ifname=$($CONFIG get wan_ifname) ;;
+	esac
+
+	local ddns_wildcard=""
+	if [ "x$($CONFIG get endis_wildcards)" = "x1" ]; then
+		ddns_wildcard="-w"
+	fi
+
+	local DDNS_SCRIPT="/etc/ez-ipupdate.script"
+	local DDNS_CACHE="/tmp/ez-ipupd.cache"
+	local DDNS_CONF="/tmp/ez-ipupd.conf"
+	local DDNS_TIME="/tmp/ez-ipupd.time"
+
+	local ipaddr=$($CONFIG get update_ddns_ipaddr)
+	local time=$($CONFIG get update_ddns_time)
+	local format_time=$($CONFIG get update_ddns_format_time)
+	echo "$time,$ipaddr" > $DDNS_CACHE
+	### {{{ XXX I do not understand this section
+	# Produce /tmp/ez-ipupd.time when reboot. then when we check
+	# status on GUI,it will display.
+	if [ ${time:-0} -gt 0 -a ! -f $DDNS_TIME ] ;then
+		echo $format_time > $DDNS_TIME
+	fi
+	if [ -f $DDNS_TIME ] ;then
+		echo "1" > $DDNS_STATUS
+		echo `date` > $DDNS_TIME
+	fi
+	### }}}
+
+	printf_ddns_conf > $DDNS_CONF
+
+	$bin	-S $service_type \
+		-u "$($CONFIG get sysDNSUser)":"$($CONFIG get sysDNSPassword)" \
+		-h $($CONFIG get sysDNSHost) \
+		-i $wan_ifname \
+		$ddns_wildcard \
+		-M 86400 \
+		-p 30 \
+		-P 10 \
+		-r 7 \
+		-F $pid \
+		-d \
+		-e $DDNS_SCRIPT \
+		-b $DDNS_CACHE \
+		-c $DDNS_CONF
+}
+
+printf_ddns_conf() {
+	cat <<- EOF
+	user-agent="NETGEAR - $(cat /module_name) - $(cat /firmware_version)"
+	EOF
+}
+
+stop()
+{
+	killall -9 $bin
+	rm -f $pid
+
+	printf "0" > $DDNS_STATUS
+}
+
+
+case "$1" in
+	start)
+		start ;;
+	stop)
+		stop ;;
+	restart|reload)
+		stop; start ;;
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+		exit 1
+esac

@@ -13,8 +13,6 @@ var dsl_port_status = "<% cat_file("/tmp/dsl_port_status") %>";
 var ts="<% cfg_get("hijack_tointenet") %>";
 <% check_adsl_vdsl() %>
 var dsl_wan_pre = "<% cfg_get("dsl_wan_preference") %>";
-var have_set_preference = "<% cfg_get("have_dsl_preference") %>";
-<% cfg_set("have_dsl_preference", "0") %>
 function loadvalue()
 {
 	var head_tag = document.getElementsByTagName("h1");
@@ -34,33 +32,24 @@ function formSubmit()
 {
 	if( "<% cfg_get("wizard_debug") %>" == "1")
 		return;
-	if(have_set_preference == "0")
+	if(dsl_port_status == "1")
 	{
-		if(dsl_port_status == "1")
-		{
-			if(dsl_mode == "adsl")
-			{	// none all
-				this.location.href = "BRS_log05_dsl_conn_ATM.html";
-			}
-			else
-			{	
-				this.location.href = "BRS_log05_dsl_conn_PTM.html";
-			}	
-		}
-		else if(port_status == "0" && dsl_port_status != "1")
-		{       // none all
-			this.location.href = "BRS_log06_etherCable_no.html";
+		if(dsl_mode == "adsl")
+		{	// none all
+			this.location.href = "BRS_log05_dsl_conn_ATM.html";
 		}
 		else
-		{ //ether link ->vdsl
-			location.href="BRS_log06_etherCable_yes.html";
-		}
-	}else if(have_set_preference == "1")//eth dsl_wan_preference have set 2
-	{
-		if(dsl_wan_pre == "2")	
-			this.location.href="BRS_log06_etherCable_yes.html";
-		else
-			this.location.href = "BRS_log06_etherCable_no.html";
+		{	
+			this.location.href = "BRS_log05_dsl_conn_PTM.html";
+		}	
+	}
+	else if(port_status == "0" && dsl_port_status != "1")
+	{       // none all
+		this.location.href = "BRS_log06_etherCable_no.html";
+	}
+	else
+	{ //ether link ->vdsl
+		location.href="BRS_log06_etherCable_yes.html";
 	}
 }
 </script>

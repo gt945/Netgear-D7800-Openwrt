@@ -13,10 +13,12 @@
 </head>
 
 <body>
+<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+<% save_timestamp("wizard_detwan", "hijack_toBasic")%>
 <script>
 var hijack_process="<% cfg_get("hijack_process") %>";
+var ts="<% cfg_get("hijack_toBasic") %>";
 </script>
-<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
 
 <div id="no_wan" class="wizard_content_div">
 

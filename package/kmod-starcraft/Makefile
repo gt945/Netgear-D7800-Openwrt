@@ -8,12 +8,11 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_NAME:=kmod-starcraft
+PKG_NAME:=kmod-dnistarcraft-alg
 PKG_VERSION:=
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)
-PKG_GIT_TREEISH:=alg-starcraft-dni3
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -24,11 +23,14 @@ define KernelPackage/dnistarcraft-alg
   FILES:= \
 	$(PKG_BUILD_DIR)/nf_nat_STARCRAFT.$(LINUX_KMOD_SUFFIX)
   AUTOLOAD:=$(call AutoLoad,45,nf_nat_STARCRAFT)
+  MENU:=1
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/kmod-starcraft.git/* $(PKG_BUILD_DIR)/
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
 endef
+
+$(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Build/Compile
 endef

@@ -10,25 +10,13 @@ function initPage()
 	var paragraph_text = document.createTextNode(bh_select_tips);
 	paragraph[0].appendChild(paragraph_text);
 	
-	/*var choices_div = document.getElementById("choices_div");
-	var choices = choices_div.getElementsByTagName("input");
-	
-	var choices_text = document.createTextNode(bh_router_mode);
-	insertAfter(choices_text, choices[0]);
-	
-	choices_text = document.createTextNode(bh_ap_mode);
-	insertAfter(choices_text, choices[1]);
-     */
-	var btns_container_div = document.getElementById("btnsContainer_div");
-	btns_container_div.onclick = function() 
+	var btn = document.getElementById("next");
+	btn.value = bh_next_mark;
+	btn.onclick = function()
 	{
 		return genieHelpChecking();
 	}
 	
-	var btn = document.getElementById("btn_div");	
-	var btn_text = document.createTextNode(bh_next_mark);
-	btn.appendChild(btn_text);
-
 	//show firmware version
         showFirmVersion("none");
 }
@@ -52,7 +40,7 @@ function genieHelpChecking()
 	}
 	else
 	{
-		alert("If you want to choose a mode yourself, you must select the Router Mode or Access Point Mode radio button.");
+		alert(bh_select_router_or_ap);
 		return false;
 	}
 

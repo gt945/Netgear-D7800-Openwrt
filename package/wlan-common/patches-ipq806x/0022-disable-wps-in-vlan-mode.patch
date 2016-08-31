@@ -1,0 +1,20 @@
+--- wlan-common/sbin/update-wifi.orig	2016-05-16 03:52:50.510179363 -0400
++++ wlan-common/sbin/update-wifi	2016-05-16 03:58:20.890179324 -0400
+@@ -165,10 +165,17 @@
+ generate_wps()
+ {
+     eval wps_onoff=\$`echo $1`_wps_onoff
++    eval local bridge=\$`echo $1`_bridge
+ 
+     if [ "$wps_onoff" = "off" ]; then
+         return;
+     fi
++
++	# if this interface in a VLAN, not br0
++	# We disable its WPS function, since this interface likely has no IP.
++	if [ "x$bridge" != "x$lan_ifname" ]; then
++		return;
++	fi
+     
+     if [ "$wsc_lock_down" = "1" ]; then
+         wl_wps_ap_setup_locked=1

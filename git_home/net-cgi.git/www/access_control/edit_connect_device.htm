@@ -30,10 +30,10 @@ function loadvalue()
         var str = eval ( 'access_control_device' + select_editnum);
 	var str_name=eval('access_control_device_name'+select_editnum);
         var each_info=str.split('*');
-        cf.acc_name.value=str_name.replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
-        cf.acc_mac.value=each_info[2];
+        cf.dev_name.value=str_name.replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+        cf.mac_addr.value=each_info[2];
 	cf.allow_or_block.value=each_info[0];
-	cf.hidden_edit_mac.value=cf.acc_mac.value;
+	cf.hidden_edit_mac.value=cf.mac_addr.value;
 }
 
 </script>
@@ -52,12 +52,12 @@ function loadvalue()
 <TR>
         <TD nowrap>$info_mark_mac</TD>
         <TD nowrap>
-                <input type="text" value="" name="acc_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)" disabled>
+                <input type="text" value="" name="mac_addr" maxlength="17" size="20" onKeyPress="return getkey('mac',event)" disabled>
         </TD>
 </TR>
 <TR>
         <TD nowrap>$lan_mark_name</TD>
-        <TD nowrap><input type="text" name="acc_name" maxLength="20" size="16" onKeyPress="return getkey('ssid', event)">
+        <TD nowrap><input type="text" name="dev_name" maxLength="20" size="16">
         </TD>
 </TR>
 

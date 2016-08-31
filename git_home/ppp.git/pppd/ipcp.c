@@ -1766,7 +1766,10 @@ ipcp_up(f)
 	strcat(dns, " ");
 	strcat(dns, ip_ntoa(go->dnsaddr[1]));
     }
-    sprintf(cmd, "%s %s 255.255.255.255 %s", IP_CONFLICT_CMD, ip_ntoa(go->ouraddr), dns);
+	if( ip_cflt_cmd)
+		sprintf(cmd, "%s %s 255.255.255.255 %s", ip_cflt_cmd, ip_ntoa(go->ouraddr), dns);
+	else
+		sprintf(cmd, "%s %s 255.255.255.255 %s", IP_CONFLICT_CMD, ip_ntoa(go->ouraddr), dns);
     run_command(cmd);
 
     if (access("/sbin/wan-ipup", X_OK) == 0) {
@@ -2131,12 +2134,10 @@ create_resolv(peerdns1, peerdns2)
 
 	if (peerdns2)
 	    fprintf(f, resolv_nameserver, ip_ntoa(peerdns2));
-
 	fclose(f);
-	
         return;
     }
-    
+
     f = fopen(_PATH_RESOLV, "w");
     if (f == NULL) {
 	error("Failed to create %s: %m", _PATH_RESOLV);
@@ -2185,7 +2186,7 @@ write_resolv(peerdns1, peerdns2)
 	/* not exist ,touch it*/
         oldf = fopen(_PATH_RESOLV, "w");
     } else {
-    	while(fgets(buffer, sizeof(buffer), oldf) != NULL) {
+		while(fgets(buffer, sizeof(buffer), oldf) != NULL) {
 		/* check if it's same with orignal */
 		if (peerdns1 && !strcmp(buffer,dnsname1)) {
 			same1 = 1;

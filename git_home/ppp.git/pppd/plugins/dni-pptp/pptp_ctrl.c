@@ -16,6 +16,9 @@
 /* The max length of PPTP control packet, 256 seems to be enough. */
 #define MAX_PKT_SIZE		256
 
+char *pptp_hostname = NULL;
+char *pptp_vendor = NULL;
+
 typedef int (*pptp_call_cb)(struct pptp_conn_mngr *, char *, int);
 
 static void send_ctrl_conn_rqst(struct pptp_conn_mngr * conn)
@@ -35,8 +38,10 @@ static void send_ctrl_conn_rqst(struct pptp_conn_mngr * conn)
 	req.max_channels	= hton16(PPTP_MAX_CHANNELS);
 	req.firmware_rev	= hton16(PPTP_FIRMWARE_VERSION);
 
-	strcpy(req.hostname, PPTP_HOSTNAME);
-	strcpy(req.vendor, PPTP_VENDOR);
+	if( pptp_hostname)
+		strcpy(req.hostname, pptp_hostname);
+	if( pptp_vendor)
+		strcpy(req.vendor, pptp_vendor);
 	
 	send(conn->call_socket, &req, sizeof(req), 0);	
 }

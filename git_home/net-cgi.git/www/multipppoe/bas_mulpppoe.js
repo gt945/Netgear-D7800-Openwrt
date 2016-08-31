@@ -248,6 +248,29 @@ function check_mulpppoe_add(cf,flag)
 			alert("$end_port_greater");
 			return false;
 		}
+		for(i=1;i<=array_num;i++)
+        	{
+				var str = eval ( 'mulpppoeArray' + i );
+				var each_info=str.split(' ');
+				if(each_info[4] == "--" || each_info[5] == "--")
+					continue;
+				if(flag == 'edit')
+				{
+					if(!(parseInt(each_info[4])>parseInt(cf.portend.value) || parseInt(each_info[5])<parseInt(cf.portstart.value)) && i!=select_edit)
+					{
+						alert("$port_dup");
+						return false;
+					}	
+				}
+				else
+				{
+					if(!(parseInt(each_info[4])>parseInt(cf.portend.value) || parseInt(each_info[5])<parseInt(cf.portstart.value)))
+					{
+						alert("$port_dup");
+						return false;
+					}
+				}
+		}	
 		cf.hidden_portstart.value=cf.portstart.value;
 		cf.hidden_portend.value=cf.portend.value;
 	}
@@ -261,7 +284,7 @@ function check_mulpppoe_add(cf,flag)
 		}
 		for(i=0;i<cf.userdefined.value.length;i++)
 	        {
-        	        if(isValidChar_space(cf.userdefined.value.charCodeAt(i))==false)
+        	        if(isValidDdnsHost(cf.userdefined.value.charCodeAt(i))==false)
                		{
                         	alert("$invalid_user_type");
                         	return false;
@@ -276,7 +299,7 @@ function check_mulpppoe_add(cf,flag)
 				{
 	                		if(each_info[1]==txt && i!=select_edit)
 	                		{
-	                        		alert(dup_doname);
+	                        		alert("$doname_dup");
 	                        		return false;
 	                		}	
 				}
@@ -284,7 +307,7 @@ function check_mulpppoe_add(cf,flag)
 				{
 					if(each_info[1]==txt)
 	                		{	
-	                        		alert(dup_doname);
+	                        		alert("$doname_dup");
 	                        		return false;
 	       				}
 				}
@@ -784,6 +807,14 @@ function check_mulpppoe(cf,check)
 	{
 		cf.run_test.value="no"	
 		cf.mul_testnum.value="0";
+	}
+	if( cf.mulpppoe_demand.value == "1" || cf.mulpppoe_demand.value == "2" )
+	{
+		if( readycloud_enable == "1" || vpn_enable == "1" || upnp_enableMedia == "1" || parent.geniecloud_flag == "1")
+		{
+			if(confirm("$ppp_dial_on_demand_query") == false)
+					return false;
+		}
 	}
 	return true;
 }
