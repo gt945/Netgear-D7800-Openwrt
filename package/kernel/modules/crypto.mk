@@ -347,7 +347,7 @@ define KernelPackage/crypto-misc
 	CONFIG_CRYPTO_WP512
   FILES:= \
 	$(LINUX_DIR)/crypto/anubis.ko \
-	$(LINUX_DIR)/crypto/camellia.ko \
+	$(LINUX_DIR)/crypto/camellia_generic.ko \
 	$(LINUX_DIR)/crypto/cast5.ko \
 	$(LINUX_DIR)/crypto/cast6.ko \
 	$(LINUX_DIR)/crypto/fcrypt.ko \
