@@ -45,6 +45,64 @@ print_log()
 	logger "[USB device attached] The USB storage device $1($volume_name) is attached to the router"
 }
 
+mount_mapper()
+{
+	mkdir /mnt/$1
+        local fs_type=`vol_id -t /dev/mapper/$1`
+
+        echo This mapper partition type is $fs_type !
+        case "$fs_type" in
+        "ntfs")
+                mount -t ufsd -o nls=utf8,rw,nodev,noexec,noatime,uid=0,gid=0,fmask=0,dmask=0 --force /dev/mapper/$1 /mnt/$1
+        ;;
+        "ext4")
+                mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+        ;;
+        "ext3")
+                mount -t ext3 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                if [ $? -ne 0 ];then
+                        mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                fi
+        ;;
+        "ext2")
+                mount -t ext2 -o nodev,noexec,noatime  /dev/mapper/$1 /mnt/$1
+		if [ $? -ne 0 ];then
+                        mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                fi
+        ;;
+        "xfs")
+                mount -t xfs  /dev/mapper/$1 /mnt/$1
+                chmod -R 777 /mnt/$1
+        ;;
+        "hfs")
+                mount -t hfs -o nodev,noexec,noatime /dev/mapper/$1 /mnt/$1
+        ;;
+        "hfsplus")
+                mount -t hfsplus -o nodev,noexec,noatime --force /dev/mapper/$1 /mnt/$1
+                chmod -R 777 /mnt/$1
+        ;;
+        "vfat")
+                mount -o usefree,utf8=yes,fmask=0000,dmask=0000 /dev/mapper/$1 /mnt/$1
+        ;;
+        *)
+	if [ "x$fs_type" = "x" ];then
+                rmdir /mnt/$1
+                return
+        fi
+	mount  /dev/mapper/$1 /mnt/$1
+                if [ $? -ne 0 ];then
+                        rmdir /mnt/$1
+                else
+                        echo "mount /mnt/$1 success"
+                fi
+                return
+                ;;
+        esac
+        if [ $? -ne 0 ];then
+                rmdir /mnt/$1
+        fi
+
+}
 if [ $# -eq 0 ];then
 	echo "Must run with devicename."
 	exit 1
@@ -86,6 +144,9 @@ if [ "x$(parted -s /dev/`echo $1 | sed 's/[0-9]//g'` print noshare | grep $1)" =
 		;;
 		"ext2")
 			mount -t ext2 -o nodev,noexec,noatime  /dev/$1 /mnt/$1
+			if [ $? -ne 0 ];then
+                                mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
+                        fi
 		;;
 		"xfs")
 			mount -t xfs  /dev/$1 /mnt/$1
@@ -101,6 +162,15 @@ if [ "x$(parted -s /dev/`echo $1 | sed 's/[0-9]//g'` print noshare | grep $1)" =
 		"vfat")
 			mount -o usefree,utf8=yes,fmask=0000,dmask=0000 /dev/$1 /mnt/$1
 		;;
+		"crypto_LUKS")
+                        cryptsetup luksOpen --key-file /root/key.bin /dev/$1 $1
+                        if [ -e /dev/mapper/$1 ];then
+                                mount_mapper $1
+                        else
+                                rmdir /mnt/$1
+                                return
+                        fi
+                ;;
 		*)
 		if [ "x$fs_type" = "x" ];then
 			rmdir /mnt/$1

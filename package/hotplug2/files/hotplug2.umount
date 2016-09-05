@@ -26,6 +26,7 @@ dev_inproc(){
 isdafake(){
 	
 	mount | awk '{print $1}' | grep ^/dev/sd | cut -c 6->$TMP_DEVICE_NAME
+	mount | awk '{print $1}' | grep ^/dev/mapper/sd | cut -c 13->>$TMP_DEVICE_NAME
 	divnam=`echo "$1" | awk -F/ '{print $NF}'`
 	sleep 1
 	while read LINE
@@ -122,6 +123,9 @@ umount_all()
 				fi
 			fi
 		fi
+		if [ -e /dev/mapper/$i ]; then
+			cryptsetup luksClose /dev/mapper/$i
+		fi
 		rmdir "$i"
 	done	
 	# when there are NOT any disks, we should set 0 to /tmp/umount_result
@@ -173,6 +177,10 @@ umount_part()
 			umount "$umount_dir" -f
 		fi
 	fi
+	ii=`echo $umount_dir | awk -F/ '{print $4}'`
+	if [ -e /dev/mapper/$ii ]; then
+                cryptsetup luksClose /dev/mapper/$ii
+        fi
 	rmdir "$umount_dir"
 	if [ $? -ne 0 ];then
 			# kill some possible tasks who is accessing usb disk to block umount command
