@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011-2012 OpenWrt.org
+# Copyright (C) 2011-2015 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,14 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libevent2
-PKG_VERSION:=2.0.19
+PKG_VERSION:=2.0.22
 PKG_RELEASE:=1
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/libevent-$(PKG_VERSION)-stable
 PKG_SOURCE:=libevent-$(PKG_VERSION)-stable.tar.gz
-PKG_SOURCE_URL:=http://www.monkey.org/~provos/ \
-	@SF/levent
-PKG_MD5SUM:=91111579769f46055b0a438f5cc59572
+PKG_SOURCE_URL:=@SF/levent
+PKG_MD5SUM:=c4c56f986aa985677ca1db89630a2e11
+PKG_MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
+PKG_LICENSE:=BSD-3-Clause
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -28,7 +29,6 @@ define Package/libevent2/Default
   CATEGORY:=Libraries
   TITLE:=Event notification
   URL:=http://www.monkey.org/~provos/libevent/
-  DEPENDS:=+USE_EGLIBC:librt
 endef
 
 define Package/libevent2/Default/description
@@ -109,17 +109,18 @@ TARGET_CFLAGS += $(FPIC)
 
 CONFIGURE_ARGS += \
 	--enable-shared \
-	--enable-static
+	--enable-static \
+	--disable-debug-mode
 
 MAKE_FLAGS += \
 	CFLAGS="$(TARGET_CFLAGS)"
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/include/libevent2
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/libevent2/
-	$(INSTALL_DIR) $(1)/usr/lib/libevent2
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevent*.{la,a,so} $(1)/usr/lib/libevent2/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevent*-2.0.so* $(1)/usr/lib/libevent2/
+	$(INSTALL_DIR) $(1)/usr/include
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevent*.{la,a,so} $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libevent*-2.0.so* $(1)/usr/lib/
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/libevent*.pc $(1)/usr/lib/pkgconfig/
 endef
