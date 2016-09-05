@@ -81,6 +81,17 @@ check_usb_storage(){
 					usb1num=0
 				fi
 			done
+			for i in `df | grep /dev/mapper | awk '{print $1}'`
+                        do
+                                ii=`cryptsetup status $i | grep device | awk -F/ '{print $3}' | sed 's/[0-9]//g'`
+                                if [ "$ii" = "$LINE" ]; then
+                                        echo "New USB1 disk mounted!!!"
+                                        usb1num=1
+                                        break;
+                                else
+                                        usb1num=0
+                                fi
+                        done
 		elif [ "$usb_interface" = "dwc3.1" ]; then
 			#For USB hub case(if just plug an USB-HUB, LED won't trun on)
 			for j in `df | grep sd | awk '{print $1}' | awk -F/ '{print $3}' | sed 's/[0-9]//g'`
@@ -93,6 +104,17 @@ check_usb_storage(){
 					usb3num=0
 				fi
 			done
+			for i in `df | grep /dev/mapper | awk '{print $1}'`
+                        do
+                                ii=`cryptsetup status $i | grep device | awk -F/ '{print $3}' | sed 's/[0-9]//g'`
+                                if [ "$ii" = "$LINE" ]; then
+                                        echo "New USB2 disk mounted!!!"
+                                        usb3num=1
+                                        break;
+                                else
+                                        usb3num=0
+                                fi
+                        done
 		fi
 	done</tmp/disk_event
 	rm /tmp/disk_event
