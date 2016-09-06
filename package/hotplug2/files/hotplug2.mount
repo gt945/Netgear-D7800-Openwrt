@@ -56,18 +56,18 @@ mount_mapper()
                 mount -t ufsd -o nls=utf8,rw,nodev,noexec,noatime,uid=0,gid=0,fmask=0,dmask=0 --force /dev/mapper/$1 /mnt/$1
         ;;
         "ext4")
-                mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
         ;;
         "ext3")
-                mount -t ext3 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                mount -t ext3 -o nodev,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
                 if [ $? -ne 0 ];then
-                        mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                        mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
                 fi
         ;;
         "ext2")
-                mount -t ext2 -o nodev,noexec,noatime  /dev/mapper/$1 /mnt/$1
+                mount -t ext2 -o nodev,noatime  /dev/mapper/$1 /mnt/$1
 		if [ $? -ne 0 ];then
-                        mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
+                        mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/mapper/$1 /mnt/$1
                 fi
         ;;
         "xfs")
@@ -134,18 +134,18 @@ if [ "x$(parted -s /dev/`echo $1 | sed 's/[0-9]//g'` print noshare | grep $1)" =
 			mount -t ufsd -o nls=utf8,rw,nodev,noexec,noatime,uid=0,gid=0,fmask=0,dmask=0 --force /dev/$1 /mnt/$1
 		;;
 		"ext4")
-			mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
+			mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
 		;;
 		"ext3")
-			mount -t ext3 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
+			mount -t ext3 -o nodev,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
 			if [ $? -ne 0 ];then
-				mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
+				mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
 			fi
 		;;
 		"ext2")
-			mount -t ext2 -o nodev,noexec,noatime  /dev/$1 /mnt/$1
+			mount -t ext2 -o nodev,noatime  /dev/$1 /mnt/$1
 			if [ $? -ne 0 ];then
-                                mount -t ext4 -o nodev,noexec,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
+                                mount -t ext4 -o nodev,noatime,barrier=0,data=writeback /dev/$1 /mnt/$1
                         fi
 		;;
 		"xfs")
