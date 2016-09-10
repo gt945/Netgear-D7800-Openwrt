@@ -75,9 +75,6 @@ define Package/transmission-daemon/conffiles
 /etc/config/transmission
 endef
 
-CONFIGURE_VARS += \
-	LIBEVENT_LIBS="$(STAGING_DIR)/usr/lib/libevent2/libevent-2.0.so.5"
-
 CONFIGURE_ARGS += \
 	--enable-daemon \
 	--enable-cli \
