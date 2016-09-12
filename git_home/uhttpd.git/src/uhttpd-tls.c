@@ -175,7 +175,7 @@ int uh_tls_ctx_cert(SSL_CTX *c, const char *file)
 {
 	int rv;
 
-	if( (rv = SSL_CTX_use_certificate_file(c, file, SSL_FILETYPE_PEM)) < 1 )
+	if( (rv = SSL_CTX_use_certificate_chain_file(c, file)) < 1 )
 		rv = SSL_CTX_use_certificate_file(c, file, SSL_FILETYPE_ASN1);
 
 	return rv;

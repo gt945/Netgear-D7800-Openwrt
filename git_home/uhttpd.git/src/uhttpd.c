@@ -452,7 +452,7 @@ static void uh_dispatch_request(
 			!strstr(pin->name, ".jpg") && !strstr(pin->name, ".gif") && !strstr(pin->name, ".png")) ||
 		(strstr(pin->name, "/shares/")) )
 	{
-                if (strstr(pin->phys, "/www/superhub/") && !ipr) {
+		if (!strncmp(pin->name, "/superhub/", 10) && !ipr) {
                     uh_file_request(cl, req, pin);
                 } else {
                     uh_cgi_request(cl, req, pin, ipr, conf);
@@ -460,7 +460,11 @@ static void uh_dispatch_request(
 	}
 	else
 	{//bug 36875: win8 ie10 can't show big pictures, use cgi to get pictures.
-		uh_cgi_request(cl, req, pin, ipr, conf);
+		if (!strncmp(pin->name, "/superhub/", 10) && !ipr) {
+                    uh_file_request(cl, req, pin);
+                } else {
+		    uh_cgi_request(cl, req, pin, ipr, conf);
+		}
 	}
 #else
 

@@ -343,7 +343,8 @@ void uh_file_request(struct client *cl, struct http_request *req, struct path_in
 	if( (pi->stat.st_mode & S_IFREG) && ((fd = open(pi->phys, O_RDONLY)) > 0) )
 	{
 		/* test preconditions */
-		//if(ok) ensure_out(uh_file_if_modified_since(cl, req, &pi->stat, &ok));
+		if(!strncmp(pi->name, "/superhub/", 10) && ok)
+			ensure_out(uh_file_if_modified_since(cl, req, &pi->stat, &ok));
 		if(ok) ensure_out(uh_file_if_match(cl, req, &pi->stat, &ok));
 		if(ok) ensure_out(uh_file_if_range(cl, req, &pi->stat, &ok));
 		if(ok) ensure_out(uh_file_if_unmodified_since(cl, req, &pi->stat, &ok));
