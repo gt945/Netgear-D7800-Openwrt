@@ -1,84 +1,84 @@
 #
-# Copyright (C) 2006-2009 OpenWrt.org
+# Copyright (C) 2010-2012 OpenWrt.org
 #
-# This is free software, licensed under the GNU General Public License v2.
-# See /LICENSE for more information.
+# This Makefile and the code shipped in src/ is free software, licensed
+# under the GNU Lesser General Public License, version 2.1 and later.
+# See src/COPYING for more information.
+#
+# Refer to src/COPYRIGHT for copyright statements on the source files.
 #
 
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libiconv
-PKG_VERSION:=1.11
-PKG_RELEASE:=1
+PKG_RELEASE:=8
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=@GNU/libiconv
-PKG_MD5SUM:=b77a17e4a5a817100ad4b2613935055e
+PKG_LICENSE:=LGPL-2.1
+PKG_LICENSE_FILES:=LICENSE
 
-#PKG_FIXUP = libtool
+PKG_MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
 
 include $(INCLUDE_DIR)/package.mk
-
-define Package/libiconv/Default
-  URL:=http://www.gnu.org/software/libiconv/
-  TITLE:=Character set conversion
-endef
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/libiconv
-  $(call Package/libiconv/Default)
   SECTION:=libs
   CATEGORY:=Libraries
-  TITLE+= library
+  TITLE:=Tiny drop-in replacement for the GNU Character set conversion library
 endef
 
-define Package/libcharset
-  $(call Package/libiconv/Default)
-  SECTION:=libs
-  CATEGORY:=Libraries
-  TITLE+= library
+define Build/Prepare
+	$(INSTALL_DIR) $(PKG_BUILD_DIR)
+	$(CP) ./src/* $(PKG_BUILD_DIR)/
+endef      
+
+define Build/Configure
 endef
-
-define Package/iconv
-  $(call Package/libiconv/Default)
-  DEPENDS:=+libiconv +libcharset
-  SECTION:=utils
-  CATEGORY:=Utilities
-  TITLE+= utility
-endef
-
-TARGET_CFLAGS += $(FPIC) -DUSE_DOS
-
-CONFIGURE_ARGS += \
-	--enable-shared \
-	--enable-static \
-	--disable-rpath \
-	--enable-relocatable
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) \
-		CC="$(TARGET_CC)" \
-		DESTDIR="$(PKG_INSTALL_DIR)" \
-		install
+	$(TARGET_CC) $(TARGET_CFLAGS) -c $(PKG_BUILD_DIR)/iconv.c -o $(PKG_BUILD_DIR)/iconv.o -I$(PKG_BUILD_DIR)/include $(FPIC)
+	$(TARGET_CROSS)ar rcs $(PKG_BUILD_DIR)/libiconv.a $(PKG_BUILD_DIR)/iconv.o
 endef
 
 define Build/InstallDev
-	$(INSTALL_DIR) $(1)/usr/lib/libiconv/include
-	$(CP) $(PKG_INSTALL_DIR)/usr/include/iconv.h $(1)/usr/lib/libiconv/include/
-	$(INSTALL_DIR) $(1)/usr/lib/libiconv/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcharset.{a,so*} $(1)/usr/lib/libiconv/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libiconv.{a,so*} $(1)/usr/lib/libiconv/lib/
-endef
+	$(INSTALL_DIR) $(1)/usr/lib/libiconv-stub/lib
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/libiconv.a $(1)/usr/lib/libiconv-stub/lib/
 
-define Package/libcharset/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libcharset.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/libiconv-stub/include
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/include/iconv.h $(1)/usr/lib/libiconv-stub/include/
+
+	$(INSTALL_DIR) $(1)/usr/share/aclocal
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/m4/* $(1)/usr/share/aclocal/
 endef
 
 define Package/libiconv/install
-	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libiconv.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/tmp
+	touch $(1)/tmp/.libiconv-placeholder
 endef
 
-$(eval $(call BuildPackage,libcharset))
+define Host/Prepare
+	mkdir -p $(HOST_BUILD_DIR)
+endef
+
+define Host/Configure
+
+endef
+
+define Host/Compile
+	$(HOSTCC) -c src/iconv.c -o $(HOST_BUILD_DIR)/iconv.o -Isrc/include -fPIC
+	ar rcs $(HOST_BUILD_DIR)/libiconv.a $(HOST_BUILD_DIR)/iconv.o
+endef
+
+define Host/Install
+	$(INSTALL_DIR) $(STAGING_DIR)/host/lib
+	$(INSTALL_DATA) $(HOST_BUILD_DIR)/libiconv.a $(STAGING_DIR)/host/lib/
+
+	$(INSTALL_DIR) $(STAGING_DIR)/host/include
+	$(INSTALL_DATA) ./src/include/iconv.h $(STAGING_DIR)/host/include/
+
+	$(INSTALL_DIR) $(STAGING_DIR)/host/share/aclocal
+	$(INSTALL_DATA) ./src/m4/* $(STAGING_DIR)/host/share/aclocal/
+endef
+
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,libiconv))
-$(eval $(call BuildPackage,iconv))
