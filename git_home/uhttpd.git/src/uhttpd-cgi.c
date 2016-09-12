@@ -269,7 +269,6 @@ void uh_cgi_request(
 	struct timeval timeout;
 	struct http_response *res;
 
-
 	/* spawn pipes for me->child, child->me */
 	if( (pipe(rfd) < 0) || (pipe(wfd) < 0) )
 	{
@@ -318,7 +317,7 @@ void uh_cgi_request(
 			fd_cloexec(wfd[0]);
 
 			char *binary = NULL;
-			if( !strstr( pi->phys, cl->server->conf->cgi_prefix ) )
+			if( !strstr( pi->phys, cl->server->conf->cgi_prefix ) && ip == NULL)
 				binary = DEFAULT_CGI_BIN;
 			
 			/* check for regular, world-executable file _or_ interpreter */

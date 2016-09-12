@@ -90,7 +90,7 @@ generate_uhttpd_sh()
 
 		uhttpd_start()
 		{
-			$tab\$UHTTPD_BIN -h /www -r \$REALM -x /cgi-bin -t 30 -p 0.0.0.0:80 $HTTPS_ARGS
+			$tab\$UHTTPD_BIN -h /www -r \$REALM -x /cgi-bin -i .php=/usr/bin/php-fcgi -I index.php -t 60 -p 0.0.0.0:80 $HTTPS_ARGS
 			$tab\$FW_CHECK_BIN -c "net-cgi -c" -g "net-cgi -s" -s /tmp/Seria_Number -t time_zone
 		}
 
