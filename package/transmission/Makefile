@@ -88,6 +88,10 @@ MAKE_FLAGS += \
 define Package/transmission-daemon/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/transmission-daemon $(1)/usr/bin/
+	$(INSTALL_DIR) $(1)/etc/init.d/
+	$(INSTALL_BIN) files/transmission.init $(1)/etc/init.d/transmission
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_CONF) files/transmission.config $(1)/etc/config/transmission
 	$(INSTALL_BIN) files/transbt.sh $(1)/usr/bin
 	$(INSTALL_BIN) files/WhenDone.sh $(1)/usr/bin
 	$(INSTALL_BIN) files/transbt-poptsk.sh $(1)/usr/bin
