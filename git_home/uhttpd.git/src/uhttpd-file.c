@@ -104,6 +104,8 @@ static int uh_file_response_ok_hdrs(struct client *cl, struct http_request *req,
 
 	if( s )
 	{
+		ensure_ret(uh_http_sendf(cl, NULL, "Cache-Control: max-age=315360000\r\n"));
+		ensure_ret(uh_http_sendf(cl, NULL, "Expires: %s\r\n",uh_file_unix2date(s->st_mtime+315360000)));
 		ensure_ret(uh_http_sendf(cl, NULL, "ETag: %s\r\n", uh_file_mktag(s)));
 		ensure_ret(uh_http_sendf(cl, NULL, "Last-Modified: %s\r\n", uh_file_unix2date(s->st_mtime)));
 	}
@@ -356,7 +358,12 @@ void uh_file_request(struct client *cl, struct http_request *req, struct path_in
 			ensure_out(uh_file_response_200(cl, req, &pi->stat));
 
 			ensure_out(uh_http_sendf(cl, NULL, "Content-Type: %s\r\n", uh_file_mime_lookup(pi->name)));
-			ensure_out(uh_http_sendf(cl, NULL, "Content-Length: %i\r\n", pi->stat.st_size));
+			/**
+			 * WTF, Content-Length is always 0
+			 * ensure_out(uh_http_sendf(cl, NULL, "Content-Length: %i\r\n", pi->stat.st_size));
+			 * but below works fine
+			 */
+			ensure_out(uh_http_sendf(cl, NULL, "%s: %i\r\n","Content-Length", pi->stat.st_size));
 
 			/* if request was HTTP 1.1 we'll respond chunked */
 			if( (req->version > 1.0) && (req->method != UH_HTTP_MSG_HEAD) )
