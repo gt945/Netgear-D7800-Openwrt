@@ -85,11 +85,9 @@ check_usb_storage(){
                         do
                                 ii=`cryptsetup status $i | grep device | awk -F/ '{print $3}' | sed 's/[0-9]//g'`
                                 if [ "$ii" = "$LINE" ]; then
-                                        echo "New USB1 disk mounted!!!"
+                                        echo "New USB1 mapper mounted!!!" > /dev/console
                                         usb1num=1
                                         break;
-                                else
-                                        usb1num=0
                                 fi
                         done
 		elif [ "$usb_interface" = "dwc3.1" ]; then
@@ -108,11 +106,9 @@ check_usb_storage(){
                         do
                                 ii=`cryptsetup status $i | grep device | awk -F/ '{print $3}' | sed 's/[0-9]//g'`
                                 if [ "$ii" = "$LINE" ]; then
-                                        echo "New USB2 disk mounted!!!"
+                                        echo "New USB2 mapper mounted!!!" > /dev/console
                                         usb3num=1
                                         break;
-                                else
-                                        usb3num=0
                                 fi
                         done
 		fi
@@ -136,7 +132,7 @@ led_control(){
 	if [ "x$sata_led" = "x0" -a "x$satadisknum" = "x1" ];then
 		ledcontrol -n sata_blink -c green -s on
 		echo "sata led turn on" > /dev/console
-	elif [ "x$sata_led" = "x1" -a "x$satadisknum" = "x0"];then
+	elif [ "x$sata_led" = "x1" -a "x$satadisknum" = "x0" ];then
 		ledcontrol -n sata -c green -s off
 		echo "sata led turn off" > /dev/console
 	fi
