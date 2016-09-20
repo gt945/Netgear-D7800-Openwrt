@@ -312,7 +312,6 @@ FFMPEG_CONFIGURE:= \
 	--disable-decoder=ralf \
 	--disable-decoder=rv30 \
 	--disable-decoder=rv40 \
-	--disable-decoder=vc1 \
 	--disable-decoder=wmavoice \
 	--disable-decoder=dirac \
 	--disable-decoder=dnxhd \
