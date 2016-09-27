@@ -272,6 +272,10 @@ static struct http_request * uh_http_header_parse(struct client *cl, char *buffe
 			req.method = UH_HTTP_MSG_PUT;
 		else if (method && !strcmp(method, "DELETE"))
 			req.method = UH_HTTP_MSG_DELETE;
+		else if (method && !strcmp(method, "PROPFIND"))
+			req.method = UH_HTTP_MSG_PROPFIND;
+		else if (method && !strcmp(method, "MKCOL"))
+			req.method = UH_HTTP_MSG_MKCOL;
 		else
 		{
 			/* invalid method */

@@ -410,6 +410,12 @@ void uh_cgi_request(
 					case UH_HTTP_MSG_DELETE:
 						setenv("REQUEST_METHOD", "DELETE", 1);
 						break;
+					case UH_HTTP_MSG_PROPFIND:
+						setenv("REQUEST_METHOD", "PROPFIND", 1);
+						break;
+					case UH_HTTP_MSG_MKCOL:
+						setenv("REQUEST_METHOD", "MKCOL", 1);
+						break;
 				}
 
 				/* request url */
@@ -468,6 +474,8 @@ void uh_cgi_request(
 						setenv("HTTP_RANGE", req->headers[i+1], 1);
 					else if( ! strcasecmp(req->headers[i], "If-Match") )
 						setenv("HTTP_IF_MATCH", req->headers[i+1], 1);
+					else
+						setenv(req->headers[i], req->headers[i+1], 1);
 				}
 
 

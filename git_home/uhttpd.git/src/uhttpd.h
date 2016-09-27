@@ -63,6 +63,8 @@
 #define UH_HTTP_MSG_POST	2
 #define UH_HTTP_MSG_PUT		3
 #define UH_HTTP_MSG_DELETE	4
+#define UH_HTTP_MSG_PROPFIND	5
+#define UH_HTTP_MSG_MKCOL	6
 
 struct listener;
 struct client;
