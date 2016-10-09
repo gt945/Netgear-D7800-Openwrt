@@ -6,7 +6,7 @@
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin:${DGC_DNI_CMD_DIR:-/lib/dnicmd}
 export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
 export HOME=${HOME:-/root}
-export PS1='\u@\h:\w\# '
+export PS1='[\u@\h \W]\$ '
 
 [ -x /bin/more ] || alias more=less
 [ -x /usr/bin/vim ] && alias vi=vim || alias vim=vi
