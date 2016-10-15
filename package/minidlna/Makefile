@@ -13,7 +13,7 @@ PKG_VERSION:=latest
 PKG_RELEASE:=3
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-PKG_BUILD_DEPENDS:=libsqlite3 ffmpeg libexif libflac libid3tag libjpeg libogg libvorbis zlib libiconv
+PKG_BUILD_DEPENDS:=libsqlite3 ffmpeg libexif libflac libid3tag libjpeg libogg libvorbis zlib libiconv-full
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -56,8 +56,8 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
                 $(TARGET_CONFIGURE_OPTS) \
                 CROSS="$(TARGET_CROSS)" \
-                CFLAGS="-Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 $(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I$(STAGING_DIR)/usr/include/libavutil -I$(STAGING_DIR)/usr/include/libavcodec -I$(STAGING_DIR)/usr/include/libavformat -I$(STAGING_DIR)/usr/include/ffmpeg -I$(STAGING_DIR)/usr/lib/libintl/include -I$(STAGING_DIR)/usr/lib/libiconv/include" \
-                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L$(STAGING_DIR)/usr/lib/libintl/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -liconv" \
+                CFLAGS="-Wall -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 $(TARGET_CFLAGS) -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I$(STAGING_DIR)/usr/include/libavutil -I$(STAGING_DIR)/usr/include/libavcodec -I$(STAGING_DIR)/usr/include/libavformat -I$(STAGING_DIR)/usr/include/ffmpeg -I$(STAGING_DIR)/usr/lib/libintl/include -I$(STAGING_DIR)/usr/lib/libiconv-full/include" \
+                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L$(STAGING_DIR)/usr/lib/libintl/lib -L$(STAGING_DIR)/usr/lib/libiconv-full/lib -liconv" \
                 ARCH="$(ARCH)" \
                 STAGING_DIR="$(STAGING_DIR)" \
 		all

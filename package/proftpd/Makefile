@@ -32,8 +32,8 @@ define Build/Configure
 		echo "ac_cv_func_setgrent_void=yes" > $(GNU_TARGET_NAME)-linux.cache ; \
 		echo "ac_cv_func_setpgrp_void=no" >> $(GNU_TARGET_NAME)-linux.cache ; \
 		./configure \
-			--with-includes=$(STAGING_DIR)/include:$(STAGING_DIR)/usr/include:$(STAGING_DIR)/usr/lib/libintl/include:$(STAGING_DIR)/usr/lib/libiconv/include \
-			--with-libraries=$(STAGING_DIR)/lib:$(STAGING_DIR)/usr/lib:$(STAGING_DIR)/usr/lib/libintl/lib:$(STAGING_DIR)/usr/lib/libiconv/lib \
+			--with-includes=$(STAGING_DIR)/include:$(STAGING_DIR)/usr/include:$(STAGING_DIR)/usr/lib/libintl-full/include:$(STAGING_DIR)/usr/lib/libiconv-full/include \
+			--with-libraries=$(STAGING_DIR)/lib:$(STAGING_DIR)/usr/lib:$(STAGING_DIR)/usr/lib/libintl-full/lib:$(STAGING_DIR)/usr/lib/libiconv-full/lib \
 			--host=$(GNU_TARGET_NAME) \
 			--cache-file=$(GNU_TARGET_NAME)-linux.cache \
 			--sysconfdir=/etc \
@@ -59,8 +59,8 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		$(TARGET_CONFIGURE_OPTS) \
 		CROSS="$(TARGET_CROSS)" \
-		CFLAGS="$(TARGET_CFLAGS) -I$(DEP_BUILD_DIR)/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I./include -I$(STAGING_DIR)/usr/lib/libiconv/include -I$(STAGING_DIR)/usr/lib/libintl/include" \
-                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L./lib -L$(STAGING_DIR)/usr/lib/libintl/lib -L$(STAGING_DIR)/usr/lib/libiconv/lib -lintl -liconv" \
+		CFLAGS="$(TARGET_CFLAGS) -I$(DEP_BUILD_DIR)/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I./include -I$(STAGING_DIR)/usr/lib/libiconv-full/include -I$(STAGING_DIR)/usr/lib/libintl-full/include" \
+                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L./lib -L$(STAGING_DIR)/usr/lib/libintl-full/lib -L$(STAGING_DIR)/usr/lib/libiconv-full/lib -lintl -liconv" \
 		all
 endef
 
