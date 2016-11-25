@@ -4,6 +4,7 @@
 
 files=$(wildcard *.c)
 bin=net-wall
+bin2=net-wall-bin
 bin6=net-wall6
 
 CFLAGS+=-Wall -Wunused -g -O2
@@ -20,6 +21,7 @@ $(bin) : $(files:%.c=%.o)
 install:
 	$(INSTALL_DIR) $(INS_BIN_DIR)
 	$(INSTALL_BIN) $(bin) $(INS_BIN_DIR)
+	$(INSTALL_BIN) $(bin2) $(INS_BIN_DIR)
 	cd $(INS_BIN_DIR) && $(LN) $(bin) $(bin6)
 
 clean:
