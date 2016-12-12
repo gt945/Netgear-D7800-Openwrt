@@ -14,7 +14,7 @@ PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://ftp.debian.org/debian/pool/main/c/ca-certificates
 PKG_MD5SUM:=d9665a83d0d3ef8176a38e6aa20458e9
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
-
+PKG_BUILD_DEPENDS:=python/host
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
