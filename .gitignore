@@ -2,7 +2,7 @@ build_dir/
 staging_dir/
 tmp/
 dl
-bin/
+/bin/
 feeds/
 
 # Object files
