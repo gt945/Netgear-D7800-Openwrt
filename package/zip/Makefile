@@ -42,6 +42,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) -f unix/Makefile generic \
 		$(TARGET_CONFIGURE_OPTS) \
 		prefix="$(PKG_INSTALL_DIR)/usr" \
+                LOCAL_ZIP="$(TARGET_CFLAGS)" \
 		CFLAGS="$(TARGET_CFLAGS)" \
 		CF="$(TARGET_CFLAGS) -O $(TARGET_CPPFLAGS) -I. -DUNIX" \
 		LD="$(TARGET_CC) $(TARGET_LDFLAGS)" \

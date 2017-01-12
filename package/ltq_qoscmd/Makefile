@@ -27,7 +27,7 @@ define Build/Prepare
 endef
 
 define Build/Compile
-	$(MAKE) -C "$(PKG_BUILD_DIR)" \
+	CFLAGS="$(TARGET_CFLAGS) $(FPIC)" $(MAKE) -C "$(PKG_BUILD_DIR)" \
 		KERNEL_INCLUDE_PATH="$(LINUX_DIR)/include" \
 		CC="$(TARGET_CROSS)gcc"
 endef

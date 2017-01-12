@@ -31,6 +31,7 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		$(TARGET_CONFIGURE_OPTS) \
 		CROSS="$(TARGET_CROSS)" \
+                CFLAGS="$(TARGET_CFLAGS) $(FPIC)" \
 		LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -lnetlink" \
 		ARCH="$(ARCH)"
 endef

@@ -38,7 +38,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) DESTDIR="$(PKG_INSTALL_DIR)" install
+	$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) DESTDIR="$(PKG_INSTALL_DIR)" CFLAGS="$(TARGET_CFLAGS) $(FPIC)" install
 endef
 
 define Build/InstallDev

@@ -31,6 +31,7 @@ define Build/Configure
 	(cd $(PKG_BUILD_DIR) ; \
 		echo "ac_cv_func_setgrent_void=yes" > $(GNU_TARGET_NAME)-linux.cache ; \
 		echo "ac_cv_func_setpgrp_void=no" >> $(GNU_TARGET_NAME)-linux.cache ; \
+                CFLAGS="$(TARGET_CFLAGS) $(FPIC)" \
 		./configure \
 			--with-includes=$(STAGING_DIR)/include:$(STAGING_DIR)/usr/include:$(STAGING_DIR)/usr/lib/libintl-full/include:$(STAGING_DIR)/usr/lib/libiconv-full/include \
 			--with-libraries=$(STAGING_DIR)/lib:$(STAGING_DIR)/usr/lib:$(STAGING_DIR)/usr/lib/libintl-full/lib:$(STAGING_DIR)/usr/lib/libiconv-full/lib \

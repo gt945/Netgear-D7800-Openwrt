@@ -1,0 +1,19 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -99,14 +99,14 @@ do
+ 	-mno-cygwin)
+ 	    shift
+ 	    ;;
+-	-m*)
++	-march)
+ 	    arch="$arch $1"
+ 	    shift
+ 	    ;;
+ 	-fomit-frame-pointer)
+ 	    shift
+ 	    ;;
+-	-O*|-f*)
++	-O*)
+ 	    optimize="$1"
+ 	    shift
+ 	    ;;

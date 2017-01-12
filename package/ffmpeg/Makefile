@@ -288,11 +288,9 @@ FFMPEG_CONFIGURE:= \
 	--enable-gpl \
 	--enable-version3 \
 	\
-	--disable-asm \
 	--disable-doc \
 	--disable-dxva2 \
 	--enable-pthreads \
-	--disable-optimizations \
 	--enable-small \
 	--disable-stripping \
 	--enable-zlib \
