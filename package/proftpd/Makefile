@@ -12,6 +12,7 @@ PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/nls.mk
 
 define Package/$(PKG_NAME)
   SECTION:=net
@@ -32,8 +33,8 @@ define Build/Configure
 		echo "ac_cv_func_setgrent_void=yes" > $(GNU_TARGET_NAME)-linux.cache ; \
 		echo "ac_cv_func_setpgrp_void=no" >> $(GNU_TARGET_NAME)-linux.cache ; \
 		./configure \
-			--with-includes=$(STAGING_DIR)/include:$(STAGING_DIR)/usr/include:$(STAGING_DIR)/usr/lib/libintl-full/include:$(STAGING_DIR)/usr/lib/libiconv-full/include \
-			--with-libraries=$(STAGING_DIR)/lib:$(STAGING_DIR)/usr/lib:$(STAGING_DIR)/usr/lib/libintl-full/lib:$(STAGING_DIR)/usr/lib/libiconv-full/lib \
+			--with-includes=$(STAGING_DIR)/include:$(STAGING_DIR)/usr/include:$(INTL_PREFIX)/include:$(ICONV_PREFIX)/include \
+			--with-libraries=$(STAGING_DIR)/lib:$(STAGING_DIR)/usr/lib:$(INTL_PREFIX)/lib:$(ICONV_PREFIX)/lib \
 			--host=$(GNU_TARGET_NAME) \
 			--cache-file=$(GNU_TARGET_NAME)-linux.cache \
 			--sysconfdir=/etc \
@@ -59,8 +60,8 @@ define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
 		$(TARGET_CONFIGURE_OPTS) \
 		CROSS="$(TARGET_CROSS)" \
-		CFLAGS="$(TARGET_CFLAGS) -I$(DEP_BUILD_DIR)/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I./include -I$(STAGING_DIR)/usr/lib/libiconv-full/include -I$(STAGING_DIR)/usr/lib/libintl-full/include" \
-                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L./lib -L$(STAGING_DIR)/usr/lib/libintl-full/lib -L$(STAGING_DIR)/usr/lib/libiconv-full/lib -lintl -liconv" \
+		CFLAGS="$(TARGET_CFLAGS) -I$(DEP_BUILD_DIR)/include -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR)/include -I./include $(ICONV_CFLAGS) $(INTL_CFLAGS)" \
+                LDFLAGS="-L$(STAGING_DIR)/usr/lib -L$(STAGING_DIR)/lib -L./lib $(ICONV_LDFLAGS) $(INTL_LDFLAGS) -lintl -liconv" \
 		all
 endef
 
