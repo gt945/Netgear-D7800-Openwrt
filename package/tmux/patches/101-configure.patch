@@ -1,0 +1,11 @@
+--- a/configure
++++ b/configure
+@@ -5123,7 +5123,7 @@ for ac_lib in '' ncurses curses terminfo
+     ac_res="none required"
+   else
+     ac_res=-l$ac_lib
+-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
++    LIBS="-l$ac_lib"
+   fi
+   if ac_fn_c_try_link "$LINENO"; then :
+   ac_cv_search_setupterm=$ac_res

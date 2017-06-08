@@ -1,0 +1,79 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -28,11 +28,11 @@ INCLUDE(CPack)
+ INCLUDE(GNUInstallDirs)
+ 
+ SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
++SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+ 
+ OPTION(ENABLE_SHARED "Build shared library" ON)
+ OPTION(ENABLE_STATIC "Build static library" OFF)
+-OPTION(ENABLE_TESTS "Build unit tests" ON)
++OPTION(ENABLE_TESTS "Build unit tests" OFF)
+ OPTION(ENABLE_GIO "Support for gio file uris" OFF)
+ OPTION(ENABLE_THUMBNAILER "Register ffmpegthumbnailer as thumbnailer" OFF)
+ 
+--- a/libffmpegthumbnailer/ffmpegthumbnailertypes.h
++++ b/libffmpegthumbnailer/ffmpegthumbnailertypes.h
+@@ -25,4 +25,12 @@ typedef enum ThumbnailerLogLevelEnum
+     ThumbnailerLogLevelError
+ } ThumbnailerLogLevel;
+ 
++#define AVPixelFormat PixelFormat
++#define AV_PIX_FMT_RGB24 PIX_FMT_RGB24
++
++#define av_frame_alloc      avcodec_alloc_frame
++#define av_frame_free       av_freep
++#define av_frame_unref      avcodec_get_frame_defaults
++#define av_packet_unref     av_free_packet
++
+ #endif
+--- a/libffmpegthumbnailer/videothumbnailerc.cpp
++++ b/libffmpegthumbnailer/videothumbnailerc.cpp
+@@ -27,15 +27,15 @@ struct thumbnailer_data
+ {
+     VideoThumbnailer thumbnailer;
+     FilmStripFilter filter;
+-    thumbnailer_log_callback log_cb = nullptr;
++    //thumbnailer_log_callback log_cb = nullptr;
+ };
+ 
+ static void trace_message(video_thumbnailer* thumbnailer, ThumbnailerLogLevel lvl, const char* message)
+ {
+-    if (thumbnailer->tdata->log_cb)
+-    {
+-        thumbnailer->tdata->log_cb(lvl, message);
+-    }
++    //if (thumbnailer->tdata->log_cb)
++    //{
++    //    thumbnailer->tdata->log_cb(lvl, message);
++    //}
+ }
+ 
+ extern "C" video_thumbnailer* video_thumbnailer_create(void)
+@@ -148,7 +148,7 @@ extern "C" int video_thumbnailer_generat
+ 
+ extern "C" void video_thumbnailer_set_log_callback(video_thumbnailer* thumbnailer, thumbnailer_log_callback cb)
+ {
+-    thumbnailer->tdata->log_cb = cb;
++    //thumbnailer->tdata->log_cb = cb;
+     auto& videoThumbnailer = thumbnailer->tdata->thumbnailer;
+ 
+     if (!cb)
+--- a/libffmpegthumbnailer/moviedecoder.cpp
++++ b/libffmpegthumbnailer/moviedecoder.cpp
+@@ -449,9 +449,11 @@ void MovieDecoder::createAVFrame(AVFrame
+     *pAvFrame = av_frame_alloc();
+     auto* avPicture = reinterpret_cast<AVPicture*>(*pAvFrame);
+ 
+-    int numBytes = av_image_get_buffer_size(format, width, height, 1);
++    //int numBytes = av_image_get_buffer_size(format, width, height, 1);
++    int numBytes = avpicture_get_size(format, width, height);
+     *pFrameBuffer = reinterpret_cast<uint8_t*>(av_malloc(numBytes));
+-    av_image_fill_arrays(avPicture->data, avPicture->linesize, *pFrameBuffer, format, width, height, 1);
++    //av_image_fill_arrays(avPicture->data, avPicture->linesize, *pFrameBuffer, format, width, height, 1);
++    avpicture_fill(avPicture, *pFrameBuffer, format, width, height);
+ }
+ 
+ }

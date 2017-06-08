@@ -1,0 +1,11 @@
+--- a/Lib/ctypes/util.py
++++ b/Lib/ctypes/util.py
+@@ -224,7 +224,7 @@ elif os.name == "posix":
+                 's390x-64': 'libc6,64bit',
+                 'ia64-64': 'libc6,IA-64',
+                 }
+-            abi_type = mach_map.get(machine, 'libc6')
++            abi_type = mach_map.get(machine, 'libc0')
+ 
+             # XXX assuming GLIBC's ldconfig (with option -p)
+             expr = r'\s+(lib%s\.[^\s]+)\s+\(%s' % (re.escape(name), abi_type)
