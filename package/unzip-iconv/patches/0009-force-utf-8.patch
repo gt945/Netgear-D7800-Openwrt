@@ -1,0 +1,34 @@
+--- a/unix/unix.c
++++ b/unix/unix.c
+@@ -1908,7 +1908,7 @@ void init_conversion_charsets()
+ 
+     /* Make a guess only if OEM_CP not already set. */ 
+     if(*OEM_CP == '\0') {
+-    	local_charset = nl_langinfo(CODESET);
++    	local_charset = "UTF-8"; //nl_langinfo(CODESET);
+     	for(i = 0; i < sizeof(dos_charset_map)/sizeof(CHARSET_MAP); i++)
+     		if(!strcasecmp(local_charset, dos_charset_map[i].local_charset)) {
+     			strncpy(OEM_CP, dos_charset_map[i].archive_charset,
+@@ -1932,9 +1932,9 @@ static void charset_to_intern(char *stri
+     	return;
+ 
+     buf = NULL;
+-    local_charset = nl_langinfo(CODESET);
++    local_charset = "UTF-8"; //nl_langinfo(CODESET);
+ 
+-    if((cd = iconv_open(local_charset, from_charset)) == (iconv_t)-1)
++    if((cd = libiconv_open(local_charset, from_charset)) == (iconv_t)-1)
+         return;
+ 
+     slen = strlen(string);
+--- a/unzip.c
++++ b/unzip.c
+@@ -788,7 +788,7 @@ int unzip(__G__ argc, argv)
+         /* get the codeset (character set encoding) currently used */
+ #       include <langinfo.h>
+ 
+-        codeset = nl_langinfo(CODESET);
++        codeset = "UTF-8"; //nl_langinfo(CODESET);
+ #  else /* NO_NL_LANGINFO || NO_LANGINFO_H */
+         /* query the current locale setting for character classification */
+         codeset = setlocale(LC_CTYPE, NULL);
