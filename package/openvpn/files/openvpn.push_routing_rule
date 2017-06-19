@@ -65,7 +65,7 @@ if [ $1 = "tap" ]; then
 	gateway=$lan_ipaddr
 else
 	tun_subnet=$(tun_net $lan_ipaddr $lan_netmask)
-	gateway=$ifconfig_pool_local_ip
+	gateway=$ifconfig_local
 fi
 
 vpn_access_mode=$(config get vpn_access_mode)

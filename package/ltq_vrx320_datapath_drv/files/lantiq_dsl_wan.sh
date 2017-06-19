@@ -467,6 +467,13 @@ tcpdump_if_needed() # $1: iface
 	tcpdump -i $1 -s 0 -W 1 -w /tmp/connection.pcap -C 1 &
 }
 
+start_dot1ag() #$1 iface
+{
+	if `ifconfig | grep -q $1` ; then
+		dot1agd -i $1 &
+	fi
+}
+
 iptv_is_ipoe()
 {
 	local country=$($CONFIG get dsl_wan_country)
@@ -788,6 +795,7 @@ create_connection_pppoe ()
 	if [ -n $iface ]; then
 #		WAN_IF=$iface
 		tcpdump_if_needed $iface
+		start_dot1ag $iface
 		. /lib/network/ppp.sh
 		#if traffic meter monthly limit is not reached or don't check "Disconnect and disable the Internet connection".
 		if [ "$traffic_month_limit" != "1" -o "$traffic_block_all" != "1" ]; then
@@ -1191,6 +1199,7 @@ create_connection_static ()
 	if [ "$DSL_WAN" = "wan1" ]; then
 		$FIREWALL restart
 
+		start_dot1ag $iface
 		# static route & ripd
 		/sbin/cmdroute stop
 		/usr/bin/killall -SIGINT ripd
@@ -1392,6 +1401,7 @@ create_connection_dhcp ()
 	else
 		ifconfig brwan hw ether $(get_next_mac) up
 		tcpdump_if_needed $iface
+		start_dot1ag $iface
 		dhcpc_option="-b -i brwan -p /var/run/udhcpc-$brTmp.pid -h \"$($CONFIG get wan_hostname)\" -r $($CONFIG get wan_dhcp_ipaddr) -N $($CONFIG get wan_dhcp_oldip) ${u_wan_domain:+-d $u_wan_domain} -s /usr/share/udhcpc/default.script"
 		[ "x$($CONFIG get dsl_wan_ether_dhcp_option60)" != "x" ] && dhcpc_option="$dhcpc_option -V \"$($CONFIG get dsl_wan_ether_dhcp_option60)\""
 		[ "x$($CONFIG get dsl_wan_ether_dhcp_option61)" != "x" ] && dhcpc_option="$dhcpc_option -c \"$($CONFIG get dsl_wan_ether_dhcp_option61)\""
@@ -1668,7 +1678,11 @@ for opt in $OPTIONS; do
 			func_$opt help;
 		else
 			shift
-			eval $@
+			for par in $@; do
+				variable=${par%%=*}
+				value=${par#*=}
+				eval $variable=\'$value\'
+			done
 			func_$opt $1
 		fi
 		exit 0;

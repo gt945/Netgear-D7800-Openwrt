@@ -122,6 +122,10 @@ static struct event exitev;
 static struct evhttp *evhttpd;
 static pthread_t tid_httpd;
 
+#ifdef DNI_SUPPORT_LIBEVENT2
+#undef HAVE_LIBEVENT2_OLD
+#endif
+
 #ifdef HAVE_LIBEVENT2_OLD
 struct stream_ctx *g_st;
 #endif

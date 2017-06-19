@@ -1,6 +1,6 @@
-cmd_scripts/basic/fixdep := gcc -Wp,-MD,scripts/basic/.fixdep.d -Iscripts/basic -O2   -I/home/roger.luo/d7800-stage2.git/staging_dir/host/include -Wall -Wmissing-prototypes -Wstrict-prototypes   -I/home/roger.luo/d7800-stage2.git/staging_dir/host/include -o scripts/basic/fixdep /home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/scripts/basic/fixdep.c  
+cmd_scripts/basic/fixdep := gcc -Wp,-MD,scripts/basic/.fixdep.d -Iscripts/basic -O2   -I/home/tianqing.liu/projects/d7800-stage2-froje.git/staging_dir/host/include -Wall -Wmissing-prototypes -Wstrict-prototypes   -I/home/tianqing.liu/projects/d7800-stage2-froje.git/staging_dir/host/include -o scripts/basic/fixdep /home/tianqing.liu/projects/d7800-stage2-froje.git/build_dir/linux-ipq806x/linux-3.4.103/sourcecode/scripts/basic/fixdep.c  
 
-source_scripts/basic/fixdep := /home/roger.luo/auto-gpl/tmp/linux/linux-3.4.103/sourcecode/scripts/basic/fixdep.c
+source_scripts/basic/fixdep := /home/tianqing.liu/projects/d7800-stage2-froje.git/build_dir/linux-ipq806x/linux-3.4.103/sourcecode/scripts/basic/fixdep.c
 
 deps_scripts/basic/fixdep := \
     $(wildcard include/config/his/driver.h) \
@@ -19,8 +19,8 @@ deps_scripts/basic/fixdep := \
   /usr/include/bits/typesizes.h \
   /usr/include/time.h \
   /usr/lib/x86_64-linux-gnu/gcc/x86_64-linux-gnu/4.5.2/include/stddef.h \
-  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/endian.h \
-  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/byteswap.h \
+  /home/tianqing.liu/projects/d7800-stage2-froje.git/staging_dir/host/include/endian.h \
+  /home/tianqing.liu/projects/d7800-stage2-froje.git/staging_dir/host/include/byteswap.h \
   /usr/include/byteswap.h \
   /usr/include/bits/byteswap.h \
   /usr/include/endian.h \
@@ -29,7 +29,7 @@ deps_scripts/basic/fixdep := \
   /usr/include/bits/select.h \
   /usr/include/bits/sigset.h \
   /usr/include/bits/time.h \
-  /home/roger.luo/d7800-stage2.git/staging_dir/host/include/sys/sysmacros.h \
+  /home/tianqing.liu/projects/d7800-stage2-froje.git/staging_dir/host/include/sys/sysmacros.h \
   /usr/include/bits/pthreadtypes.h \
   /usr/include/sys/stat.h \
   /usr/include/bits/stat.h \

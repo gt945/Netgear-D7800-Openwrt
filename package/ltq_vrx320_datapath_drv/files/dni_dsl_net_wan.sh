@@ -307,6 +307,7 @@ dsl_start()
 
 dsl_stop()
 {
+	killall dot1agd
 	$DSL_WAN stop_connection
 	
 	wan2_active=`$CONFIG get wan2_active`

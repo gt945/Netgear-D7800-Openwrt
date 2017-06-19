@@ -36,6 +36,7 @@ endef
 
 # Fix for libevent
 TARGET_CPPFLAGS += -I$(STAGING_DIR)/usr/include/libevent2
+TARGET_CPPFLAGS += -DDNI_SUPPORT_LIBEVENT2
 TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib/libevent2
 
 TARGET_CFLAGS += $(FPIC)

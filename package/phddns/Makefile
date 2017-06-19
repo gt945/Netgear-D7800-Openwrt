@@ -5,8 +5,11 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=phddns
-PKG_RELEASE:=1
+PKG_VERSION:=1.0.4
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)
+PKG_SOURCE:=$(PKG_NAME)_$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=http://open.oray.com/doc/phddns-sdk-1.0.4.17314.tar.gz
+PKG_MD5SUM:=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -18,7 +21,7 @@ define Package/phddns
 endef
 
 define Build/Prepare
-	$(CP) $(GIT_HOME)/phddns.git/* $(PKG_BUILD_DIR)/
+	$(TAR) -xzf $(DL_DIR)/$(PKG_SOURCE) -C $(PKG_BUILD_DIR)/
 endef
 
 $(eval $(call PKG/config/CommonModule,$(PKG_NAME)))

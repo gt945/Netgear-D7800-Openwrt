@@ -123,11 +123,7 @@ generate_makefile()
 		SCRIPT_DIR:="scripts"
 		WWW_DIR:="www"
 
-		all:
-			$tab\$(MAKE) -C \$(WWW_DIR) \$@
-			$tab\$(MAKE) -C \$(FILES_DIR) \$@
-
-		install:
+		all %::
 			$tab\$(MAKE) -C \$(SOURCE_DIR) \$@
 			$tab\$(MAKE) -C \$(WWW_DIR) \$@
 			$tab\$(MAKE) -C \$(SCRIPT_DIR) \$@

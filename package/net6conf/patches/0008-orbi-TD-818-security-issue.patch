@@ -1,0 +1,90 @@
+diff -Nurp net6conf-old//6autodet net6conf/6autodet
+--- net6conf-old//6autodet	2016-09-18 10:44:23.243933529 -0400
++++ net6conf/6autodet	2016-09-18 10:56:38.313932996 -0400
+@@ -4,6 +4,11 @@
+ outfile=/tmp/ipv6_auto_output
+ BASEDIR="/etc/net6conf"
+ 
++generate_config()
++{
++	echo "$CONFIG_TYPE_NAME $WAN_IPV6_TYPE" > $CONFIG_FILE
++}
++
+ start()
+ {
+ 	echo -n "Detecting..." > ${outfile}
+@@ -14,22 +19,29 @@ start()
+ 	case `cat ${outfile}` in
+ 		"6to4 Tunnel")
+ 			${BASEDIR}/6to4 start
++			WAN_IPV6_TYPE="6to4"
+ 		;;
+ 		"6rd Tunnel")
+ 			${BASEDIR}/6rd start
++			WAN_IPV6_TYPE="6rd"
+ 		;;
+ 		"DHCP")
+ 			${BASEDIR}/6dhcpc start
++			WAN_IPV6_TYPE="dhcp"
+ 		;;
+ 		"Auto Config")
+ 			${BASEDIR}/6autoconf start
++			WAN_IPV6_TYPE="autoConfig"
+ 		;;
+ 		"Pass Through")
+ 			${BASEDIR}/6bridge start
++			WAN_IPV6_TYPE="bridge"
+ 		;;
+ 		*)
+ 		;;
+ 	esac
++
++	generate_config
+ }
+ 
+ detwanv6_is_running()
+diff -Nurp net6conf-old//6data.conf net6conf/6data.conf
+--- net6conf-old//6data.conf	2016-09-18 10:44:23.243933529 -0400
++++ net6conf/6data.conf	2016-09-18 10:56:38.313932996 -0400
+@@ -19,6 +19,9 @@ Mask=`$CONFIG get Ipv6rdv4Mask`
+ IPV6_PPPOE_UNIT=2
+ RA_DNS_FILE="/tmp/ra_dns_info_file"
+ PPPOEv6_type=`$CONFIG get ipv6_sameinfo`
++WAN_IPV6_TYPE=`$CONFIG get ipv6_type`
++CONFIG_FILE="/tmp/etc/net-wall6.conf"
++CONFIG_TYPE_NAME="sys_ipv6_type"
+ 
+ if [ "x$PPPOEv6_type" = "x1" ] ;then
+ 	IPV6_PPPOE_UNIT=0
+diff -Nurp net6conf-old//net6conf net6conf/net6conf
+--- net6conf-old//net6conf	2016-09-18 10:44:23.243933529 -0400
++++ net6conf/net6conf	2016-09-18 11:25:10.843931745 -0400
+@@ -57,6 +57,11 @@ stop_service() {
+ 	${BASEDIR}/6service stop
+ }
+ 
++generate_config()
++{
++	echo "$CONFIG_TYPE_NAME $WAN_IPV6_TYPE" > $CONFIG_FILE
++}
++
+ reset_iface_ip6() {
+ 	local dev=$1
+ 
+@@ -140,6 +145,7 @@ start() {
+ 
+ 	set_interface_id
+ 	echo 0 > /proc/sys/net/ipv6/neigh/${bridge}/not_send_neighbor_solicitation
++	generate_config
+ 	start_connection
+ 	# For IPv6 Ready Log test, fixed ip setting do not enable radvd and dhcpv6s
+ 	local logo_test=`$CONFIG get endis_ipv6_logo_test`
+@@ -177,6 +183,8 @@ stop () {
+ 	del_gw
+ 	firewall.sh stop ipv6
+ 	killall 6pppoe #kill pppoev6 autode
++	[ -f $CONFIG_FILE ] && rm $CONFIG_FILE	#delete configuration file
++
+ }
+ 
+ restart() {

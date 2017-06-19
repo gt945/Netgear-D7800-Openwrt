@@ -1,8 +1,7 @@
 include $(NETCGI_CONF)
 
 ifeq ($(MAKECMDGOALS),install)
-#check_language=$(shell ./check_language.sh)
-check_language=success
+check_language=$(shell ./check_language.sh)
 endif
 
 .PHONY: all install clean

@@ -104,6 +104,7 @@ start0() # $1: boot/start
 	cmddlna ip_restart &   # dlan daemon
 	/etc/init.d/upnp $1
 	[ "$opmode" = "apmode" -o "$opmode" = "extmode" ] && brctl stp br0 on
+	[ "$opmode" = "factory" ] && /etc/init.d/qca-nss-ecm restart
 }
 
 start()

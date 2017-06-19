@@ -1330,7 +1330,7 @@ ppp_send_frame(struct ppp *ppp, struct sk_buff *skb)
 			return;
 		}
 		/* if this packet passes the active filter, record the time */
-		if (!(ppp->active_filter &&
+		if (actived && !(ppp->active_filter &&
 		      sk_run_filter(skb, ppp->active_filter) == 0))
 			ppp->last_xmit = jiffies;
 		skb_pull(skb, 2);

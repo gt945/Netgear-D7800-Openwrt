@@ -168,6 +168,11 @@ User application
         http://www.thekelleys.org.uk/dnsmasq
         GPL
         Source Code
+[dot1ag-utils]
+        dot1ag-utils
+        dot1ag-utils
+        GPL
+        Source Code
 [drflocs]
         drflocs
         Atheros
@@ -493,6 +498,16 @@ User application
         http://packages.debian.org/unstable/admin/logrotate
         GPL
         Source Code
+[lsof]
+		lsof
+		http://ftp2.de.debian.org/debian/pool/main/l/lsof
+        GPL
+        Source Code
+[green-download]
+        green-download
+        DNI
+        DNI
+        Binary 
 [lua]
         lua
         http://www.lua.org/ftp/

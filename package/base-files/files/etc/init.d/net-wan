@@ -360,12 +360,13 @@ start() # $1: manually
 	/etc/init.d/init6 start
 	/etc/init.d/ntpclient start
 	/etc/init.d/cron start
-	/etc/init.d/dnsmasq start
+	# We should restart dnsmasq in case that the change of WAN mode influence dnsmasq
+	/etc/init.d/dnsmasq restart
 }
 
 stop()
 {
-	/etc/init.d/dnsmasq stop
+	# we should not stop dnsmsaq so that LAN PC can access board with domain name
 	/etc/init.d/cron stop
 	/etc/init.d/ntpclient stop
 	/etc/init.d/init6 stop

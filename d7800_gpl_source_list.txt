@@ -74,6 +74,8 @@ dni-mtdoops, 2, GPL, Yes
 
 dnsmasq, 2.39, GPL, Yes
 
+dot1ag-utils, 1.0.1, GPL, No
+
 dsl-cpe-api-vrx, 4.16.5.4, GPL_BSD, Yes
 
 dsl-cpe-control-vrx, 4.16.5.4, GPL_BSD, Yes
@@ -109,6 +111,10 @@ iproute2, 3.3.0, GPL, No
 iptables, 1.4.10, GPL, Yes
 
 lltd, MICROSOFT WINDOWS RALLY PROGRAM LICENSE
+
+lsof, 4.86, GPL, No
+
+green-download, 1.0, DNI, No
 
 ltq-ifxos, 1.5.14, GPLv2, No
 

@@ -18,6 +18,8 @@ config()
 			erase_size="126976"	
 			super_wifi="1"
 			ap_mode_detection="0"
+			mode_3="800"
+			eur_dfs_on="nc_dfs_europe ON"
 			;;
 	esac
 
@@ -58,6 +60,8 @@ config()
 		"nc_have_vpn_smartphone 1"\
 		"nc_solve_soap_vulnerability 1"\
 		"nc_super_wifi ${super_wifi}"\
+		"nc_mode_3 ${mode_3}"\
+		"$eur_dfs_on"\
 		"$addon"
 }
 

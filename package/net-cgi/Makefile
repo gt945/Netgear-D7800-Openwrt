@@ -46,6 +46,9 @@ endef
 
 $(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
+define Build/Compile
+endef
+
 define Build/Configure
 	(cd $(PKG_BUILD_DIR) && \
 		./configure $(config-y) \

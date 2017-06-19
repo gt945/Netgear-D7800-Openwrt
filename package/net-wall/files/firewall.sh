@@ -7,22 +7,33 @@ firewall4="/usr/sbin/net-wall"
 firewall6="/usr/sbin/net-wall6"
 
 conffile="/etc/net-wall/net-wall.conf"
+ipv6_conffile="/tmp/etc/net-wall6.conf"
 
 usage()
 {
 	printf "%s\n" \
-		"Usage:	firewall.sh start|stop|restart|boot|reload [ipv6|ipv4]" \
+		"Usage:	firewall.sh start|stop|restart|boot|reload [ipv6|ipv4] [config_file]" \
 		"" \
 		"option:" \
-		"	ipv6	set ipv6 firewall rules." \
-		"	ipv4	set ipv4 firewall rules." \
+		"	ipv6		set ipv6 firewall rules." \
+		"	ipv4		set ipv4 firewall rules." \
+		"	config_file	set config file for ipv4 or ipv6." \
 		"  if both ipv4 and ipv6 are all not supply, will use ipv4."
 }
 
+# if file $ipv6_conffile is not exist, we should not start ipv6 firewall.
 start()
 {
 	$firewall4 rule
-	[ "x$1" = "xipv6" ] && $firewall6 start || $firewall4 start
+	if [ "x$1" = "xipv6" ]; then 
+		[ $# -eq 2 ] && $firewall6 -c $2 start || [ -f $ipv6_conffile ] && $firewall6 -c $ipv6_conffile start || return 
+	elif [ $# -eq 2 ]; then
+		$firewall4 -c $2 start
+	elif [ $# -eq 1 ]; then
+		[ "x$1" = "xipv4" ] && $firewall4 start || $firewall4 -c $1 start
+	else
+		$firewall4 start
+	fi
 }
 
 stop()

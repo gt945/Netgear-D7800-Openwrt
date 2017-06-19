@@ -1,0 +1,88 @@
+diff -Nurp dsl_cpe_control-4.16.5.4-old//src/dsl_cpe_control.c dsl_cpe_control-4.16.5.4/src/dsl_cpe_control.c
+--- dsl_cpe_control-4.16.5.4-old//src/dsl_cpe_control.c	2016-09-26 09:29:58.623432293 -0400
++++ dsl_cpe_control-4.16.5.4/src/dsl_cpe_control.c	2016-09-26 09:38:45.403431921 -0400
+@@ -556,6 +556,61 @@ DSL_CPE_STATIC  DSL_char_t description[]
+ 
+ DSL_CPE_STATIC  const DSL_char_t *dsl_cpe_ctl_version = "@(#)" PACKAGE_VERSION;
+ 
++#define SNFILE "/tmp/Seria_Number"
++#define VNFILE "/firmware_version"
++
++int DSL_CPE_GetSerialNumber(char *SerialNumber, int size)
++{
++	FILE *fp;
++	
++	fp = fopen(SNFILE, "r");
++	if (fp == NULL)
++	{
++   		DSL_CPE_FPrintf (DSL_CPE_STDOUT, "Open file error! \n");
++		goto open_err;
++	}
++
++	if (fgets(SerialNumber, size, fp) == NULL)
++	{
++   		DSL_CPE_FPrintf (DSL_CPE_STDOUT, "fgets() error! \n");
++		goto get_err;
++	}
++	
++	fclose(fp);
++	return 0;
++
++get_err:
++	fclose(fp);
++open_err:
++	return -1;
++}
++
++int DSL_CPE_GetVersionNumber(char *VersionNumber, int size)
++{
++	FILE *fp;
++	
++	fp = fopen(VNFILE, "r");
++	if (fp == NULL)
++	{
++   		DSL_CPE_FPrintf (DSL_CPE_STDOUT, "Open file error! \n");
++		goto open_err;
++	}
++
++	if (fgets(VersionNumber, size, fp) == NULL)
++	{
++   		DSL_CPE_FPrintf (DSL_CPE_STDOUT, "fgets() error! \n");
++		goto get_err;
++	}
++
++	fclose(fp);	
++	return 0;
++
++get_err:
++	fclose(fp);
++open_err:
++	return -1;
++}
++
+ DSL_CPE_Control_Context_t *DSL_CPE_GetGlobalContext (
+    DSL_void_t
+ )
+@@ -6323,6 +6376,8 @@ static DSL_Error_t DSL_CPE_SwVersionFrom
+ DSL_int32_t DSL_CPE_DeviceInit (
+    DSL_CPE_Control_Context_t * pContext)
+ {
++   char VersionNumber[16] = { 0 };
++   char SerialNumber[32] = { 0 };
+ #ifndef INCLUDE_FW_REQUEST_SUPPORT
+    DSL_Error_t nRet = DSL_SUCCESS;
+    DSL_uint8_t *pFirmware1 = DSL_NULL;
+@@ -6530,9 +6585,11 @@ DSL_int32_t DSL_CPE_DeviceInit (
+    inv.Auxiliary.nLength = 8;
+ #endif
+    /* $$ ND: this is for testing only --> */
+-   memcpy (&inv.SerialNumber, "01234567890123456789012345678901", 32);
++   if (!DSL_CPE_GetSerialNumber(SerialNumber, sizeof(SerialNumber)))
++  	 memcpy (&inv.SerialNumber, SerialNumber, sizeof(SerialNumber));
++   if (!DSL_CPE_GetVersionNumber(VersionNumber, sizeof(VersionNumber)))
++	 memcpy (&inv.VersionNumber, VersionNumber, sizeof(VersionNumber));
+    memcpy (&inv.SystemVendorID, G994VendorID, 8);
+-   memcpy (&inv.VersionNumber, "0123456789012345", 16);
+    init.data.pInventory = &inv;
+    /* $$ <-- */
+ 

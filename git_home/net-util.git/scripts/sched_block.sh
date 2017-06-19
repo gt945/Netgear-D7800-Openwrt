@@ -1,7 +1,7 @@
 #! /bin/sh
 
 CONFIG="/bin/config"
-FIREWALL="firewal.sh"
+FIREWALL="firewall.sh"
 
 sched_block_site()
 {

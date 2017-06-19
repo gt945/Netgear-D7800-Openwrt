@@ -5,13 +5,15 @@ CONFIG=/bin/config
 
 config() {
 	wan_proto=`$CONFIG get wan_proto`
-	dst_enable=`$CONFIG get ntpadjust`
-	dst_change=`$CONFIG get dstflag`
-	dst_index=`$CONFIG get ntp_hidden_select`
-	time_zone=`$CONFIG get time_zone`
-	ap_mode=`$CONFIG get ap_mode`
 
-	if [ "X$wan_proto" = "Xpppoe" -o "X$wan_proto" = "Xpptp" -o "X$wan_proto" = "Xmulpppoe1" ]; then
+	dst_options="-e 1" #the optin -e is the flag whether ntpclinet need to set time by time zone, we enable it here.
+
+	time_zone=`$CONFIG get time_zone`
+
+	if [ "X`$CONFIG get ap_mode`" = "X1" -o "X`$CONFIG get bridge_mode`" = "X1" ]; then
+		net_ifname=$DGC_LAN_BR_IF
+		wan_proto=dhcp
+	elif [ "X$wan_proto" = "Xpppoe" -o "X$wan_proto" = "Xpptp" -o "X$wan_proto" = "Xmulpppoe1" -o "X$wan_proto" = "Xpppoa" -o "X$wan_proto" = "Xipoa" ]; then
 		net_ifname=$DGC_WAN_PPP_IF
 	else
 		net_ifname=$DGC_WAN_BR_IF
@@ -21,11 +23,12 @@ config() {
 start() {
 
 	config
-	/usr/sbin/ntpclient -w ${wan_proto:-dhcp} -n ${net_ifname:-brwan} -a ${ap_mode:-0} -j ${dst_enable:-1} -u ${dst_change:-0} -x $dst_index -z $time_zone
+	/usr/sbin/ntpclient -w ${wan_proto:-dhcp} -n ${net_ifname:-brwan} -z $time_zone $dst_options
 }
 
 stop() {
-	killall ntpclient
+	pid_fd=`cat /tmp/run/ntpclient.pid`
+	kill $pid_fd
 }
 
 restart() {

@@ -1,0 +1,32 @@
+diff -Nur noip2-old/noip2.c noip2/noip2.c
+--- noip2-old/noip2.c	2016-07-12 19:05:12.910533314 +0800
++++ noip2/noip2.c	2016-07-12 20:43:21.730537943 +0800
+@@ -2650,19 +2650,19 @@
+ 	    show_ddns_status(2,"0.0.0.0");
+ 	    return -1;
+ 	}
+-        sprintf(buffer, "GET http://%s/\r\n\r\n", NOIP_IP_SCRIPT);
++	sprintf(buffer, "GET http://%s/ HTTP/1.0\r\nUser-Agent:NETGEAR-%s\r\n\r\n", NOIP_IP_SCRIPT,user_agent);
+         if ((x = converse_with_web_server()) <= 0) {
+             handle_dynup_error(x);
+ 	    return -1;
+ 	}
+-        p = buffer;
+-        if ((*p >= '0') && (*p <= '9')) {	// extract IP address
+-	    if (!validate_IP_addr(buffer, external_ip)) {
+-		Msg(CMSG44, p);
+-		return -1;
+-//		exit(1);
+-	    }
+-        }
++	if ((p = strrchr(buffer,'\n')))
++	{
++		if (!validate_IP_addr(++p, external_ip))
++		{
++			Msg(CMSG44, p);
++			return -1;
++		}
++	}
+ #ifdef DEBUG
+ 	if (debug)
+ 	    fprintf(stderr,"! Our NAT IP address is %s\n", external_ip);

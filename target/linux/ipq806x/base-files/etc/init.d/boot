@@ -50,6 +50,7 @@ start() {
 	fi
 	grep -q "dev\.nss\.general\.redirect=1" /etc/sysctl.d/qca-nss-ecm.conf || cp /rom/etc/sysctl.d/qca-nss-ecm.conf /etc/sysctl.d/qca-nss-ecm.conf
 	load_modules /etc/modules.d/*
+	insmod /lib/ufsd/jnl.ko
 	insmod /lib/ufsd/ufsd.ko
 
 	# disable wifi under factory_mode

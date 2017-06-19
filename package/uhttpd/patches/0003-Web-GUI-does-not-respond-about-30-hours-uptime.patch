@@ -1,0 +1,15 @@
+diff -Nurp uhttpd-old//src/uhttpd-tls.c uhttpd/src/uhttpd-tls.c
+--- uhttpd-old//src/uhttpd-tls.c	2016-08-15 09:06:41.546081936 -0400
++++ uhttpd/src/uhttpd-tls.c	2016-08-15 09:07:18.666081905 -0400
+@@ -35,10 +35,7 @@ static int uh_cyassl_recv_cb(char *buf,
+ 
+ 	rv = uh_tcp_recv_lowlevel(cl, buf, sz);
+ 
+-	if (rv < 0)
+-		return -4; /* interrupted */
+-
+-	if (rv == 0)
++	if (rv <= 0)
+ 		return -5; /* connection closed */
+ 
+ 	return rv;
