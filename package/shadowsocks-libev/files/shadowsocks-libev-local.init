@@ -1,0 +1,53 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+STOP=15
+
+CONFIG_FILE=/var/etc/shadowsocks-libev.json
+
+get_config() {
+	config_get_bool enable $1 enable
+	config_get server $1 server
+	config_get server_port $1 server_port
+	config_get local_port $1 local_port
+	config_get timeout $1 timeout
+	config_get password $1 password
+	config_get encrypt_method $1 encrypt_method
+	: ${timeout:=60}
+}
+
+start_local() {
+	cat <<-EOF >$CONFIG_FILE
+		{
+		    "server": "$server",
+		    "server_port": $server_port,
+		    "local_address": "0.0.0.0",
+		    "local_port": $local_port,
+		    "password": "$password",
+		    "timeout": $timeout,
+		    "method": "$encrypt_method"
+		}
+EOF
+	/usr/bin/ss-local \
+		-c $CONFIG_FILE \
+		-f /var/run/ss-local.pid
+	return $?
+}
+
+start() {
+	config_load shadowsocks-libev-local
+	config_foreach get_config shadowsocks-libev-local
+	[ "$enable" = 1 ] || exit 0
+	mkdir -p /var/run /var/etc
+
+	: ${server:?}
+        : ${server_port:?}
+        : ${local_port:?}
+        : ${password:?}
+        : ${encrypt_method:?}
+        start_local
+}
+
+stop() {
+	killall -q -9 ss-local
+}
