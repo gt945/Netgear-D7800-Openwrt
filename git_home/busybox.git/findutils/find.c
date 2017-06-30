@@ -183,7 +183,7 @@ ACTF(newer)
 #if ENABLE_FEATURE_FIND_INUM
 ACTF(inum)
 {
-	return (statbuf->st_ino != ap->inode_num);
+	return (statbuf->st_ino == ap->inode_num);
 }
 #endif
 #if ENABLE_FEATURE_FIND_EXEC
