@@ -136,12 +136,14 @@ ddns_update()
 	killall -9 updatednsip
 	killall -9 phddns
 	killall -9 noip2
+	killall -9 ntgrddns
+	rm /tmp/ntgrpid
 	# Process ntgrddns must  be alive at anytime,even though ddns is disabled.
 	# Because we need ntgrddns to check  whether hostname is aviable or not  
 	if [ ! -f /tmp/ntgrpid ];then
 			print_ntgrddns_conf "$(ifconfig br0|grep "HWaddr"| awk '{print $NF}')" \
                		  "$(cat /module_name)" "$(cat /firmware_version)" "$(cat /tmp/Seria_Number)" > $NTGRDNS_CONF
-			/usr/sbin/ntgrddns -c $NTGRDNS_CONF	
+			/usr/sbin/ntgrddns -c $NTGRDNS_CONF > /dev/null
 	fi
 	rm -f ${pid}
 	$CONFIG unset oray_serv_type
