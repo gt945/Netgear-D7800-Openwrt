@@ -2,10 +2,7 @@
 
 /usr/sbin/net-wall-bin $*
 if [ "$1" = "rule" ]; then
-    if [ -f /root/firewall-start.txt ]; then
-        mv /tmp/netwall-rules /tmp/netwall-rules.txt
-        cat /root/firewall-start.txt > /tmp/netwall-rules
-        cat /tmp/netwall-rules.txt >> /tmp/netwall-rules
-        rm /tmp/netwall-rules.txt
-    fi
+    for i in /etc/net-wall/rules.d/*; do
+        cat $i >> /tmp/netwall-rules
+    done
 fi

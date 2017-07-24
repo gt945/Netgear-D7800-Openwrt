@@ -46,6 +46,7 @@ EOF
 	lan_netmask=$($CONFIG get lan_netmask)
 	lan_ipaddr=$($CONFIG get lan_ipaddr)
 	subnet=$(tun_net $lan_ipaddr $lan_netmask)
+	echo "REDIRECT       net   $port    udp   $port" > /etc/net-wall/rules.d/openvpn_tun
 	cat <<EOF
 dh /tmp/openvpn/dh1024.pem
 ca /tmp/openvpn/ca.crt

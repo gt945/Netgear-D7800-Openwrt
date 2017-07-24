@@ -29,6 +29,7 @@ $(eval $(call PKG/config/CommonModule,$(PKG_NAME)))
 
 define Package/$(PKG_NAME)/install
 	$(MAKE) -C $(PKG_BUILD_DIR) install PREFIX=$(1)
+	$(INSTALL_DIR) $(1)/etc/net-wall/rules.d
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) ./files/firewall.sh $(1)/usr/sbin/
 endef
