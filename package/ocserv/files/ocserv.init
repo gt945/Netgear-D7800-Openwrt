@@ -100,8 +100,8 @@ setup_config() {
 	    /etc/ocserv/ocserv.conf.template > /var/etc/ocserv.conf
 
 	test -f /etc/ocserv/ocserv.conf.local && cat /etc/ocserv/ocserv.conf.local >> /var/etc/ocserv.conf
-	echo "REDIRECT       net   $port    tcp    $port" \
-	    "REDIRECT       net  $port    udp    $port" > /etc/net-wall/rules.d/ocserv
+	echo "REDIRECT       net   $port    tcp    $port" > /etc/net-wall/rules.d/ocserv
+	echo "REDIRECT       net   $port    udp    $port" >> /etc/net-wall/rules.d/ocserv
 }
 
 setup_users() {

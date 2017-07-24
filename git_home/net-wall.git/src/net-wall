@@ -2,7 +2,11 @@
 
 /usr/sbin/net-wall-bin $*
 if [ "$1" = "rule" ]; then
+    mv /tmp/netwall-rules /tmp/netwall-rules.txt
+    echo "#Custom Rules" > /tmp/netwall-rules
     for i in /etc/net-wall/rules.d/*; do
         cat $i >> /tmp/netwall-rules
     done
+    cat /tmp/netwall-rules.txt >> /tmp/netwall-rules
+    rm /tmp/netwall-rules.txt
 fi
