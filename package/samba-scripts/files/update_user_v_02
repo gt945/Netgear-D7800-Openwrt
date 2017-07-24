@@ -15,16 +15,16 @@ echo "root:!:0:0:root:/tmp:/bin/ash"			> $SMB_CONF_DIR/passwd
 echo "guest:*:65534:65534:guest:/tmp/ftpadmin:/bin/ash"	>>$SMB_CONF_DIR/passwd
 echo "nobody:*:65534:65534:nobody:/var:/bin/false" 	>>$SMB_CONF_DIR/passwd
 echo "daemon:*:65534:65534:daemon:/var:/bin/false"	>>$SMB_CONF_DIR/passwd
-echo "xware:*:65533:65533:xware:/var:/bin/false"	>>$SMB_CONF_DIR/passwd
+echo "ocserv:*:65533:65533:ocserv:/var:/bin/false"	>>$SMB_CONF_DIR/passwd
 
 # group setting
 echo "root:x:0:admin"		> $SMB_CONF_DIR/group
 echo "admin:x:1:"		>>$SMB_CONF_DIR/group
 echo "guest:x:65534:"		>>$SMB_CONF_DIR/group
-echo "xware:x:65533:admin"	>>$SMB_CONF_DIR/group
+echo "ocserv:x:65533:"		>>$SMB_CONF_DIR/group
 
 #/bin/adduser -G admin admin -D -H
-(sleep 1; echo "$($config get http_passwd)"; sleep 1; echo "$($config get http_passwd)") | /bin/adduser -G admin admin -h /tmp/ftpadmin -s /bin/bash
+(sleep 1; echo "$($config get http_passwd)"; sleep 1; echo "$($config get http_passwd)") | /bin/adduser -G admin admin -h /tmp/ftpadmin -s /bin/sh
 echo "guest::10957:0:99999:7:::"                        >> $SMB_CONF_DIR/shadow
 
 # clear smbpasswd file
