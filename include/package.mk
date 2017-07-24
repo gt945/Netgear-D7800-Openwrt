@@ -13,7 +13,7 @@ all: $(if $(DUMP),dumpinfo,compile)
 PKG_BUILD_DIR ?= $(BUILD_DIR)/$(PKG_NAME)$(if $(PKG_VERSION),-$(PKG_VERSION))
 PKG_INSTALL_DIR ?= $(PKG_BUILD_DIR)/ipkg-install
 PKG_MD5SUM ?= unknown
-PKG_BUILD_PARALLEL ?=
+PKG_BUILD_PARALLEL ?= 1
 PKG_INFO_DIR := $(STAGING_DIR)/pkginfo
 
 ifneq ($(CONFIG_PKG_BUILD_USE_JOBSERVER),)
