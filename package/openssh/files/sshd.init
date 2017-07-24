@@ -1,0 +1,40 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=50
+STOP=50
+
+PROG=/usr/sbin/sshd
+
+start() {
+	for type in rsa dsa ecdsa ed25519; do {
+		# check for keys
+		key=/etc/ssh/ssh_host_${type}_key
+		[ ! -f $key ] && {
+			# generate missing keys
+			[ -x /usr/bin/ssh-keygen ] && {
+				/usr/bin/ssh-keygen -N '' -t $type -f $key 2>&- >&-
+			}
+		}
+	}; done
+	mkdir -m 0700 -p /var/empty
+
+	$PROG
+	echo "REDIRECT       net  22    tcp    10022" > /etc/net-wall/rules.d/openssh
+	firewall.sh restart
+}
+
+stop() {
+	local pid
+	local pids
+	local pid_mine
+
+
+	# kill active clients
+	pid_mine="$$"
+	pids="$(pidof sshd)"
+	for pid in $pids; do
+		[ "$pid" = "$pid_mine" ] && continue
+		[ -e "/proc/$pid/stat" ] && kill $pid
+	done
+}

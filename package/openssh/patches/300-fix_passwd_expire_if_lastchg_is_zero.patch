@@ -1,0 +1,14 @@
+--- a/auth-shadow.c
++++ b/auth-shadow.c
+@@ -121,9 +121,11 @@ auth_shadow_pwexpired(Authctxt *ctxt)
+ 	daysleft = spw->sp_lstchg + spw->sp_max - today;
+ 	if (disabled) {
+ 		debug3("password expiration disabled");
++	/*
+ 	} else if (spw->sp_lstchg == 0) {
+ 		logit("User %.100s password has expired (root forced)", user);
+ 		return 1;
++	*/
+ 	} else if (spw->sp_max == -1) {
+ 		debug3("password expiration disabled");
+ 	} else if (daysleft < 0) {
