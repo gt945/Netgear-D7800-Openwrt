@@ -47,6 +47,7 @@ firewall_start()
 		/etc/appflow/streamboost.d/40_qdiscman teardown_iptables
 		/etc/appflow/streamboost.d/40_qdiscman setup_iptables
 	fi
+	/etc/ocserv/ocserv-firewall.sh start
 }
 
 firewall_stop()
@@ -69,6 +70,7 @@ firewall_stop()
 		/etc/appflow/streamboost.d/40_qdiscman teardown_iptables
 		/etc/appflow/streamboost.d/40_qdiscman setup_iptables
 	fi
+	/etc/ocserv/ocserv-firewall.sh stop
 }
 
 get_configs

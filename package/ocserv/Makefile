@@ -106,6 +106,7 @@ define Package/ocserv/install
 	$(INSTALL_CONF) ./files/config $(1)/etc/config/ocserv
 	$(INSTALL_DIR) $(1)/lib/upgrade/keep.d
 	$(INSTALL_DATA) ./files/ocserv.upgrade $(1)/lib/upgrade/keep.d/ocserv
+	$(INSTALL_BIN) ./files/ocserv-firewall.sh $(1)/etc/ocserv/
 endef
 
 $(eval $(call BuildPackage,ocserv))
