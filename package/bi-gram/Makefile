@@ -51,8 +51,8 @@ define Build/InstallDev
 endef
 
 define Package/bi-gram/install
-	$(INSTALL_DIR) $(1)/usr/lib/mysql
-	$(CP) $(PKG_INSTALL_DIR)/usr/lib/mysql/bi_gramlib.so* $(1)/usr/lib/
+	$(INSTALL_DIR) $(1)/usr/lib/mysql/plugin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/mysql/bi_gramlib.so* $(1)/usr/lib/mysql/plugin
 endef
 
 $(eval $(call BuildPackage,bi-gram))
