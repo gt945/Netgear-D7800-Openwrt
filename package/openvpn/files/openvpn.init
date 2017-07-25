@@ -22,7 +22,7 @@ server-bridge nogw
 proto $proto 
 port $port 
 keepalive 10 120
-verb 5
+verb 0
 mute 5
 log-append /tmp/openvpn_log
 writepid /tmp/openvpnd.pid
@@ -57,7 +57,7 @@ dev tun0
 proto $proto 
 port $port 
 keepalive 10 120
-verb 5
+verb 0
 mute 5
 log-append /tmp/openvpn_tun_log
 writepid /tmp/openvpnd_tun.pid
