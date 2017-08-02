@@ -13,13 +13,13 @@ export LN:=ln -sf
 export CP:=cp -fpR
 export TOUCH:=touch
 
-export WWW_OUT_DIR:=/home/tianqing.liu/projects/d7800-stage2-froje.git/build_dir/target-arm_v7-a_uClibc-0.9.33.2_eabi/net-cgi/www.out
+export WWW_OUT_DIR:=${CURDIR}/www.out
 
 export INS_DIR_PRE:=
 export INS_BIN_DIR:=$(INS_DIR_PRE)/usr/sbin
 export INS_WWW_DIR:=$(INS_DIR_PRE)/www
 
-export NETCGI_CONF:=/home/tianqing.liu/projects/d7800-stage2-froje.git/build_dir/target-arm_v7-a_uClibc-0.9.33.2_eabi/net-cgi/files/net-cgi.config
+export NETCGI_CONF:=${CURDIR}/files/net-cgi.config
 
 export NEW_SOURCE:=yes
 

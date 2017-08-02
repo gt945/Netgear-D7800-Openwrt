@@ -1,5 +1,7 @@
 function select_lable(num)
 {
+	if(first_flag == 1 || (first_flag == 0 && parent.ookla_speedtest_flag == 1))
+		return;
         if(num==0)
                 document.getElementById("streamboost_qos").className="label_click";
         else
@@ -27,8 +29,8 @@ function wmmMain()
 
 function qos_advanced()
 {
-	var cf = document.forms[0];
-	if(first_flag == "1"){
+	var cf = document.forms[0];	
+	if(first_flag == "1" || (parent.ookla_speedtest_flag == 1 && first_flag == "0")){
 		cf.hid_streamboost_enable.value = 0;
 		cf.hid_first_flag.value = "0";
 		parent.ookla_speedtest_flag = 0;
@@ -42,7 +44,7 @@ function qos_advanced()
 			parent.ookla_speedtest_flag = 0;
 		location.href = "QOS_dynamic.htm";
 	}
-		
+	enable_links();	
 		
 }
 
@@ -174,7 +176,8 @@ function check_qos_apply2()
                                         return false;
                                 }
                                 cf.hid_first_flag.value="1";
-                                parent.ookla_speedtest_flag == 1;
+                                parent.ookla_speedtest_flag = 1;
+				grayout_menu_links();
 				check_qos_apply3();
                         },
 			function(){return false;});
@@ -289,9 +292,48 @@ function check_ookla_speedtest(form)
 		form.action="/func.cgi?/QOS_basic_setting.htm timestamp="+ts;
 		parent.basic_qos_ookla_speedtest_flag = 1;
 	}
-	form.submit();
+	grayout_menu_links();
+	form.submit();	
 	return true;
 }
+
+
+function enable_links()
+{
+	top.enable_action = 1;
+	//console.log("ookla_speedtest"+parent.ookla_speedtest_flag);
+	if(top.location.href.indexOf("adv_index.htm") > -1){
+		subItemsClass("setup_sub", "usb_sub", "admin_sub", "security_sub", "green_sub", "advanced_sub");
+		var div_list = parent.window.document.getElementsByTagName("div");
+		for(var i = 0; i < div_list.length; i++)
+			if(div_list[i].className == "basic_button_gray")
+				div_list[i].className = "basic_button";
+		menu_class_default();
+	}
+	else{
+		basic_menu_class_default();
+		parent.window.document.getElementById("intqos").className = "basic_button_purple";
+	}
+}
+
+function grayout_menu_links()
+{
+	top.enable_action = 0;
+	if(top.location.href.indexOf("adv_index.htm") > -1){
+		enabledItemsClass()
+		var div_list = parent.window.document.getElementsByTagName("div");
+		for(var i = 0; i < div_list.length; i++)
+			if(div_list[i].className == "advanced_black_button")
+				div_list[i].className = "advanced_grey_button";
+	}
+	else{
+		var div_list = parent.window.document.getElementsByTagName("div");
+		for(var i = 0; i < div_list.length; i++)
+			if(div_list[i].className.indexOf("basic_button") != -1 && div_list[i].className != "basic_button_purple")
+				div_list[i].className = div_list[i].className + "_grey";							
+	}
+}
+
 
 function check_basic_manual_update(form)
 {

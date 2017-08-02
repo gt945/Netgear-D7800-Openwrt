@@ -11,7 +11,7 @@ body{ background: url(../image/oneline.gif) 0 -80px repeat-x #e5e5e5; margin:aut
 .menu_ie9_words{ font-weight: 350; font-size: 14.8px;}
 #menu .basic_button{margin-bottom: 5px;  width: 190px; height: 29px; background:url(../image/menus.gif) no-repeat -736px -70px; color: #4e4e4e;cursor:pointer; position: relative}
 #menu .basic_button_big{margin-bottom: 5px;  width: 190px; height: 44px; background:url(../image/menus.gif) no-repeat -720px -128px;color: #4e4e4e;cursor:pointer; position: relative }
-#menu .basic_button_big_grey{margin-bottom: 5px;  width: 190px; height: 44px; background:url(../image/menus.gif) no-repeat -340px -128px;color: #4e4e4e;cursor:pointer; position: relative }
+#menu .basic_button_big_grey{margin-bottom: 5px;  width: 190px; height: 44px; background:url(../image/menus.gif) no-repeat -340px -128px;color: #808080;cursor:pointer; position: relative }
 #menu .basic_button_purple{margin-bottom: 5px;  width: 190px; height: 29px;background:url(../image/menus.gif) no-repeat -546px -99px;color: #ffffff; position: relative}
 #menu .basic_button_big_purple{margin-bottom: 5px;  width: 190px; height: 44px; background:url(../image/menus.gif) no-repeat -530px -128px;color: #ffffff; position: relative}
 #menu .basic_button_grey{margin-bottom: 5px;  width: 190px; height: 29px;background:url(../image/menus.gif) no-repeat -546px -70px;color: #808080; position: relative}

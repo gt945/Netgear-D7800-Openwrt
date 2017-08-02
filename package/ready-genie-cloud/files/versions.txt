@@ -1,0 +1,4 @@
+ReadyCLOUD_agent: 44
+Leaf: leaf-multipresence 1681
+Remote: unknown
+CloudAgent: 78

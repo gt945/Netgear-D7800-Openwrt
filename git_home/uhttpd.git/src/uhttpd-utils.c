@@ -162,6 +162,38 @@ int uh_tcp_send_lowlevel(struct client *cl, const char *buf, int len)
 	return -1;
 }
 
+#ifdef TLS_IS_CYASSL
+int uh_cyassl_tcp_send(struct client *cl, const char *buf, int len)
+{
+	fd_set writer;
+	struct timeval timeout;
+	int ret;
+
+	FD_ZERO(&writer);
+	FD_SET(cl->socket, &writer);
+
+	timeout.tv_sec = cl->server->conf->network_timeout;
+	timeout.tv_usec = 0;
+
+	ret = select(cl->socket + 1, NULL, &writer, NULL, &timeout);
+
+	/* the fd can be writable */
+	if (ret > 0)
+	{
+		ret = send(cl->socket, buf, len, 0);
+		if (ret > 0)	//succeed
+			return ret;
+		else if (ret = -1 &&(errno == EINTR || errno == EWOULDBLOCK || errno ==EAGAIN))
+			return -4;	//retransmit
+		else
+			return -5;	//close
+	}
+	/* "<= 0" means that the link should be closed */
+	else
+		return -1;
+}
+#endif
+
 int uh_tcp_send(struct client *cl, const char *buf, int len)
 {
 #ifdef HAVE_TLS
@@ -206,6 +238,38 @@ int uh_tcp_recv_lowlevel(struct client *cl, char *buf, int len)
 
 	return -1;
 }
+
+#ifdef TLS_IS_CYASSL
+int uh_cyassl_tcp_recv(struct client * cl, const char *buf, int len)
+{
+	fd_set reader;
+	struct timeval timeout;
+	int ret;
+
+	FD_ZERO(&reader);
+	FD_SET(cl->socket, &reader);
+
+	timeout.tv_sec  = cl->server->conf->network_timeout;
+	timeout.tv_usec = 0;
+
+	ret = select(cl->socket + 1, &reader, NULL, NULL, &timeout);
+
+	/* some data need to be read */
+	if (ret > 0)
+	{
+		ret = recv(cl->socket, buf, len, 0);
+		if (ret > 0)
+			return ret;	//succeed
+		else if (ret = -1 &&(errno == EINTR || errno == EWOULDBLOCK || errno ==EAGAIN))
+			return -4;	//retransmit
+		else
+			return -5;	//close
+	}
+	/* "<= 0" means that the link should be closed */
+	else
+		return -1;
+}
+#endif
 
 int uh_tcp_recv(struct client *cl, char *buf, int len)
 {

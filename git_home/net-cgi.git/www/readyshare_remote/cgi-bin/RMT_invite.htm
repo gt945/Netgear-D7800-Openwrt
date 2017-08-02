@@ -117,6 +117,15 @@ function hide_text(cf)
 			passwd[i] = "*";
 		}
 	}
+
+	/* 
+	   fix Bug that when password includes '*', it will be filtered.
+	   In fact, once an character is input, hid_text will be called immediately so that only the new
+	   character will be translated at one time.
+	 */
+	if(hid_passwd.length != passwd.length)
+		hid_passwd[passwd.length - 1] = "*";	//if the new character is "*", add to the ending of hid_passwd
+
 	cf.TXT_remote_password.value = passwd.join("");
 	cf.TXT_remote_passwd.value = hid_passwd.join("");
 }

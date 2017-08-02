@@ -17,15 +17,20 @@ cf.action="/apply.cgi?/BRS_netgear_success.html timestamp=" + ts;
 cf.submit_flag.value = "hijack_success";
 		
 if(have_click_take_me_to_internet != "1" )
-	cf.submit();
+	cf.no_dns_hijack.disabled = true;
 else if(dns_hijack_v == "1" && hijack_process_v == "2")
-	cf.submit();
+	cf.no_dns_hijack.disabled = true;
 else
-	this.location.href = "BRS_netgear_success.html";
+	cf.no_dns_hijack.disabled = false;
+
+//submit this page anyway
+cf.submit();
+
 }
 </script>
 <form method="POST">
 <input type="hidden" name="submit_flag">
+<input type="hidden" name="no_dns_hijack" value="1">
 </form>
 </body>
 

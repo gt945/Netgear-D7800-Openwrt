@@ -4,7 +4,7 @@ D7800
 
 2) List the version number of the firmware/software that correlates with the open source code archive.
 
-D7800-V1.0.0.30
+D7800-V1.0.1.22
 
 7) List the main HW platform utilized such as CPU, main chipset, RF chipset, DSP, Switch IC¡­etc.
 
@@ -178,8 +178,6 @@ samba-scripts, 1, GPL, Yes
 
 ssmtp, 2.64, GPL, No
 
-guest_dhcp, 1, Atheros, Yes
-
 kmod-dni-qos, 1, DNI, Yes
 
 telnetenable, 1.0, GPL, Yes
@@ -218,19 +216,7 @@ qca-nss-gmac,2.4.3.1008.232 , GPL, Yes
 
 qca-nss-clients,2.4.3.1008.232 , Dual BSD/GPL, Yes
 
-qca-spectral, 10.4-r38329.1, Atheros, No
-
 qca-ssdk,2.4.3.1008.232 , Dual BSD/GPL, Yes
-
-qca-acfg, 10.4-r38329.1, Atheros, Yes
-
-qca-wpc, 10.4-r38329.1, Atheros, Yes
-
-qca-wrapd, 10.4-r38329.1, Atheros, Yes
-
-qca-wifi-fw, CNSS.BL.1.0-00453-S-1, Atheros, Yes
-
-qcmbr, 10.4, Atheros, Yes
 
 13) List the name, version, license, and modification status of the library modules for the product
 

@@ -80,7 +80,6 @@ endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/uhttpd.git/* $(PKG_BUILD_DIR)/
-	$(call Build/Patch/Default)
 endef
 
 $(eval $(call PKG/config/CommonModule,$(PKG_NAME)))

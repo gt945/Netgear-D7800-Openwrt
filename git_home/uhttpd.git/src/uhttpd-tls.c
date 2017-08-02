@@ -33,15 +33,7 @@ static int uh_cyassl_recv_cb(char *buf, int sz, void *ctx)
 	if (!(cl = uh_client_lookup(socket)))
 		return -1; /* unexpected error */
 
-	rv = uh_tcp_recv_lowlevel(cl, buf, sz);
-
-	if (rv < 0)
-		return -4; /* interrupted */
-
-	if (rv == 0)
-		return -5; /* connection closed */
-
-	return rv;
+	return uh_cyassl_tcp_recv(cl, buf, sz);
 }
 
 static int uh_cyassl_send_cb(char *buf, int sz, void *ctx)
@@ -53,12 +45,7 @@ static int uh_cyassl_send_cb(char *buf, int sz, void *ctx)
 	if (!(cl = uh_client_lookup(socket)))
 		return -1; /* unexpected error */
 
-	rv = uh_tcp_send_lowlevel(cl, buf, sz);
-
-	if (rv <= 0)
-		return -5; /* connection dead */
-
-	return rv;
+	return uh_cyassl_tcp_send(cl, buf, sz);
 }
 
 void SetCallbackIORecv_Ctx(SSL_CTX*, int (*)(char *, int, void *));

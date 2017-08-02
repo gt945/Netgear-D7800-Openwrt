@@ -26,16 +26,16 @@ var quest2_8="$quest2_8";
 function loadvalue()
 {
 	var answer_again="<% cfg_get("enter_answer_again") %>";
-	var last_error_ans1="<% cfg_get("last_error_ans1") %>";
-	var last_error_ans2="<% cfg_get("last_error_ans2") %>";
+	var last_error_ans1="<% cfg_sed_xss("last_error_ans1") %>";
+	var last_error_ans2="<% cfg_sed_xss("last_error_ans2") %>";
 
 	<% cfg_set("enter_answer_again","0") %>
 	<% commit() %>
 
 	if( answer_again == "1" )
 	{
-		document.forms[0].answer1.value=last_error_ans1;
-		document.forms[0].answer2.value=last_error_ans2;
+		document.forms[0].answer1.value=last_error_ans1.replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+		document.forms[0].answer2.value=last_error_ans2.replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
 		alert("$answer_not_match");
 	}
 }

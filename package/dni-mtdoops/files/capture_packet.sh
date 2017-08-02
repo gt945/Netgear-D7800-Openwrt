@@ -2,6 +2,7 @@
 
 # As requirement for NTGR Weber, if have usb storage, we will store LAN/WAN packet into usb storage, or store in sdram
 
+. /dni-gconfig
 dist_path=""
 mnt_path="/mnt/"
 store_locate=`cat /tmp/debug_store_locate`
@@ -37,12 +38,12 @@ if [ "X$wanlan_capture" = "X1" ]; then
 	if [ "X$store_locate" = "X1" -a "X$dist_path" != "X" ]; then
 		echo "Save capture lan/wan packet in usb storage"
 		mkdir $dist_path/Capture
-		tcpdump -i br0 -s 0 -W 1 -w $dist_path/Capture/lan.pcap -C 100 &
-		tcpdump -i eth0 -s 0 -W 1 -w $dist_path/Capture/wan.pcap -C 100 &
+		tcpdump -i $DGC_LAN_BR_IF -s 0 -W 1 -w $dist_path/Capture/lan.pcap -C 100 &
+		tcpdump -i $DGC_WAN_ETH_IF -s 0 -W 1 -w $dist_path/Capture/wan.pcap -C 100 &
 	else
 		echo "Save capture lan/wan packet in SDRAM tmp dir"
-		tcpdump -i br0 -s 0 -W 1 -w /tmp/lan.pcap -C 5 &
-		tcpdump -i eth0  -s 0 -W 1 -w /tmp/wan.pcap -C 5 &
+		tcpdump -i $DGC_LAN_BR_IF -s 0 -W 1 -w /tmp/lan.pcap -C 5 &
+		tcpdump -i $DGC_WAN_ETH_IF -s 0 -W 1 -w /tmp/wan.pcap -C 5 &
 	fi
 fi
 

@@ -6,7 +6,7 @@
 product=r7500v2
 
 #version=`cat /cloud_version`
-version=20160630
+version=20160909
 
 sleep_time_1=60
 sleep_time_2=300
@@ -54,10 +54,18 @@ restore() {
 	rm -rf /tmp/clouddir
 }
 
+install_local(){
+	tar xfz /lib/readygeniecloud-${product}-$version-01.tar.gz -C /
+	echo readygeniecloud-${product}-$version-01.tar.gz > /opt/version
+
+	start
+}
+
 update() {
 	[ -f /tmp/.cloud_updated ] && return 1
 	PID_file=/var/run/cloud.pid
 	[ -f $PID_file ] && return 1
+	install_local
 	echo "$$" > $PID_file
 	echo "start to get info from ftp://updates1.netgear.com/sw-apps/ready-genie-cloud/${product}/"
 	retry_count=0
@@ -73,7 +81,6 @@ update() {
 		touch /tmp/.cloud_updated
 		rm -f $PID_file
 		echo "the readygeniecloud on update server is same as on R/W filesystem"
-		start
 		return 1
 	fi
 	size=`tail -1 /tmp/cloud_info | awk '{print $5}'`

@@ -71,7 +71,10 @@ int uh_tcp_send_lowlevel(struct client *cl, const char *buf, int len);
 int uh_tcp_peek(struct client *cl, char *buf, int len);
 int uh_tcp_recv(struct client *cl, char *buf, int len);
 int uh_tcp_recv_lowlevel(struct client *cl, char *buf, int len);
-
+#ifdef TLS_IS_CYASSL 
+int uh_cyassl_tcp_send(struct client *cl, const char *buf, int len);
+int uh_cyassl_tcp_recv(struct client *cl, const char *buf, int len);
+#endif
 int uh_http_sendhf(
 	struct client *cl, int code, const char *summary,
 	const char *fmt, ...

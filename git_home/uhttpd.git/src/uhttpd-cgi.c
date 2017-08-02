@@ -151,15 +151,50 @@ static void uh_usb_download_file(char *path, int len, int sock,struct client *cl
        #define MAX_NON_LFSIZE  ((1UL << 31) - 1)
        #define O_LARGEFILE     0x2000
        char full_name[4096];
+       char buf[4096];
        off_t rlen, offset;
        int fd, i, r, on, s;
+       int count = 8;
+       int link_len;
        struct stat statbuf;
        char *filepath;
+       char *partname;
+       char *partpath;
 
        /* skip `DOWNLOAD:` in path */
        path[len-1] = '\0';
        filepath = &path[9];
        strcpy(full_name, filepath);
+		
+       link_len = readlink(full_name, buf, 4096);
+       if(link_len > 0)
+           return;
+       partname = &full_name[count];
+       while(*partname != '\0')
+       {
+           if(*partname != '/')
+           {
+               partname = &full_name[count+1];
+               count++;
+           }
+           else
+           {
+               full_name[count] = '\0';
+               partpath = &full_name;
+               link_len = readlink(partpath, buf, 4096);
+               if(link_len > 0)
+               {
+                   return;
+               }
+               else
+               {
+                   full_name[count]='/';
+                   partname = &full_name[count+1];
+                   count++;
+               }
+           }
+        }
+
 
 	fd = open(full_name, O_RDWR | O_LARGEFILE);
        struct flock lock;

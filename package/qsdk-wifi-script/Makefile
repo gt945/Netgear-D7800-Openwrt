@@ -30,10 +30,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/usr/lib/
 	cp -af $(PKG_BUILD_DIR)/lib/wifi/* $(1)/lib/wifi
 	cp -af $(PKG_BUILD_DIR)/usr/lib/* $(1)/usr/lib
-	rm -rf $(1)/lib/wifi/wps-hostapd-update-uci.sh
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/wifi/wps-hostapd-update-uci.sh \
-					$(1)/lib/wifi/wps-hostapd-update-uci
-
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

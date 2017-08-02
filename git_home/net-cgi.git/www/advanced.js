@@ -124,7 +124,7 @@ function subItemsClass(argv)
 
 		for(i=0; i<items.length; i++)
 		{
-			if( top.old_div == items[i] ) break;
+			if( top.old_div == items[i] ) continue;
 			words_height = items[i].getElementsByTagName("a")[0].clientHeight;
 			if(words_height > 28 )
 				items[i].className = "long_name";
@@ -172,14 +172,15 @@ function clickSubMenu(current_div, change_id)
 		current_div.className = "sub_back_purple_triple";
 	top.old_div = current_div;
 }
-var array_name = ["wds_items", "ap_items", "bridge_items", "extender_items", "mapt_items", "devmode_items"];
-var enable_flags = ["enabled_wds", "enable_ap_flag", "enable_bridge_flag", "enable_extender_flag", "enable_mapt", "device_mode"];
+var array_name = ["wds_items", "ap_items", "bridge_items", "extender_items", "mapt_items", "devmode_items", "all_items"];
+var enable_flags = ["enabled_wds", "enable_ap_flag", "enable_bridge_flag", "enable_extender_flag", "enable_mapt", "device_mode", "ookla_speedtest_flag"];
 var wds_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wl_bridge", "guest", "email", "schedule", "log"]; 
 var ap_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "remote", "upnp", "traffic", "wl_bridge", "lan", "ipv6", "parental", "access_control", "usb_set", "devname"];
 var extender_items = [ "internet", "wan", "block_site", "block_services", "forwarding_triggering","vpn",  "remote", "upnp", "traffic", "wl_bridge", "lan", "ipv6", "led", "fbwifi"];
 var bridge_items = ["internet", "wan", "block_site", "block_services", "forwarding_triggering","qos","vpn", "dns", "static", "remote", "upnp", "traffic", "wireless", "guest", "lan", "parental","access_control",  "email", "schedule", "wds", "ipv6", "wlap"];
 var mapt_items= [ "internet" ];
 var devmode_items = [ "internet", "wireless", "guest", "wan", "lan", "qos", "readyshare_stor", "usb_bas", "usb_adv", "media", "print", "vault", "block_site", "block_services", "schedule", "email", "wladv", "rae", "forwarding_triggering", "dns", "vpn", "static", "remote", "upnp", "traffic", "wl_bridge", "ipv6", "parental", "access_control", "usb_set", "vlan", "led", "devname" ];
+var all_items = ["internet", "wireless", "guest", "wan", "lan", "readyshare_stor", "usb_bas", "usb_adv", "cloud", "media", "print", "vault", "block_site", "block_services", "schedule", "email", "green_basic", "green_manager", "status", "log", "wladv", "wlap", "rae", "attached", "bak_set", "passwd", "upgrade", "forwarding_triggering", "dns", "vpn", "static", "remote", "upnp", "traffic", "wl_bridge", "ipv6", "parental", "access_control", "usb_set", "vlan", "led", "devname", "devmode" ]
 function enabledItemsClass()
 {
 	var i, j;
@@ -198,7 +199,7 @@ function enabledItemsClass()
 			var height  = cur_div.getElementsByTagName("a")[0].clientHeight;
 			if( cur_div.style.display == "none" ) break;
 
-			if(enable_flag == "1" )
+			if(enable_flag == "1")
 			{
 				if( height > 28 )
 					cur_div.className = "long_grey";

@@ -122,20 +122,24 @@ function updateProgress()
 		}
 	}
 	else
-	{
+	{	
 		 sAlert("$fail_detect", function(){
 		var cf = document.forms[0];
-		 parent.ookla_speedtest_flag = 2;
-                 if(first_flag == "1") {
+                 if(first_flag == "1" || (parent.ookla_speedtest_flag == 1 && first_flag == 0)){
+			 parent.ookla_speedtest_flag = 2;
 			cf.hid_streamboost_enable.value=0;
 			cf.hid_first_flag.value="0";
 			if(top.have_advanced_qos == "1")
 				check_confirm(cf, "QOS_basic_dynamic.htm", ts);
 			else
 				check_confirm(cf, "QOS_dynamic.htm", ts);
-                 }else
+                 }else{
+				  parent.ookla_speedtest_flag = 2;
+				 //alert("lala  "+first_flag);
 			this.location.href = "QOS_dynamic.htm";
-		});
+			}
+			enable_links();
+		});	
 	}
 }
 function detect_speedtest_value()
@@ -189,6 +193,7 @@ function detect_speedtest_value()
                                         });
 				}else
 					location.href="QOS_dynamic.htm";
+					enable_links();
                         }else{
                                 setTimeout("detect_speedtest_value()",3000);
 			}
@@ -230,7 +235,7 @@ function loadvalue()
 	document.getElementById("streamboost_qos").className="label_click";
     var cf=document.forms[0];
 	
-	var table1_height = $$("#fix_button_table").height();
+       var table1_height = $$("#fix_button_table").height();
 
 	if(parent.type == "advanced"){
 		if(table1_height > 175)
@@ -293,6 +298,8 @@ function loadvalue()
 		cf.apply.disabled=true;
 		document.getElementById("apply").className="new_greyapply_bt  ui-corner-all";
 		cf.qosSetting[0].checked = true;
+		cf.basic_dynamic_qos[1].disabled = true;
+		cf.qosSetting[1].disabled = true;
 		document.getElementById("speedtest").className="new_greyspeed_test ui-corner-all";
 		if(top.is_gr_version == 1)
 			 document.getElementById("speedtest").className = "new_greyspeed_test ui-corner-all";
