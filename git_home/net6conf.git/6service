@@ -109,10 +109,12 @@ radvd_write_config() {
 	# To fix bug 22829,spec 2.0: The router's Auto Config function on the LAN has to include the RDNSS option in the RA's and it
 	# uses the router's unicast link-local IPv6 address as the recursive DNS server.
 	IPV6_ADDR=$(/sbin/ifconfig br0 | grep 'Scope:Link' | awk -F/ '{print$1}' | awk -F'inet6 addr:' '{print$2}');
-	printf '\tRDNSS %s {\n' "$IPV6_ADDR"
-	printf '\t\tAdvRDNSSPreference 8;\n'
-	printf '\t\tAdvRDNSSLifetime 1200;\n'
-	printf '\t};\n'
+	if [ "x$IPV6_ADDR" != "x" ]; then
+		printf '\tRDNSS %s {\n' "$IPV6_ADDR"
+		printf '\t\tAdvRDNSSPreference 8;\n'
+		printf '\t\tAdvRDNSSLifetime 1200;\n'
+		printf '\t};\n'
+	fi
 	printf '};\n'
 }
 
