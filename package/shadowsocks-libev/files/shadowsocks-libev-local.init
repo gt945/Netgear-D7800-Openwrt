@@ -31,6 +31,8 @@ EOF
 	/usr/bin/ss-local \
 		-c $CONFIG_FILE \
 		-f /var/run/ss-local.pid
+	echo "REDIRECT       net   $local_port    tcp    $local_port" > /etc/net-wall/rules.d/shadowsocks-local
+	firewall.sh restart
 	return $?
 }
 
