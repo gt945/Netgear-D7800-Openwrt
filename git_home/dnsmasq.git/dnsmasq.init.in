@@ -18,8 +18,8 @@ start() {
 	fi
 
 	[ ! -f /tmp/resolv.conf ] && touch /tmp/resolv.conf
-
-	local opt_argv=""
+	[ ! -d /tmp/dnsmasq.d ] && mkdir /tmp/dnsmasq.d
+	local opt_argv="--conf-dir=/tmp/dnsmasq.d"
 	local resolv_file="/tmp/resolv.conf"
 
 	# start parental ctl config
