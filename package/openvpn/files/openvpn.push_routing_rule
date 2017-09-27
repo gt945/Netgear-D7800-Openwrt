@@ -46,6 +46,7 @@ EOF
 	if [ "$1" = "tun" ]; then
 	cat <<EOF
 push "route $tun_subnet $lan_netmask $gateway"
+push "route $oc_subnet $lan_netmask $gateway"
 EOF
 	fi
 }
@@ -65,6 +66,7 @@ if [ $1 = "tap" ]; then
 	gateway=$lan_ipaddr
 else
 	tun_subnet=$(tun_net $lan_ipaddr $lan_netmask)
+	oc_subnet=$(tun_net $tun_subnet $lan_netmask)
 	gateway=$ifconfig_pool_local_ip
 fi
 

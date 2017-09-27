@@ -1,6 +1,7 @@
 #!/bin/sh /etc/rc.common
 
 START=50
+CONFIG=/bin/config
 
 setup_config() {
 	config_get port         $1 port "4443"
@@ -50,8 +51,11 @@ setup_config() {
 		test -n "$ipaddr" && sysctl -w "net.ipv4.conf.$(uci get network.lan.ifname).proxy_arp"=1 >/dev/null
 		test -n "$ip6addr" && sysctl -w "net.ipv6.conf.$(uci get network.lan.ifname).proxy_ndp"=1 >/dev/null
 	else
-		test "$ipaddr" = "" && ipaddr="192.168.3.0"
-		test "$netmask" = "" && netmask="255.255.255.0"
+		lan_ipaddr=$($CONFIG get lan_ipaddr)
+		lan_netmask=$($CONFIG get lan_netmask)
+		openvpn_ipaddr=$(tun_net $lan_ipaddr $lan_netmask)
+		ipaddr=$(tun_net $openvpn_ipaddr $lan_netmask)
+		netmask=$lan_netmask
 	fi
 
 	enable_default_domain="#"
