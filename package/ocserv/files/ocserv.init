@@ -79,7 +79,7 @@ setup_config() {
 	test $auth = "plain" && authsuffix="\[passwd=/var/etc/ocpasswd\]"
 
 	dyndns="false"
-	hostname=`uci show ddns 2>/dev/null|grep domain|head -1|cut -d '=' -f 2`
+	hostname=`$CONFIG get sysDNSHost 2>/dev/null|head -1|cut -d '=' -f 2`
 	[ -n "$hostname" ] && dyndns="true"
 
 	mkdir -p /var/etc
