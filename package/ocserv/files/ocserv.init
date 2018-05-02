@@ -55,6 +55,7 @@ setup_config() {
 		lan_netmask=$($CONFIG get lan_netmask)
 		openvpn_ipaddr=$(tun_net $lan_ipaddr $lan_netmask)
 		ipaddr=$(tun_net $openvpn_ipaddr $lan_netmask)
+		ip6addr=$($CONFIG get ipv6_rule_prefix)
 		netmask=$lan_netmask
 	fi
 
