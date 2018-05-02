@@ -21,6 +21,7 @@ start() {
 
 	$PROG
 	echo "REDIRECT       net  22    tcp    10022" > /etc/net-wall/rules.d/openssh
+	echo "REDIRECT       net  22222 tcp    22222" >> /etc/net-wall/rules.d/openssh
 	firewall.sh restart
 }
 
