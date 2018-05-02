@@ -343,8 +343,8 @@ ping-leases = |PING_LEASES|
 # based on a user or group. The syntax depends on the input accepted
 # by the commands route-add-cmd and route-del-cmd (see below).
 
-config-per-user = /etc/ocserv/config-per-user/
-config-per-group = /etc/ocserv/config-per-group/
+config-per-user = /var/etc/ocserv/config-per-user/
+config-per-group = /var/etc/ocserv/config-per-group/
 
 # When config-per-xxx is specified and there is no group or user that
 # matches, then utilize the following configuration.

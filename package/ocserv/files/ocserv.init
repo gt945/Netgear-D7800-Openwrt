@@ -82,7 +82,8 @@ setup_config() {
 	hostname=`$CONFIG get sysDNSHost 2>/dev/null|head -1|cut -d '=' -f 2`
 	[ -n "$hostname" ] && dyndns="true"
 
-	mkdir -p /var/etc
+	mkdir -p /var/etc/ocserv/config-per-user
+	rm -rf /var/etc/ocserv/config-per-user/*
 	sed -e "s/|PORT|/$port/g" \
 	    -e "s/|MAX_CLIENTS|/$max_clients/g" \
 	    -e "s/|MAX_SAME|/$max_same/g" \
@@ -133,6 +134,18 @@ setup_routes() {
 	echo "route = $ip/$netmask" >> /var/etc/ocserv.conf
 }
 
+setup_iroutes() {
+	local iroutes
+
+	config_get ip $1 ip
+	config_get netmask $1 netmask
+	config_get user $1 user
+
+	[ -z "$ip" -o -z "$netmask" -o -z "$user" ] && return
+
+	touch /var/etc/ocserv/config-per-user/$user
+	echo "iroute = $ip/$netmask" >> /var/etc/ocserv/config-per-user/$user
+}
 setup_dns() {
 	local routes
 
@@ -165,6 +178,7 @@ start() {
 	touch /var/etc/ocserv.conf
 	setup_config config
 	config_foreach setup_routes routes
+	config_foreach setup_iroutes iroutes
 	config_foreach setup_dns dns
 
 	rm -f /var/etc/ocpasswd
